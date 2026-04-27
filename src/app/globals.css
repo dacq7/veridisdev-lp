@@ -28,3 +28,7 @@ body {
   background-color: #1A8A5A;
   color: #ffffff;
 }
+
+.footer-email-link:hover {
+  color: #22B573;
+}
