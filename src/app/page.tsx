@@ -1,6 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
+import Projects from '@/components/Projects';
 
 export default function Home() {
   return (
@@ -10,7 +11,7 @@ export default function Home() {
         <Hero />
         {/* Services */}
         <Services />
-        {/* Projects */}
+        <Projects />
         {/* WhyVeridis */}
         {/* TechStack */}
         {/* Contact */}
