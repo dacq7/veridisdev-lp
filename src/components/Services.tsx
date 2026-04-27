@@ -343,8 +343,24 @@ export default function Services() {
   const { currency, rate, loading, error, selectCurrency } = useCurrencyRate();
 
   return (
-    <section id="services" className="py-24 md:py-32">
-      <div className="max-w-7xl mx-auto px-6 md:px-8">
+    <section
+      id="services"
+      className="relative py-24 md:py-32"
+      style={{
+        backgroundImage: 'radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+      }}
+    >
+      {/* Ambient glow — top-right */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 600px 500px at 100% 0%, rgba(13, 92, 58, 0.08), transparent)',
+          zIndex: 0,
+        }}
+      />
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
 
         {/* Header row: left text + right toggle */}
         <motion.div
@@ -397,7 +413,7 @@ export default function Services() {
           ))}
         </motion.div>
 
-      </div>
+      </div>  {/* end relative z-10 */}
     </section>
   );
 }

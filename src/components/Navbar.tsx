@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import MagneticButton from '@/components/MagneticButton';
 
 function useScrolled(threshold = 50): boolean {
   const [scrolled, setScrolled] = useState(false);
@@ -113,12 +114,14 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:block">
-            <a
-              href="#contact"
-              className="inline-flex items-center bg-accent text-white text-xs font-medium font-sans rounded-[6px] px-5 py-2.5 hover:bg-primary transition-all duration-200 hover:scale-[1.02]"
-            >
-              Start a project
-            </a>
+            <MagneticButton>
+              <a
+                href="#contact"
+                className="inline-flex items-center bg-accent text-white text-xs font-medium font-sans rounded-[6px] px-5 py-2.5 hover:bg-primary transition-all duration-200 hover:scale-[1.02]"
+              >
+                Start a project
+              </a>
+            </MagneticButton>
           </div>
 
           {/* Mobile hamburger */}

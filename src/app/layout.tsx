@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
+import CustomCursor from "@/components/CustomCursor";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -50,6 +51,31 @@ export default function RootLayout({
       className={`${dmSans.variable} ${syne.variable}`}
     >
       <body className="bg-background text-white antialiased">
+        <CustomCursor />
+        {/* Film grain overlay — fixed, covers every section, pointer-events none */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            pointerEvents: 'none',
+            opacity: 0.055,
+          }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+            <filter id="page-grain">
+              <feTurbulence
+                type="fractalNoise"
+                baseFrequency="0.65"
+                numOctaves="3"
+                stitchTiles="stitch"
+              />
+              <feColorMatrix type="saturate" values="0" />
+            </filter>
+            <rect width="100%" height="100%" filter="url(#page-grain)" />
+          </svg>
+        </div>
         {children}
       </body>
     </html>

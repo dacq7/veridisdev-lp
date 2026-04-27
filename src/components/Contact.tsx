@@ -410,8 +410,15 @@ function ContactForm() {
 
 export default function Contact() {
   return (
-    <section id="contact" className="py-24 md:py-32">
-      <div className="max-w-7xl mx-auto px-6 md:px-8">
+    <section
+      id="contact"
+      className="relative py-24 md:py-32"
+      style={{
+        backgroundImage: 'radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px)',
+        backgroundSize: '24px 24px',
+      }}
+    >
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
 
         {/* Section header */}
         <motion.div

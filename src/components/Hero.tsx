@@ -1,6 +1,8 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import MagneticButton from '@/components/MagneticButton';
 
 // ── Animation variants ────────────────────────────────────────────────────────
 
@@ -24,11 +26,10 @@ const FADE_UP = {
 };
 
 const TERMINAL_ENTER = {
-  hidden: { opacity: 0, x: 24, y: -8 },
+  hidden: { opacity: 0, x: 24 },
   show: {
     opacity: 1,
     x: 0,
-    y: 0,
     transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] as const, delay: 0.6 },
   },
 };
@@ -45,6 +46,23 @@ const STAT_ITEM = {
   show: {
     opacity: 1,
     x: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const },
+  },
+};
+
+const HEADLINE_CONTAINER = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.06 },
+  },
+};
+
+const WORD_REVEAL = {
+  hidden: { opacity: 0, y: 20, filter: 'blur(8px)' },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
     transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const },
   },
 };
@@ -193,8 +211,18 @@ function StatsGrid() {
 // ── Hero ──────────────────────────────────────────────────────────────────────
 
 export default function Hero() {
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const terminalY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const statsY    = useTransform(scrollYProgress, [0, 1], [0, -20]);
+  const hexagonY  = useTransform(scrollYProgress, [0, 1], [0,  60]);
+
   return (
     <section
+      ref={heroRef}
       id="hero"
       className="relative min-h-screen flex items-center overflow-hidden"
     >
@@ -210,6 +238,30 @@ export default function Hero() {
         }
       `}</style>
 
+      {/* ── Background blob 1: primary glow, top-left, breathes up ─── */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        animate={{ y: [0, -20, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          background:
+            'radial-gradient(ellipse 600px 400px at 20% 50%, rgba(13, 92, 58, 0.12), transparent)',
+        }}
+      />
+
+      {/* ── Background blob 2: accent glow, bottom-right, breathes down */}
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        animate={{ y: [0, 20, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          background:
+            'radial-gradient(ellipse 400px 300px at 80% 80%, rgba(26, 138, 90, 0.06), transparent)',
+        }}
+      />
+
       {/* ── Background layer 1: radial glow ─────────────────────────── */}
       <div
         aria-hidden="true"
@@ -220,17 +272,18 @@ export default function Hero() {
         }}
       />
 
-      {/* ── Background layer 2: decorative hexagon ──────────────────── */}
-      <svg
+      {/* ── Background layer 2: decorative hexagon + deep parallax ──── */}
+      <div
         aria-hidden="true"
-        width="720"
-        height="720"
-        viewBox="0 0 200 200"
         className="absolute right-[-160px] top-1/2 -translate-y-1/2 pointer-events-none select-none"
         style={{ opacity: 0.04 }}
       >
-        <polygon points="40,72 100,38 160,72 160,138 100,172 40,138" fill="#1A8A5A" />
-      </svg>
+        <motion.div style={{ y: hexagonY }}>
+          <svg width="720" height="720" viewBox="0 0 200 200">
+            <polygon points="40,72 100,38 160,72 160,138 100,172 40,138" fill="#1A8A5A" />
+          </svg>
+        </motion.div>
+      </div>
 
       {/* ── Background layer 3: grain texture ──────────────────────── */}
       <svg
@@ -266,20 +319,29 @@ export default function Hero() {
               <BadgeInner />
             </motion.div>
 
-            {/* Headline */}
+            {/* Headline — word-by-word blur reveal */}
             <motion.h1
-              variants={FADE_UP}
+              variants={HEADLINE_CONTAINER}
               className="font-display tracking-tight"
               style={{ lineHeight: 0.95 }}
             >
               <span className="block text-white" style={{ fontSize: 'clamp(48px, 8vw, 110px)' }}>
-                Software
+                <motion.span variants={WORD_REVEAL} style={{ display: 'inline-block' }}>
+                  Software
+                </motion.span>
               </span>
               <span className="block text-text-secondary" style={{ fontSize: 'clamp(48px, 8vw, 110px)' }}>
-                you can
+                <motion.span variants={WORD_REVEAL} style={{ display: 'inline-block' }}>
+                  {'you '}
+                </motion.span>
+                <motion.span variants={WORD_REVEAL} style={{ display: 'inline-block' }}>
+                  can
+                </motion.span>
               </span>
               <span className="block text-accent" style={{ fontSize: 'clamp(48px, 8vw, 110px)' }}>
-                trust.
+                <motion.span variants={WORD_REVEAL} style={{ display: 'inline-block' }}>
+                  trust.
+                </motion.span>
               </span>
             </motion.h1>
 
@@ -303,37 +365,43 @@ export default function Hero() {
               variants={FADE_UP}
               className="mt-8 flex flex-col md:flex-row gap-3"
             >
-              <a
-                href="#projects"
-                className="inline-flex items-center justify-center w-full md:w-auto border border-accent text-accent font-sans font-medium text-sm rounded-[6px] px-6 py-3 transition-all duration-200 hover:bg-accent hover:text-white"
-              >
-                See our work
-              </a>
-              <a
-                href="#contact"
-                className="inline-flex items-center justify-center w-full md:w-auto bg-accent text-white font-sans font-medium text-sm rounded-[6px] px-6 py-3 transition-all duration-200 hover:bg-primary"
-              >
-                Get in touch
-              </a>
+              <MagneticButton>
+                <a
+                  href="#projects"
+                  className="inline-flex items-center justify-center w-full md:w-auto border border-accent text-accent font-sans font-medium text-sm rounded-[6px] px-6 py-3 transition-all duration-200 hover:bg-accent hover:text-white"
+                >
+                  See our work
+                </a>
+              </MagneticButton>
+              <MagneticButton>
+                <a
+                  href="#contact"
+                  className="inline-flex items-center justify-center w-full md:w-auto bg-accent text-white font-sans font-medium text-sm rounded-[6px] px-6 py-3 transition-all duration-200 hover:bg-primary"
+                >
+                  Get in touch
+                </a>
+              </MagneticButton>
             </motion.div>
           </motion.div>
 
           {/* ── Right column: terminal + stats (desktop only) ─────────── */}
           <div className="hidden md:flex flex-col gap-5">
-            {/* Terminal — slight counter-clockwise tilt */}
+            {/* Terminal — entry animation shell + inner parallax layer */}
             <motion.div
               variants={TERMINAL_ENTER}
               initial="hidden"
               animate="show"
-              style={{ transform: 'rotate(-2deg)' }}
+              style={{ rotate: -2 }}
             >
-              <TerminalWindow />
+              <motion.div style={{ y: terminalY }}>
+                <TerminalWindow />
+              </motion.div>
             </motion.div>
 
-            {/* Stats grid — slight clockwise tilt */}
-            <div style={{ transform: 'rotate(1deg)' }}>
+            {/* Stats grid — parallax at half terminal speed */}
+            <motion.div style={{ rotate: 1, y: statsY }}>
               <StatsGrid />
-            </div>
+            </motion.div>
           </div>
 
         </div>

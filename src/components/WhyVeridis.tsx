@@ -189,12 +189,25 @@ export default function WhyVeridis() {
   return (
     <section
       id="why"
-      className="py-24 md:py-32"
+      className="relative py-24 md:py-32"
       style={{
-        background: 'linear-gradient(135deg, #0F1A14 0%, #0D1A11 100%)',
+        backgroundImage: [
+          'radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px)',
+          'linear-gradient(135deg, #0F1A14 0%, #0D1A11 100%)',
+        ].join(', '),
+        backgroundSize: '24px 24px, 100% 100%',
       }}
     >
-      <div className="max-w-7xl mx-auto px-6 md:px-8">
+      {/* Ambient glow — center */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 800px 600px at 50% 50%, rgba(13, 92, 58, 0.07), transparent)',
+          zIndex: 0,
+        }}
+      />
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
 
         {/* Section header */}
         <motion.div

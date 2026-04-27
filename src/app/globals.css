@@ -19,6 +19,8 @@ html {
 
 body {
   background-color: #0F1A14;
+  background-image: radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px);
+  background-size: 24px 24px;
   color: #ffffff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -31,4 +33,10 @@ body {
 
 .footer-email-link:hover {
   color: #22B573;
+}
+
+/* Applied via JS only on fine-pointer (desktop) devices */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none !important;
 }
