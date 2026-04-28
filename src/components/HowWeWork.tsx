@@ -1,6 +1,7 @@
 'use client';
 
-import { motion, type Variants } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
+import { motion, type Variants, useInView } from 'framer-motion';
 
 const steps = [
   {
@@ -82,6 +83,41 @@ const headerVariants: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
+// ── CountUp ───────────────────────────────────────────────────────────────────
+
+function CountUp({ target, duration, delay: startDelay }: {
+  target: number;
+  duration: number;
+  delay: number;
+}) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (!isInView) return;
+    let interval: ReturnType<typeof setInterval>;
+    const timer = setTimeout(() => {
+      if (target === 0) return;
+      const stepTime = Math.max(16, Math.floor(duration / target));
+      let current = 0;
+      interval = setInterval(() => {
+        current += 1;
+        setCount(current);
+        if (current >= target) clearInterval(interval);
+      }, stepTime);
+    }, startDelay * 1000);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [isInView, target, duration, startDelay]);
+
+  return <span ref={ref}>{String(count).padStart(2, '0')}</span>;
+}
+
+// ── Section ───────────────────────────────────────────────────────────────────
+
 export default function HowWeWork() {
   return (
     <section
@@ -148,10 +184,42 @@ export default function HowWeWork() {
                     style={{
                       left: 'calc(100% - 0px)',
                       width: 'calc(100% + 24px)',
-                      borderTop: '1px dashed rgba(26, 138, 90, 0.2)',
                       transform: 'translateX(28px)',
+                      height: '2px',
                     }}
-                  />
+                  >
+                    {/* Animated fill line */}
+                    <motion.div
+                      initial={{ width: '0%', opacity: 0 }}
+                      whileInView={{ width: '100%', opacity: 1 }}
+                      viewport={{ once: true, margin: '-100px' }}
+                      transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1], delay: 0.4 }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        height: '2px',
+                        background: 'linear-gradient(90deg, rgba(26,138,90,0.5), rgba(26,138,90,0.2))',
+                      }}
+                    />
+                    {/* Junction dot */}
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true, margin: '-100px' }}
+                      transition={{ duration: 0.3, delay: 1.0 + index * 0.1 }}
+                      style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        background: '#1A8A5A',
+                      }}
+                    />
+                  </div>
                 )}
 
                 <motion.div
@@ -175,7 +243,7 @@ export default function HowWeWork() {
                       '1px solid rgba(26, 138, 90, 0.12)';
                   }}
                 >
-                  {/* Step number — decorative */}
+                  {/* Step number — count-up on viewport enter */}
                   <span
                     className="absolute top-4 right-5 select-none"
                     style={{
@@ -186,12 +254,29 @@ export default function HowWeWork() {
                       lineHeight: 1,
                     }}
                   >
-                    {step.number}
+                    <CountUp
+                      target={parseInt(step.number, 10)}
+                      duration={300 + index * 100}
+                      delay={index * 0.15}
+                    />
                   </span>
 
-                  {/* Icon */}
-                  <div
+                  {/* Icon — breathing glow */}
+                  <motion.div
                     className="flex items-center justify-center mb-5 flex-shrink-0"
+                    animate={{
+                      boxShadow: [
+                        '0 0 0px rgba(26,138,90,0)',
+                        '0 0 12px rgba(26,138,90,0.3)',
+                        '0 0 0px rgba(26,138,90,0)',
+                      ],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                      delay: index * 0.75,
+                    }}
                     style={{
                       width: '52px',
                       height: '52px',
@@ -201,7 +286,7 @@ export default function HowWeWork() {
                     }}
                   >
                     {step.icon}
-                  </div>
+                  </motion.div>
 
                   {/* Title */}
                   <h3
@@ -230,9 +315,17 @@ export default function HowWeWork() {
                     {step.description}
                   </p>
 
-                  {/* Tag pill */}
-                  <span
+                  {/* Tag pill — delayed independent entrance */}
+                  <motion.span
                     className="self-start"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 300,
+                      delay: index * 0.15 + 0.3,
+                    }}
                     style={{
                       fontFamily: 'DM Sans, sans-serif',
                       fontSize: '11px',
@@ -245,7 +338,7 @@ export default function HowWeWork() {
                     }}
                   >
                     {step.tag}
-                  </span>
+                  </motion.span>
                 </motion.div>
               </div>
             ))}

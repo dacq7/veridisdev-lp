@@ -1,43 +1,91 @@
 'use client';
 
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import MagneticButton from '@/components/MagneticButton';
 
 // ── Animation variants ────────────────────────────────────────────────────────
 
-const CONTAINER = {
-  hidden: {},
-  show: {
-    transition: {
-      delayChildren: 0.3,
-      staggerChildren: 0.12,
-    },
-  },
-};
-
-const FADE_UP = {
-  hidden: { opacity: 0, y: 30 },
+// Phase 1 — Background awakens (0–800ms)
+const BLOB_ENTER = {
+  hidden: { opacity: 0, scale: 0.8 },
   show: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] as const },
+    scale: 1,
+    transition: { duration: 1, ease: 'easeOut' as const },
   },
 };
 
-const TERMINAL_ENTER = {
-  hidden: { opacity: 0, x: 24 },
+// Phase 2 — Right column (terminal + stats) slides in (600ms–1300ms)
+const RIGHT_COL = {
+  hidden: { opacity: 0, x: 60, rotateY: 8 },
   show: {
     opacity: 1,
     x: 0,
+    rotateY: 0,
     transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] as const, delay: 0.6 },
   },
 };
 
+// Phase 3 — Headline words snap in (900ms–1600ms)
+const HEADLINE_CONTAINER = {
+  hidden: {},
+  show: {
+    transition: { delayChildren: 0.9, staggerChildren: 0.06 },
+  },
+};
+
+const WORD_REVEAL = {
+  hidden: { opacity: 0, y: 20, filter: 'blur(8px)', scaleX: 0.85 },
+  show: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    scaleX: 1,
+    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const },
+  },
+};
+
+// Phase 4 — Supporting elements settle (1400ms–2200ms)
+const BADGE = {
+  hidden: { opacity: 0, y: -20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const, delay: 1.4 },
+  },
+};
+
+const DIVIDER = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 0.45,
+    transition: { duration: 0.5, delay: 1.55 },
+  },
+};
+
+const SUBHEADLINE = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { duration: 0.7, delay: 1.6 },
+  },
+};
+
+const BUTTONS = {
+  hidden: { opacity: 0, scale: 0.9 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: { type: 'spring' as const, stiffness: 200, delay: 1.8 },
+  },
+};
+
+// Stats — stagger after right column arrives
 const STATS_CONTAINER = {
   hidden: {},
   show: {
-    transition: { delayChildren: 0.9, staggerChildren: 0.1 },
+    transition: { delayChildren: 1.1, staggerChildren: 0.1 },
   },
 };
 
@@ -50,31 +98,16 @@ const STAT_ITEM = {
   },
 };
 
-const HEADLINE_CONTAINER = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.06 },
-  },
-};
-
-const WORD_REVEAL = {
-  hidden: { opacity: 0, y: 20, filter: 'blur(8px)' },
-  show: {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const },
-  },
-};
-
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const TERMINAL_LINES: { text: string; delay: number }[] = [
-  { text: '▲ Next.js 16 ready in 797ms', delay: 0.9 },
-  { text: '✓ TypeScript — zero errors',  delay: 1.4 },
-  { text: '✓ 110 tests passing',         delay: 1.9 },
-  { text: '✓ 3 apps in production',      delay: 2.4 },
-  { text: '→ veridisdev.com',            delay: 2.9 },
+type GlitchSeg = { glitch: string; glitchDelay: number };
+
+const TERMINAL_LINES: { segments: (string | GlitchSeg)[]; delay: number }[] = [
+  { segments: ['▲ Next.js 16 ready in ', { glitch: '797', glitchDelay: 1200 }, 'ms'], delay: 0.9 },
+  { segments: ['✓ TypeScript — zero errors'],                                          delay: 1.4 },
+  { segments: ['✓ ', { glitch: '110', glitchDelay: 1800 }, ' tests passing'],         delay: 1.9 },
+  { segments: ['✓ ', { glitch: '3',   glitchDelay: 2100 }, ' apps in production'],    delay: 2.4 },
+  { segments: ['→ veridisdev.com'],                                                    delay: 2.9 },
 ];
 
 const STATS: { value: string; label: string }[] = [
@@ -83,6 +116,37 @@ const STATS: { value: string; label: string }[] = [
   { value: 'React · FastAPI', label: 'Core stack' },
   { value: 'Vercel · Railway', label: 'Deployed on' },
 ];
+
+// ── GlitchNumber ─────────────────────────────────────────────────────────────
+
+function GlitchNumber({ finalValue, delay }: { finalValue: string; delay: number }) {
+  const [display, setDisplay] = useState(finalValue);
+  const final = parseInt(finalValue, 10);
+
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+
+    const timeout = setTimeout(() => {
+      const startMs = Date.now();
+      interval = setInterval(() => {
+        if (Date.now() - startMs >= 400) {
+          setDisplay(finalValue);
+          clearInterval(interval!);
+          return;
+        }
+        const offset = Math.floor(Math.random() * 7) - 3;
+        setDisplay(String(Math.max(0, final + offset)));
+      }, 80);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeout);
+      if (interval) clearInterval(interval);
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return <span>{display}</span>;
+}
 
 // ── Badge ─────────────────────────────────────────────────────────────────────
 
@@ -191,7 +255,7 @@ function TerminalWindow() {
 
       {/* Terminal body */}
       <div className="px-4 py-4 space-y-1">
-        {TERMINAL_LINES.map(({ text, delay }, i) => (
+        {TERMINAL_LINES.map(({ segments, delay }, i) => (
           <div
             key={i}
             className="font-mono text-[12px] leading-relaxed"
@@ -202,7 +266,11 @@ function TerminalWindow() {
               animationDelay: `${delay}s`,
             }}
           >
-            {text}
+            {segments.map((seg, j) =>
+              typeof seg === 'string'
+                ? seg
+                : <GlitchNumber key={j} finalValue={seg.glitch} delay={seg.glitchDelay} />
+            )}
             {i === TERMINAL_LINES.length - 1 && (
               <span
                 className="inline-block ml-0.5 font-mono"
@@ -273,6 +341,32 @@ export default function Hero() {
       id="hero"
       className="relative min-h-screen flex items-center overflow-hidden"
     >
+      {/* ── Scan line: one-shot sweep on load ───────────────────────── */}
+      <div
+        aria-hidden="true"
+        style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 10, overflow: 'hidden' }}
+      >
+        <motion.div
+          animate={{ opacity: [1, 1, 0] }}
+          transition={{ duration: 1.8, times: [0, 0.8, 1], delay: 0.3 }}
+        >
+          <motion.div
+            animate={{ top: ['-2px', '100%'] }}
+            transition={{ duration: 1.5, ease: 'easeInOut', delay: 0.3 }}
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              height: '1px',
+              background:
+                'linear-gradient(90deg, transparent 0%, rgba(26,138,90,0.6) 20%, rgba(26,138,90,0.9) 50%, rgba(26,138,90,0.6) 80%, transparent 100%)',
+              boxShadow: '0 0 8px rgba(26,138,90,0.4), 0 0 20px rgba(26,138,90,0.2)',
+              pointerEvents: 'none',
+            }}
+          />
+        </motion.div>
+      </div>
+
       {/* CSS keyframes for terminal typewriter */}
       <style>{`
         @keyframes termLine {
@@ -289,29 +383,43 @@ export default function Hero() {
         }
       `}</style>
 
-      {/* ── Background blob 1: primary glow, top-left, breathes up ─── */}
+      {/* ── Background blob 1: primary glow, top-left — Phase 1 entry + breathe */}
       <motion.div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
-        animate={{ y: [0, -20, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        style={{
-          background:
-            'radial-gradient(ellipse 600px 400px at 20% 50%, rgba(13, 92, 58, 0.12), transparent)',
-        }}
-      />
+        initial="hidden"
+        animate="show"
+        variants={BLOB_ENTER}
+      >
+        <motion.div
+          className="absolute inset-0"
+          animate={{ y: [0, -20, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            background:
+              'radial-gradient(ellipse 600px 400px at 20% 50%, rgba(13, 92, 58, 0.12), transparent)',
+          }}
+        />
+      </motion.div>
 
-      {/* ── Background blob 2: accent glow, bottom-right, breathes down */}
+      {/* ── Background blob 2: accent glow, bottom-right — Phase 1 entry + breathe */}
       <motion.div
         aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
-        animate={{ y: [0, 20, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        style={{
-          background:
-            'radial-gradient(ellipse 400px 300px at 80% 80%, rgba(26, 138, 90, 0.06), transparent)',
-        }}
-      />
+        initial="hidden"
+        animate="show"
+        variants={BLOB_ENTER}
+      >
+        <motion.div
+          className="absolute inset-0"
+          animate={{ y: [0, 20, 0] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            background:
+              'radial-gradient(ellipse 400px 300px at 80% 80%, rgba(26, 138, 90, 0.06), transparent)',
+          }}
+        />
+      </motion.div>
 
       {/* ── Background layer 1: radial glow ─────────────────────────── */}
       <div
@@ -327,12 +435,25 @@ export default function Hero() {
       <div
         aria-hidden="true"
         className="absolute right-[-160px] top-1/2 -translate-y-1/2 pointer-events-none select-none"
-        style={{ opacity: 0.04 }}
       >
         <motion.div style={{ y: hexagonY }}>
-          <svg width="720" height="720" viewBox="0 0 200 200">
-            <polygon points="40,72 100,38 160,72 160,138 100,172 40,138" fill="#1A8A5A" />
-          </svg>
+          <motion.svg
+            width="720"
+            height="720"
+            viewBox="0 0 200 200"
+            strokeDasharray="1000"
+            strokeDashoffset="1000"
+            initial={{ strokeDashoffset: 1000, opacity: 0 }}
+            animate={{ strokeDashoffset: 0, opacity: 0.08 }}
+            transition={{ duration: 2, ease: [0.25, 0.1, 0.25, 1] as const, delay: 0.2 }}
+          >
+            <polygon
+              points="40,72 100,38 160,72 160,138 100,172 40,138"
+              stroke="#1A8A5A"
+              strokeWidth="1.5"
+              fill="rgba(26,138,90,0.04)"
+            />
+          </motion.svg>
         </motion.div>
       </div>
 
@@ -352,25 +473,25 @@ export default function Hero() {
 
       {/* ── Main content ─────────────────────────────────────────────── */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-16 pt-20 pb-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center">
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center"
+          style={{ perspective: '1000px' }}
+        >
 
           {/* ── Left column: headline + subtext + buttons ────────────── */}
-          <motion.div
-            variants={CONTAINER}
-            initial="hidden"
-            animate="show"
-          >
-            {/* Badge — mobile only (in flow above headline) */}
-            <motion.div variants={FADE_UP} className="md:hidden mb-6">
+          <motion.div initial="hidden" animate="show">
+
+            {/* Badge — mobile only (Phase 4: drops from above) */}
+            <motion.div variants={BADGE} className="md:hidden mb-6">
               <BadgeInner />
             </motion.div>
 
-            {/* Badge — desktop only (above headline in left column) */}
-            <motion.div variants={FADE_UP} className="hidden md:block mb-8">
+            {/* Badge — desktop only (Phase 4: drops from above) */}
+            <motion.div variants={BADGE} className="hidden md:block mb-8">
               <BadgeInner />
             </motion.div>
 
-            {/* Headline — word-by-word blur reveal */}
+            {/* Headline — word-by-word blur + scaleX snap (Phase 3) */}
             <motion.h1
               variants={HEADLINE_CONTAINER}
               className="font-display tracking-tight"
@@ -396,24 +517,23 @@ export default function Hero() {
               </span>
             </motion.h1>
 
-            {/* Accent divider */}
+            {/* Accent divider (Phase 4) */}
             <motion.div
-              variants={FADE_UP}
+              variants={DIVIDER}
               className="mt-7 mb-5 w-10 h-px bg-accent"
-              style={{ opacity: 0.45 }}
             />
 
-            {/* Subheadline */}
+            {/* Subheadline (Phase 4) */}
             <motion.p
-              variants={FADE_UP}
+              variants={SUBHEADLINE}
               className="font-sans text-text-secondary text-base leading-relaxed max-w-[420px]"
             >
               We build reliable web and mobile software for businesses — faster than traditional agencies, with enterprise-level quality.
             </motion.p>
 
-            {/* CTA buttons */}
+            {/* CTA buttons — spring scale-in (Phase 4) */}
             <motion.div
-              variants={FADE_UP}
+              variants={BUTTONS}
               className="mt-8 flex flex-col md:flex-row gap-3"
             >
               <MagneticButton>
@@ -435,15 +555,16 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* ── Right column: terminal + stats (desktop only) ─────────── */}
-          <div className="hidden md:flex flex-col gap-5">
-            {/* Terminal — entry animation shell + inner parallax layer */}
-            <motion.div
-              variants={TERMINAL_ENTER}
-              initial="hidden"
-              animate="show"
-              style={{ rotate: -2 }}
-            >
+          {/* ── Right column: terminal + stats — Phase 2 cinematic entry ─ */}
+          <motion.div
+            className="hidden md:flex flex-col gap-5"
+            initial="hidden"
+            animate="show"
+            variants={RIGHT_COL}
+            style={{ transformStyle: 'preserve-3d' }}
+          >
+            {/* Terminal — inner parallax layer */}
+            <motion.div style={{ rotate: -2 }}>
               <motion.div style={{ y: terminalY }}>
                 <TerminalWindow />
               </motion.div>
@@ -453,16 +574,16 @@ export default function Hero() {
             <motion.div style={{ rotate: 1, y: statsY }}>
               <StatsGrid />
             </motion.div>
-          </div>
+          </motion.div>
 
         </div>
       </div>
 
-      {/* ── Scroll indicator: desktop only ──────────────────────────── */}
+      {/* ── Scroll indicator: desktop only — last to appear (Phase 4) ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.4, duration: 0.8 }}
+        transition={{ delay: 2.2, duration: 0.8 }}
         className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-1.5"
         aria-label="Scroll down"
       >

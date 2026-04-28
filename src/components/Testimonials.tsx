@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -53,9 +54,42 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.12 } },
 };
 
+// hover state added so whileHover="hover" propagates to children
 const cardVariants = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  hover: { scale: 1.02 },
+};
+
+const quoteVariants = {
+  visible: { scale: 1, x: 0, y: 0 },
+  hover: {
+    scale: 1.3,
+    opacity: 0.4,
+    x: -4,
+    y: -4,
+    transition: { type: 'spring' as const, stiffness: 300, damping: 20 },
+  },
+};
+
+const badgeVariants = {
+  visible: {
+    backgroundColor: 'rgba(26,138,90,0.1)',
+    borderColor: 'rgba(26,138,90,0.25)',
+  },
+  hover: {
+    backgroundColor: 'rgba(26,138,90,0.2)',
+    borderColor: 'rgba(26,138,90,0.5)',
+    transition: { duration: 0.3 },
+  },
+};
+
+const avatarVariants = {
+  visible: { boxShadow: '0 0 0 0px rgba(26,138,90,0)' },
+  hover: {
+    boxShadow: '0 0 0 2px rgba(26,138,90,0.6)',
+    transition: { duration: 0.3 },
+  },
 };
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -116,22 +150,52 @@ export default function Testimonials() {
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   const { quote, name, role, badge, initials } = testimonial;
 
+  const cardRef = useRef<HTMLDivElement>(null);
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springX = useSpring(rotateX, { stiffness: 300, damping: 30 });
+  const springY = useSpring(rotateY, { stiffness: 300, damping: 30 });
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width / 2);
+    const dy = (e.clientY - cy) / (rect.height / 2);
+    rotateX.set(-dy * 3);
+    rotateY.set(dx * 3);
+  }
+
+  function handleMouseLeave() {
+    rotateX.set(0);
+    rotateY.set(0);
+  }
+
   return (
     <motion.div
+      ref={cardRef}
       variants={cardVariants}
-      whileHover={{ scale: 1.02 }}
+      whileHover="hover"
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{
         backgroundColor: '#1A2820',
         border: '1px solid rgba(26, 138, 90, 0.12)',
         borderRadius: '12px',
         padding: '32px',
         position: 'relative',
+        rotateX: springX,
+        rotateY: springY,
+        perspective: '800px',
+        transformStyle: 'preserve-3d',
       }}
     >
       {/* Decorative opening quote mark */}
-      <span
+      <motion.span
         aria-hidden="true"
+        variants={quoteVariants}
         style={{
           fontFamily: 'Syne, sans-serif',
           fontSize: '64px',
@@ -144,7 +208,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         }}
       >
         &ldquo;
-      </span>
+      </motion.span>
 
       {/* Quote */}
       <p
@@ -172,7 +236,8 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       {/* Footer row: avatar + name/role + badge */}
       <div className="flex items-center gap-3">
         {/* Avatar */}
-        <div
+        <motion.div
+          variants={avatarVariants}
           style={{
             width: '40px',
             height: '40px',
@@ -194,7 +259,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           >
             {initials}
           </span>
-        </div>
+        </motion.div>
 
         {/* Name + role */}
         <div className="flex-1 min-w-0">
@@ -222,21 +287,22 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         </div>
 
         {/* Project badge */}
-        <span
+        <motion.span
+          variants={badgeVariants}
           style={{
             fontFamily: 'DM Sans, sans-serif',
             fontSize: '11px',
             color: '#1A8A5A',
-            backgroundColor: 'rgba(26, 138, 90, 0.1)',
-            border: '1px solid rgba(26, 138, 90, 0.25)',
             borderRadius: '999px',
             padding: '3px 10px',
             whiteSpace: 'nowrap',
             flexShrink: 0,
+            borderWidth: '1px',
+            borderStyle: 'solid',
           }}
         >
           {badge}
-        </span>
+        </motion.span>
       </div>
     </motion.div>
   );
