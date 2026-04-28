@@ -85,7 +85,7 @@ export default function Navbar() {
         <nav
           role="navigation"
           aria-label="Main navigation"
-          className="max-w-7xl mx-auto px-6 md:px-8 h-16 flex items-center justify-between"
+          className="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between"
         >
           {/* Logo */}
           <a href="/" className="flex items-center gap-2.5 shrink-0" aria-label="Veridis Dev — home">
@@ -126,7 +126,7 @@ export default function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-[5px] shrink-0"
+            className="md:hidden flex flex-col justify-center items-center w-11 h-11 gap-[5px] shrink-0"
             onClick={() => setMenuOpen((v) => !v)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}

@@ -300,7 +300,7 @@ export default function Hero() {
       </svg>
 
       {/* ── Main content ─────────────────────────────────────────────── */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-8 pt-20 pb-10">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-16 pt-20 pb-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center">
 
           {/* ── Left column: headline + subtext + buttons ────────────── */}

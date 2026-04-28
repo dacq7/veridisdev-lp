@@ -138,10 +138,10 @@ function DiffCard({ item }: { item: Differentiator }) {
         scale: 1.02,
         transition: { type: 'spring', stiffness: 300, damping: 25 },
       }}
+      className="p-5 md:p-9"
       style={{
         background: '#1A2820',
         borderRadius: '12px',
-        padding: '36px',
         border: `1px solid ${hovered ? 'rgba(26, 138, 90, 0.35)' : 'rgba(26, 138, 90, 0.12)'}`,
         boxShadow: hovered ? '0 0 24px rgba(26, 138, 90, 0.08)' : 'none',
         transition: 'border-color 300ms, box-shadow 300ms',
@@ -207,7 +207,7 @@ export default function WhyVeridis() {
           zIndex: 0,
         }}
       />
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
 
         {/* Section header */}
         <motion.div

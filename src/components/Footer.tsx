@@ -49,7 +49,7 @@ export default function Footer() {
       }}
     >
       <div
-        className="max-w-7xl mx-auto px-6 md:px-8"
+        className="max-w-7xl mx-auto px-4 md:px-8 lg:px-16"
         style={{ paddingTop: '64px', paddingBottom: '64px' }}
       >
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8">
@@ -90,7 +90,7 @@ export default function Footer() {
                 <li key={href}>
                   <a
                     href={href}
-                    className="font-sans transition-colors duration-200 hover:text-white"
+                    className="font-sans transition-colors duration-200 hover:text-white break-all"
                     style={{ color: '#4A6B58', fontSize: '14px' }}
                   >
                     {label}
@@ -124,7 +124,7 @@ export default function Footer() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-sans transition-colors duration-200 hover:text-white"
+                    className="font-sans transition-colors duration-200 hover:text-white break-all"
                     style={{ color: '#4A6B58', fontSize: '14px' }}
                   >
                     {label}

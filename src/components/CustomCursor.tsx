@@ -55,7 +55,11 @@ export default function CustomCursor() {
   const springY = useSpring(mouseY, SPRING_CFG);
 
   useEffect(() => {
-    if (!window.matchMedia('(pointer: fine)').matches) return;
+    const isTouch     = 'ontouchstart' in window;
+    const isPointerFine = window.matchMedia('(pointer: fine)').matches;
+    const isNarrow    = window.innerWidth < 768;
+
+    if (isTouch || !isPointerFine || isNarrow) return;
 
     setActive(true);
     document.body.style.cursor = 'none';

@@ -164,11 +164,11 @@ function CredentialsBlock({ credentials }: { credentials: Credential[] }) {
         Demo credentials
       </p>
       {credentials.map(({ role, user, pass }) => (
-        <p key={role} className="flex gap-2 leading-relaxed" style={{ fontSize: '11px' }}>
+        <p key={role} className="flex flex-wrap gap-x-2 leading-relaxed" style={{ fontSize: '11px' }}>
           <span className="shrink-0" style={{ color: '#4A6B58', minWidth: '64px' }}>
             {role}
           </span>
-          <span style={{ color: '#1A8A5A', fontFamily: 'monospace' }}>
+          <span style={{ color: '#1A8A5A', fontFamily: 'monospace', wordBreak: 'break-all' }}>
             {user} / {pass}
           </span>
         </p>
@@ -237,7 +237,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       </div>
 
       {/* Content side — 45% width on desktop */}
-      <div className="flex flex-col flex-1 p-7 md:w-[45%] md:p-12">
+      <div className="flex flex-col flex-1 p-5 md:w-[45%] md:p-12">
         {/* Category label */}
         <p className="font-sans text-xs tracking-widest uppercase text-accent mb-2">
           {project.category}
@@ -308,7 +308,7 @@ export default function Projects() {
           zIndex: 0,
         }}
       />
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
 
         {/* Section header — unchanged */}
         <motion.div

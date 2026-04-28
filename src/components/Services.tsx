@@ -285,7 +285,7 @@ function ServiceCard({
       }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      className="relative overflow-hidden rounded-[8px] p-7 cursor-default flex flex-col"
+      className="relative overflow-hidden rounded-[8px] p-5 md:p-7 cursor-default flex flex-col"
       style={{
         background: '#1A2820',
         borderWidth: '1px',
@@ -360,7 +360,7 @@ export default function Services() {
           zIndex: 0,
         }}
       />
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
 
         {/* Header row: left text + right toggle */}
         <motion.div

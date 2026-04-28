@@ -60,7 +60,7 @@ export default function About() {
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
 
         {/* Section header */}
         <motion.div
@@ -176,7 +176,7 @@ export default function About() {
             </p>
 
             {/* Stats */}
-            <div className="flex gap-10 mt-3">
+            <div className="flex flex-wrap gap-6 md:gap-10 mt-3">
               {STATS.map(({ value, label }) => (
                 <div key={value}>
                   <p className="font-display font-semibold text-white text-2xl leading-none mb-1">

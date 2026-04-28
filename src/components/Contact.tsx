@@ -112,10 +112,10 @@ function ContactInfo() {
 
   return (
     <div className="relative flex flex-col gap-10 h-full">
-      {/* Decorative "V" */}
+      {/* Decorative "V" — hidden on mobile to avoid overlapping contact info */}
       <div
         aria-hidden="true"
-        className="absolute right-0 top-0 select-none pointer-events-none font-display font-bold leading-none"
+        className="hidden md:block absolute right-0 top-0 select-none pointer-events-none font-display font-bold leading-none"
         style={{
           fontSize: 'clamp(160px, 20vw, 260px)',
           color: 'rgba(26, 138, 90, 0.05)',
@@ -418,7 +418,7 @@ export default function Contact() {
         backgroundSize: '24px 24px',
       }}
     >
-      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
 
         {/* Section header */}
         <motion.div

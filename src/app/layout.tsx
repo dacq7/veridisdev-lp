@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
 import CustomCursor from "@/components/CustomCursor";
+import TouchRipple from "@/components/TouchRipple";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -52,6 +53,7 @@ export default function RootLayout({
     >
       <body className="bg-background text-white antialiased">
         <CustomCursor />
+        <TouchRipple />
         {/* Film grain overlay — fixed, covers every section, pointer-events none */}
         <div
           aria-hidden="true"
