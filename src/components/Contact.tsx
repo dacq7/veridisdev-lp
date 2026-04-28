@@ -1,33 +1,83 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type FormData = {
+interface FormData {
   name: string;
   email: string;
-  project: string;
+  country: string;
+  projectType: string;
+  description: string;
+  contactTime: string;
+  timeline: string;
   budget: string;
-};
+  source: string;
+}
 
-type Status = 'idle' | 'loading' | 'success' | 'error';
+type Step = 1 | 2;
+type Direction = 'forward' | 'back';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const BUDGET_OPTIONS = [
-  { value: '', label: 'Select a budget range (optional)' },
+const PROJECT_TYPES = [
+  { value: '', label: 'Select a project type' },
+  { value: 'Web Application', label: 'Web Application' },
+  { value: 'Mobile App', label: 'Mobile App' },
+  { value: 'Landing Page', label: 'Landing Page' },
+  { value: 'E-commerce Store', label: 'E-commerce Store' },
+  { value: 'CRM / Internal Tool', label: 'CRM / Internal Tool' },
+  { value: 'Not sure yet', label: 'Not sure yet' },
+];
+
+const CONTACT_TIMES = [
+  { value: 'Morning (9am — 12pm)', label: 'Morning (9am — 12pm)' },
+  { value: 'Afternoon (12pm — 5pm)', label: 'Afternoon (12pm — 5pm)' },
+  { value: 'Evening (5pm — 8pm)', label: 'Evening (5pm — 8pm)' },
+  { value: 'Anytime', label: 'Anytime' },
+];
+
+const TIMELINES = [
+  { value: '', label: 'Select a timeline' },
+  { value: 'As soon as possible', label: 'As soon as possible' },
+  { value: '1 — 3 months', label: '1 — 3 months' },
+  { value: '3 — 6 months', label: '3 — 6 months' },
+  { value: 'Flexible', label: 'Flexible' },
+];
+
+const BUDGETS = [
+  { value: '', label: 'Select a budget range' },
   { value: '< $500 USD', label: '< $500 USD' },
-  { value: '$500 - $1.500 USD', label: '$500 - $1.500 USD' },
-  { value: '$1.500 - $5.000 USD', label: '$1.500 - $5.000 USD' },
+  { value: '$500 — $1.500 USD', label: '$500 — $1.500 USD' },
+  { value: '$1.500 — $5.000 USD', label: '$1.500 — $5.000 USD' },
   { value: '$5.000+ USD', label: '$5.000+ USD' },
   { value: "Let's talk", label: "Let's talk" },
 ];
 
-const INITIAL_FORM: FormData = { name: '', email: '', project: '', budget: '' };
+const SOURCES = [
+  { value: '', label: 'Select an option' },
+  { value: 'Google', label: 'Google' },
+  { value: 'LinkedIn', label: 'LinkedIn' },
+  { value: 'GitHub', label: 'GitHub' },
+  { value: 'Referral', label: 'Referral' },
+  { value: 'Other', label: 'Other' },
+];
 
-// ── Variants ──────────────────────────────────────────────────────────────────
+const INITIAL_FORM: FormData = {
+  name: '',
+  email: '',
+  country: '',
+  projectType: '',
+  description: '',
+  contactTime: '',
+  timeline: '',
+  budget: '',
+  source: '',
+};
+
+// ── Animation variants ────────────────────────────────────────────────────────
 
 const HEADER_VARIANT = {
   hidden: { opacity: 0, y: 20 },
@@ -56,6 +106,12 @@ const COL_RIGHT = {
   },
 };
 
+const STEP_VARIANTS = {
+  enter: (dir: Direction) => ({ x: dir === 'forward' ? 40 : -40, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (dir: Direction) => ({ x: dir === 'forward' ? -40 : 40, opacity: 0 }),
+};
+
 // ── Shared field styles ───────────────────────────────────────────────────────
 
 const FIELD_BASE: React.CSSProperties = {
@@ -68,9 +124,10 @@ const FIELD_BASE: React.CSSProperties = {
   fontSize: '14px',
   outline: 'none',
   boxSizing: 'border-box',
+  fontFamily: 'inherit',
 };
 
-// ── Copy icon ─────────────────────────────────────────────────────────────────
+// ── Icons ─────────────────────────────────────────────────────────────────────
 
 function IconCopy({ done }: { done: boolean }) {
   if (done) {
@@ -87,8 +144,6 @@ function IconCopy({ done }: { done: boolean }) {
     </svg>
   );
 }
-
-// ── Chevron down ──────────────────────────────────────────────────────────────
 
 function IconChevron() {
   return (
@@ -191,23 +246,285 @@ function ContactInfo() {
   );
 }
 
+// ── Field helpers ─────────────────────────────────────────────────────────────
+
+function FieldLabel({
+  htmlFor,
+  children,
+  required,
+}: {
+  htmlFor: string;
+  children: React.ReactNode;
+  required?: boolean;
+}) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className="font-sans uppercase tracking-wide"
+      style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
+    >
+      {children}
+      {required && <span style={{ color: '#1A8A5A' }}> *</span>}
+    </label>
+  );
+}
+
+function SelectField({
+  id,
+  value,
+  onChange,
+  options,
+}: {
+  id: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <div className="relative">
+      <select
+        id={id}
+        className="contact-field font-sans appearance-none cursor-pointer"
+        style={{ ...FIELD_BASE, paddingRight: '36px' }}
+        value={value}
+        onChange={onChange}
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true">
+        <IconChevron />
+      </div>
+    </div>
+  );
+}
+
+// ── Step indicator ────────────────────────────────────────────────────────────
+
+function StepIndicator({ step }: { step: Step }) {
+  const steps = [
+    { num: '01', label: 'Your info' },
+    { num: '02', label: 'Project details' },
+  ];
+
+  return (
+    <div className="mb-6">
+      <div className="flex gap-6 mb-3">
+        {steps.map((s, i) => {
+          const active = step === i + 1;
+          return (
+            <div
+              key={s.num}
+              className="pb-2"
+              style={{ borderBottom: active ? '2px solid #1A8A5A' : '2px solid transparent' }}
+            >
+              <span
+                className="font-sans"
+                style={{ fontSize: '13px', color: active ? '#ffffff' : '#4A6B58', letterSpacing: '0.02em' }}
+              >
+                {s.num} — {s.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      {/* Progress bar */}
+      <div
+        style={{
+          height: '2px',
+          background: 'rgba(26,138,90,0.1)',
+          borderRadius: '1px',
+          overflow: 'hidden',
+        }}
+      >
+        <motion.div
+          style={{ height: '100%', background: '#1A8A5A', borderRadius: '1px' }}
+          animate={{ width: step === 1 ? '50%' : '100%' }}
+          transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ── Contact info strip ────────────────────────────────────────────────────────
+
+function ContactInfoStrip() {
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    navigator.clipboard.writeText('team@veridisdev.com').then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <div
+      className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-6 pt-5"
+      style={{ borderTop: '1px solid rgba(26,138,90,0.1)' }}
+    >
+      <div className="flex items-center gap-2">
+        <a
+          href="mailto:team@veridisdev.com"
+          className="font-sans transition-colors duration-200"
+          style={{ color: '#ffffff', fontSize: '13px' }}
+        >
+          team@veridisdev.com
+        </a>
+        <button
+          onClick={handleCopy}
+          title={copied ? 'Copied!' : 'Copy email'}
+          className="flex items-center justify-center rounded transition-colors duration-200"
+          style={{
+            color: copied ? '#1A8A5A' : '#4A6B58',
+            padding: '2px',
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
+          <IconCopy done={copied} />
+        </button>
+      </div>
+      <span className="font-sans" style={{ color: '#4A6B58', fontSize: '13px' }}>
+        We respond within 24 hours
+      </span>
+      <span style={{ color: '#4A6B58' }}>·</span>
+      <span className="font-sans" style={{ color: '#4A6B58', fontSize: '13px' }}>
+        Medellín, Colombia 🇨🇴 · Working globally
+      </span>
+    </div>
+  );
+}
+
+// ── Success state ─────────────────────────────────────────────────────────────
+
+function SuccessState() {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+      className="flex flex-col items-center text-center gap-6 py-16"
+    >
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.1 }}
+        style={{
+          width: '72px',
+          height: '72px',
+          borderRadius: '50%',
+          background: 'rgba(26, 138, 90, 0.12)',
+          border: '1px solid rgba(26, 138, 90, 0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#1A8A5A"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20 6L9 17l-5-5" />
+        </svg>
+      </motion.div>
+
+      <div>
+        <p className="font-display font-semibold text-white mb-3" style={{ fontSize: '28px' }}>
+          Message sent!
+        </p>
+        <p
+          className="font-sans mb-4"
+          style={{ color: '#4A6B58', fontSize: '15px', lineHeight: '1.6' }}
+        >
+          We&apos;ll review your project and get back to you within 24 hours.
+        </p>
+        <a
+          href="#projects"
+          className="font-sans transition-colors duration-200 hover:opacity-80"
+          style={{ color: '#1A8A5A', fontSize: '14px' }}
+        >
+          While you wait, check out our work →
+        </a>
+      </div>
+    </motion.div>
+  );
+}
+
 // ── Form ──────────────────────────────────────────────────────────────────────
 
 function ContactForm() {
+  const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
-  const [status, setStatus] = useState<Status>('idle');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [stepError, setStepError] = useState('');
+  const [direction, setDirection] = useState<Direction>('forward');
 
-  function set(field: keyof FormData) {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  function update(field: keyof FormData) {
+    return (
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
       setForm((prev) => ({ ...prev, [field]: e.target.value }));
     };
   }
 
+  function setRadio(field: keyof FormData, value: string) {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  }
+
+  function validateStep1(): boolean {
+    if (!form.name.trim()) {
+      setStepError('Please enter your full name.');
+      return false;
+    }
+    if (!form.email.trim()) {
+      setStepError('Please enter your email.');
+      return false;
+    }
+    if (!form.country.trim()) {
+      setStepError('Please enter your country or city.');
+      return false;
+    }
+    if (!form.projectType) {
+      setStepError('Please select a project type.');
+      return false;
+    }
+    setStepError('');
+    return true;
+  }
+
+  function handleNext() {
+    if (!validateStep1()) return;
+    setDirection('forward');
+    setStep(2);
+  }
+
+  function handleBack() {
+    setDirection('back');
+    setStep(1);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus('loading');
-    setErrorMsg('');
+    if (!form.description.trim()) {
+      setError('Please describe your project.');
+      return;
+    }
+    setLoading(true);
+    setError('');
 
     try {
       const res = await fetch('/api/contact', {
@@ -217,56 +534,20 @@ function ContactForm() {
       });
 
       if (!res.ok) {
-        const data = await res.json() as { error?: string };
+        const data = (await res.json()) as { error?: string };
         throw new Error(data.error ?? 'Something went wrong');
       }
 
-      setStatus('success');
+      setSuccess(true);
     } catch (err) {
-      setStatus('error');
-      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong');
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  if (status === 'success') {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        className="flex flex-col items-start gap-4 py-12"
-      >
-        <div
-          style={{
-            width: '48px',
-            height: '48px',
-            borderRadius: '50%',
-            background: 'rgba(26, 138, 90, 0.12)',
-            border: '1px solid rgba(26, 138, 90, 0.3)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1A8A5A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M20 6L9 17l-5-5" />
-          </svg>
-        </div>
-        <div>
-          <p className="font-display font-semibold text-white" style={{ fontSize: '20px', marginBottom: '8px' }}>
-            Message sent!
-          </p>
-          <p className="font-sans text-text-secondary" style={{ fontSize: '15px', lineHeight: '1.6' }}>
-            We&apos;ll get back to you within 24 hours.
-          </p>
-        </div>
-      </motion.div>
-    );
-  }
-
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-      {/* Focus styles injected once */}
+    <div>
       <style>{`
         .contact-field:focus {
           border-color: rgba(26, 138, 90, 0.6) !important;
@@ -278,131 +559,287 @@ function ContactForm() {
         }
       `}</style>
 
-      {/* Name */}
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="cf-name"
-          className="font-sans uppercase tracking-wide"
-          style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
-        >
-          Name <span style={{ color: '#1A8A5A' }}>*</span>
-        </label>
-        <input
-          id="cf-name"
-          type="text"
-          required
-          className="contact-field font-sans"
-          style={FIELD_BASE}
-          value={form.name}
-          onChange={set('name')}
-          placeholder="Diego Correa"
-        />
-      </div>
+      {success ? (
+        <SuccessState />
+      ) : (
+        <>
+          <StepIndicator step={step} />
 
-      {/* Email */}
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="cf-email"
-          className="font-sans uppercase tracking-wide"
-          style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
-        >
-          Email <span style={{ color: '#1A8A5A' }}>*</span>
-        </label>
-        <input
-          id="cf-email"
-          type="email"
-          required
-          className="contact-field font-sans"
-          style={FIELD_BASE}
-          value={form.email}
-          onChange={set('email')}
-          placeholder="you@company.com"
-        />
-      </div>
+          <form onSubmit={handleSubmit} noValidate>
+            <AnimatePresence mode="wait" custom={direction}>
+              {step === 1 ? (
+                <motion.div
+                  key="step1"
+                  custom={direction}
+                  variants={STEP_VARIANTS}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="flex flex-col gap-5"
+                >
+                  {/* Full name */}
+                  <div className="flex flex-col gap-1.5">
+                    <FieldLabel htmlFor="cf-name" required>
+                      Full name
+                    </FieldLabel>
+                    <input
+                      id="cf-name"
+                      type="text"
+                      className="contact-field font-sans"
+                      style={FIELD_BASE}
+                      value={form.name}
+                      onChange={update('name')}
+                    />
+                  </div>
 
-      {/* Project */}
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="cf-project"
-          className="font-sans uppercase tracking-wide"
-          style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
-        >
-          Project description <span style={{ color: '#1A8A5A' }}>*</span>
-        </label>
-        <textarea
-          id="cf-project"
-          required
-          rows={4}
-          className="contact-field font-sans resize-none"
-          style={FIELD_BASE}
-          value={form.project}
-          onChange={set('project')}
-          placeholder="Tell us what you want to build — what problem it solves and who uses it."
-        />
-      </div>
+                  {/* Email */}
+                  <div className="flex flex-col gap-1.5">
+                    <FieldLabel htmlFor="cf-email" required>
+                      Email
+                    </FieldLabel>
+                    <input
+                      id="cf-email"
+                      type="email"
+                      className="contact-field font-sans"
+                      style={FIELD_BASE}
+                      value={form.email}
+                      onChange={update('email')}
+                    />
+                  </div>
 
-      {/* Budget */}
-      <div className="flex flex-col gap-1.5">
-        <label
-          htmlFor="cf-budget"
-          className="font-sans uppercase tracking-wide"
-          style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
-        >
-          Budget range
-        </label>
-        <div className="relative">
-          <select
-            id="cf-budget"
-            className="contact-field font-sans appearance-none cursor-pointer"
-            style={{ ...FIELD_BASE, paddingRight: '36px' }}
-            value={form.budget}
-            onChange={set('budget')}
-          >
-            {BUDGET_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <div
-            className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-            aria-hidden="true"
-          >
-            <IconChevron />
-          </div>
-        </div>
-      </div>
+                  {/* Country / City */}
+                  <div className="flex flex-col gap-1.5">
+                    <FieldLabel htmlFor="cf-country" required>
+                      Country / City
+                    </FieldLabel>
+                    <input
+                      id="cf-country"
+                      type="text"
+                      placeholder="e.g. Medellín, Colombia or Austin, TX"
+                      className="contact-field font-sans"
+                      style={FIELD_BASE}
+                      value={form.country}
+                      onChange={update('country')}
+                    />
+                  </div>
 
-      {/* Submit */}
-      <button
-        type="submit"
-        disabled={status === 'loading'}
-        className="font-sans font-medium text-white rounded-[6px] transition-all duration-200"
-        style={{
-          width: '100%',
-          padding: '14px',
-          fontSize: '14px',
-          background: status === 'loading' ? 'rgba(26, 138, 90, 0.6)' : '#1A8A5A',
-          border: 'none',
-          cursor: status === 'loading' ? 'not-allowed' : 'pointer',
-          letterSpacing: '0.01em',
-        }}
-      >
-        {status === 'loading' ? 'Sending…' : 'Send message →'}
-      </button>
+                  {/* Project type */}
+                  <div className="flex flex-col gap-1.5">
+                    <FieldLabel htmlFor="cf-projectType" required>
+                      Project type
+                    </FieldLabel>
+                    <SelectField
+                      id="cf-projectType"
+                      value={form.projectType}
+                      onChange={update('projectType')}
+                      options={PROJECT_TYPES}
+                    />
+                  </div>
 
-      {/* Inline error */}
-      {status === 'error' && (
-        <motion.p
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="font-sans text-sm"
-          style={{ color: '#E05C5C' }}
-        >
-          {errorMsg}
-        </motion.p>
+                  {/* Step validation error */}
+                  {stepError && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="font-sans text-sm"
+                      style={{ color: '#E05C5C' }}
+                    >
+                      {stepError}
+                    </motion.p>
+                  )}
+
+                  {/* Next button */}
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="font-sans font-medium text-white rounded-[6px] transition-all duration-200"
+                    style={{
+                      width: '100%',
+                      padding: '14px',
+                      fontSize: '14px',
+                      background: '#1A8A5A',
+                      border: 'none',
+                      cursor: 'pointer',
+                      letterSpacing: '0.01em',
+                    }}
+                  >
+                    Next →
+                  </button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="step2"
+                  custom={direction}
+                  variants={STEP_VARIANTS}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="flex flex-col gap-5"
+                >
+                  {/* Project description */}
+                  <div className="flex flex-col gap-1.5">
+                    <FieldLabel htmlFor="cf-description" required>
+                      Project description
+                    </FieldLabel>
+                    <textarea
+                      id="cf-description"
+                      rows={5}
+                      className="contact-field font-sans resize-none"
+                      style={FIELD_BASE}
+                      value={form.description}
+                      onChange={update('description')}
+                      placeholder="What problem does it solve? Who will use it? Do you have an existing system we need to integrate with?"
+                    />
+                  </div>
+
+                  {/* Preferred contact time — custom radio */}
+                  <div className="flex flex-col gap-2">
+                    <p
+                      className="font-sans uppercase tracking-wide"
+                      style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
+                    >
+                      Preferred contact time
+                    </p>
+                    <div className="flex flex-col gap-2">
+                      {CONTACT_TIMES.map((ct) => (
+                        <button
+                          key={ct.value}
+                          type="button"
+                          onClick={() => setRadio('contactTime', ct.value)}
+                          className="flex items-center gap-2.5 text-left w-full"
+                          style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                        >
+                          <div
+                            style={{
+                              width: '16px',
+                              height: '16px',
+                              borderRadius: '50%',
+                              border: `1px solid ${
+                                form.contactTime === ct.value
+                                  ? '#1A8A5A'
+                                  : 'rgba(26,138,90,0.3)'
+                              }`,
+                              background: '#1A2820',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              flexShrink: 0,
+                            }}
+                          >
+                            {form.contactTime === ct.value && (
+                              <div
+                                style={{
+                                  width: '8px',
+                                  height: '8px',
+                                  borderRadius: '50%',
+                                  background: '#1A8A5A',
+                                }}
+                              />
+                            )}
+                          </div>
+                          <span
+                            className="font-sans"
+                            style={{ color: '#4A6B58', fontSize: '13px' }}
+                          >
+                            {ct.label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Timeline */}
+                  <div className="flex flex-col gap-1.5">
+                    <FieldLabel htmlFor="cf-timeline">Timeline</FieldLabel>
+                    <SelectField
+                      id="cf-timeline"
+                      value={form.timeline}
+                      onChange={update('timeline')}
+                      options={TIMELINES}
+                    />
+                  </div>
+
+                  {/* Budget range */}
+                  <div className="flex flex-col gap-1.5">
+                    <FieldLabel htmlFor="cf-budget">Budget range</FieldLabel>
+                    <SelectField
+                      id="cf-budget"
+                      value={form.budget}
+                      onChange={update('budget')}
+                      options={BUDGETS}
+                    />
+                  </div>
+
+                  {/* How did you find us */}
+                  <div className="flex flex-col gap-1.5">
+                    <FieldLabel htmlFor="cf-source">How did you find us?</FieldLabel>
+                    <SelectField
+                      id="cf-source"
+                      value={form.source}
+                      onChange={update('source')}
+                      options={SOURCES}
+                    />
+                  </div>
+
+                  {/* Submit error */}
+                  {error && (
+                    <motion.p
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="font-sans text-sm"
+                      style={{ color: '#E05C5C' }}
+                    >
+                      {error}
+                    </motion.p>
+                  )}
+
+                  {/* Back + Submit buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      className="font-sans font-medium rounded-[6px] transition-all duration-200"
+                      style={{
+                        padding: '14px 20px',
+                        fontSize: '14px',
+                        background: 'transparent',
+                        border: '1px solid #1A8A5A',
+                        color: '#1A8A5A',
+                        cursor: 'pointer',
+                        letterSpacing: '0.01em',
+                        flexShrink: 0,
+                      }}
+                    >
+                      ← Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="font-sans font-medium text-white rounded-[6px] transition-all duration-200"
+                      style={{
+                        flex: 1,
+                        padding: '14px',
+                        fontSize: '14px',
+                        background: loading ? 'rgba(26, 138, 90, 0.6)' : '#1A8A5A',
+                        border: 'none',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        letterSpacing: '0.01em',
+                      }}
+                    >
+                      {loading ? 'Sending…' : 'Send message →'}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </form>
+        </>
       )}
-    </form>
+
+      <ContactInfoStrip />
+    </div>
   );
 }
 

@@ -11,6 +11,12 @@ type Credential = {
   pass: string;
 };
 
+type Metric = {
+  value?: string;
+  label: string;
+  italic?: boolean;
+};
+
 type Project = {
   id: string;
   category: string;
@@ -23,6 +29,7 @@ type Project = {
   terminalPath: string;
   credentials: Credential[];
   features: string[];
+  metrics: Metric[];
 };
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -48,6 +55,11 @@ const PROJECTS: Project[] = [
       'Real-time attendance tracking',
       'Automated fee & mora detection',
     ],
+    metrics: [
+      { value: '25', label: 'active students' },
+      { value: '3', label: 'user roles' },
+      { value: '100%', label: 'automated payments' },
+    ],
   },
   {
     id: 'barberos',
@@ -69,6 +81,11 @@ const PROJECTS: Project[] = [
       '40/60 commission split',
       'Inventory with stock alerts',
     ],
+    metrics: [
+      { value: '3', label: 'barbers' },
+      { value: '24+', label: 'daily appointments' },
+      { value: '40/60', label: 'commission split' },
+    ],
   },
   {
     id: 'trucking',
@@ -89,6 +106,11 @@ const PROJECTS: Project[] = [
       '8-stage insurance pipeline',
       'ADMIN/VENDOR role isolation',
       'DOT/MC profiles & fleet registry',
+    ],
+    metrics: [
+      { value: '100+', label: 'active clients' },
+      { value: '8', label: 'pipeline stages' },
+      { label: 'Still in daily operation', italic: true },
     ],
   },
 ];
@@ -340,6 +362,63 @@ function FeatureBar({ features }: { features: string[] }) {
   );
 }
 
+// ── Metrics row ───────────────────────────────────────────────────────────────
+
+function MetricsRow({ metrics }: { metrics: Metric[] }) {
+  return (
+    <div
+      style={{
+        padding: '10px 16px',
+        background: 'rgba(26, 138, 90, 0.04)',
+        borderTop: '1px solid rgba(26, 138, 90, 0.1)',
+        borderBottom: '1px solid rgba(26, 138, 90, 0.1)',
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 24,
+        alignItems: 'center',
+      }}
+    >
+      {metrics.map((metric, i) => (
+        <span key={i} style={{ display: 'contents' }}>
+          {i > 0 && (
+            <span
+              aria-hidden="true"
+              style={{ color: 'rgba(26, 138, 90, 0.3)', flexShrink: 0 }}
+            >
+              ·
+            </span>
+          )}
+          <span style={{ display: 'flex', flexDirection: 'column' }}>
+            {metric.value !== undefined && (
+              <span
+                style={{
+                  fontFamily: 'Syne, sans-serif',
+                  fontWeight: 600,
+                  fontSize: 15,
+                  color: '#FFFFFF',
+                  lineHeight: 1.2,
+                }}
+              >
+                {metric.value}
+              </span>
+            )}
+            <span
+              style={{
+                fontFamily: 'DM Sans, sans-serif',
+                fontSize: 11,
+                color: metric.italic ? '#1A8A5A' : '#4A6B58',
+                fontStyle: metric.italic ? 'italic' : 'normal',
+              }}
+            >
+              {metric.label}
+            </span>
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 // ── Project card ──────────────────────────────────────────────────────────────
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
@@ -404,7 +483,9 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       </div>
 
       {/* Content side — 45% width on desktop */}
-      <div className="flex flex-col flex-1 p-5 md:w-[45%] md:p-12">
+      <div className="flex flex-col flex-1 md:w-[45%]">
+        <MetricsRow metrics={project.metrics} />
+        <div className="flex flex-col flex-1 p-5 md:p-12">
         {/* Category label */}
         <p className="font-sans text-xs tracking-widest uppercase text-accent mb-2">
           {project.category}
@@ -449,6 +530,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
         {/* Demo credentials */}
         <CredentialsBlock credentials={project.credentials} />
+        </div>
       </div>
     </motion.article>
   );
