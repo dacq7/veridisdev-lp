@@ -39,6 +39,11 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: '/logo/veridis-icon.svg',
+    shortcut: '/logo/veridis-icon.svg',
+    apple: '/logo/veridis-icon.svg',
+  },
 };
 
 export default function RootLayout({

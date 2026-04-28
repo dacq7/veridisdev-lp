@@ -70,11 +70,11 @@ const WORD_REVEAL = {
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const TERMINAL_LINES: { text: string; delay: number }[] = [
-  { text: '▲ Next.js 15 ready',      delay: 0.9 },
-  { text: '✓ compiled in 797ms',     delay: 1.4 },
-  { text: '✓ 47 tests passing',      delay: 1.9 },
-  { text: '→ Local:  localhost:3000', delay: 2.4 },
-  { text: '✓ Deployed to Vercel',    delay: 2.9 },
+  { text: '▲ Next.js 16 ready in 797ms', delay: 0.9 },
+  { text: '✓ TypeScript — zero errors',  delay: 1.4 },
+  { text: '✓ 110 tests passing',         delay: 1.9 },
+  { text: '✓ 3 apps in production',      delay: 2.4 },
+  { text: '→ veridisdev.com',            delay: 2.9 },
 ];
 
 const STATS: { value: string; label: string }[] = [
@@ -128,18 +128,65 @@ function TerminalWindow() {
     >
       {/* Header bar */}
       <div
-        className="flex items-center gap-2 px-4 py-3"
-        style={{ borderBottom: '1px solid rgba(26, 138, 90, 0.12)', background: 'rgba(0,0,0,0.2)' }}
+        style={{
+          height: 36,
+          background: '#0A1510',
+          borderBottom: '1px solid rgba(26, 138, 90, 0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          paddingLeft: 12,
+          paddingRight: 12,
+          gap: 4,
+          position: 'relative',
+          flexShrink: 0,
+        }}
       >
-        <span className="w-3 h-3 rounded-full bg-[#FF5F57] shrink-0" />
-        <span className="w-3 h-3 rounded-full bg-[#FEBC2E] shrink-0" />
-        <span className="w-3 h-3 rounded-full bg-[#28C840] shrink-0" />
+        {/* Square WM buttons */}
+        {(['×', '−', '□'] as const).map((icon) => (
+          <span
+            key={icon}
+            aria-hidden="true"
+            style={{
+              width: 14, height: 14, borderRadius: 3,
+              background: 'rgba(255,255,255,0.08)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, fontSize: 10, color: '#4A6B58',
+              lineHeight: 1, userSelect: 'none',
+            }}
+          >
+            {icon}
+          </span>
+        ))}
+
+        {/* Terminal path — centered */}
         <span
-          className="ml-2 font-mono text-[11px] select-none"
-          style={{ color: 'rgba(26, 138, 90, 0.5)' }}
+          style={{
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontFamily: 'DM Mono, DM Sans, monospace',
+            fontSize: 11,
+            color: '#1A8A5A',
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+          }}
         >
-          veridis ~ npm run dev
+          diego@veridis:~$ npm run dev
         </span>
+
+        {/* Running indicator — CSS pulsing green dot */}
+        <span
+          aria-hidden="true"
+          style={{
+            marginLeft: 'auto',
+            width: 7, height: 7,
+            borderRadius: '50%',
+            background: '#1A8A5A',
+            boxShadow: '0 0 6px rgba(26, 138, 90, 0.7)',
+            flexShrink: 0,
+            animation: 'dotPulse 2s ease-in-out infinite',
+          }}
+        />
       </div>
 
       {/* Terminal body */}
@@ -235,6 +282,10 @@ export default function Hero() {
         @keyframes cursorBlink {
           0%, 100% { opacity: 1; }
           50%       { opacity: 0; }
+        }
+        @keyframes dotPulse {
+          0%, 100% { opacity: 1; }
+          50%       { opacity: 0.3; }
         }
       `}</style>
 

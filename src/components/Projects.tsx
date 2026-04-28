@@ -20,7 +20,9 @@ type Project = {
   liveUrl: string;
   repoUrl: string;
   imgSrc: string;
+  terminalPath: string;
   credentials: Credential[];
+  features: string[];
 };
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -36,9 +38,15 @@ const PROJECTS: Project[] = [
     liveUrl: 'https://budokan-app.vercel.app',
     repoUrl: 'https://github.com/dacq7/budokan-app',
     imgSrc: '/images/budokan-screenshot.png',
+    terminalPath: 'diego@veridis:~/budokan-app',
     credentials: [
       { role: 'Sensei', user: '11111111', pass: 'demo2025' },
       { role: 'Karateca', user: '22222222', pass: 'demo2025' },
+    ],
+    features: [
+      'Belt progression & exam auth',
+      'Real-time attendance tracking',
+      'Automated fee & mora detection',
     ],
   },
   {
@@ -51,9 +59,15 @@ const PROJECTS: Project[] = [
     liveUrl: 'https://barberos-os.vercel.app/admin/login',
     repoUrl: 'https://github.com/dacq7/barberos-os',
     imgSrc: '/images/barberos-screenshot.png',
+    terminalPath: 'diego@veridis:~/barberos-os',
     credentials: [
       { role: 'Admin', user: 'admin@barberos.com', pass: 'demo1234' },
       { role: 'Barber', user: 'carlos@barberos.com', pass: 'demo1234' },
+    ],
+    features: [
+      '3-step public booking',
+      '40/60 commission split',
+      'Inventory with stock alerts',
     ],
   },
   {
@@ -66,9 +80,15 @@ const PROJECTS: Project[] = [
     liveUrl: 'https://trucking-crm-one.vercel.app/login',
     repoUrl: 'https://github.com/dacq7/trucking-crm',
     imgSrc: '/images/trucking-screenshot.png',
+    terminalPath: 'diego@veridis:~/trucking-crm',
     credentials: [
       { role: 'Admin', user: 'admin@premiertruckins.com', pass: 'Admin1234!' },
       { role: 'Vendor', user: 'maria.gonzalez@premiertruckins.com', pass: 'Vendor1234!' },
+    ],
+    features: [
+      '8-stage insurance pipeline',
+      'ADMIN/VENDOR role isolation',
+      'DOT/MC profiles & fleet registry',
     ],
   },
 ];
@@ -100,12 +120,107 @@ const CARD_ITEM = {
   },
 };
 
+// ── Terminal frame ────────────────────────────────────────────────────────────
+
+const SQUARE_BTN: React.CSSProperties = {
+  width: 14,
+  height: 14,
+  borderRadius: 3,
+  background: 'rgba(255,255,255,0.08)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+  fontSize: 10,
+  color: '#4A6B58',
+  lineHeight: 1,
+  userSelect: 'none',
+};
+
+function TerminalFrame({
+  terminalPath,
+  children,
+}: {
+  terminalPath: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        background: '#0A1510',
+        border: '1px solid rgba(26, 138, 90, 0.2)',
+        borderRadius: 8,
+        overflow: 'hidden',
+        boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(26, 138, 90, 0.05)',
+      }}
+    >
+      {/* Terminal bar */}
+      <div
+        style={{
+          height: 36,
+          background: '#0D1F16',
+          borderBottom: '1px solid rgba(26, 138, 90, 0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          paddingLeft: 12,
+          paddingRight: 12,
+          gap: 4,
+          flexShrink: 0,
+          position: 'relative',
+        }}
+      >
+        {/* Square WM buttons */}
+        <span style={SQUARE_BTN}>×</span>
+        <span style={SQUARE_BTN}>−</span>
+        <span style={SQUARE_BTN}>□</span>
+
+        {/* Terminal path — centered */}
+        <span
+          style={{
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontFamily: 'DM Mono, DM Sans, monospace',
+            fontSize: 11,
+            color: '#1A8A5A',
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+          }}
+        >
+          {terminalPath}
+        </span>
+
+        {/* Running indicator — pulsing green dot */}
+        <motion.span
+          animate={{ opacity: [1, 0.3, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            marginLeft: 'auto',
+            width: 7,
+            height: 7,
+            borderRadius: '50%',
+            background: '#1A8A5A',
+            boxShadow: '0 0 6px rgba(26, 138, 90, 0.7)',
+            flexShrink: 0,
+          }}
+          aria-hidden="true"
+        />
+      </div>
+
+      {/* Viewport */}
+      <div style={{ overflow: 'hidden' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 // ── Placeholder ───────────────────────────────────────────────────────────────
 
 function ProjectPlaceholder({ name }: { name: string }) {
   return (
     <div
-      className="w-full flex items-center justify-center min-h-[300px]"
+      className="w-full flex items-center justify-center min-h-[260px]"
       style={{
         backgroundColor: '#1A2820',
         backgroundImage: [
@@ -177,6 +292,54 @@ function CredentialsBlock({ credentials }: { credentials: Credential[] }) {
   );
 }
 
+// ── Feature bar ───────────────────────────────────────────────────────────────
+
+function FeatureBar({ features }: { features: string[] }) {
+  return (
+    <div
+      className="flex flex-wrap md:flex-nowrap overflow-hidden"
+      style={{
+        padding: '12px 16px',
+        background: 'rgba(13, 31, 22, 0.95)',
+        borderTop: '1px solid rgba(26, 138, 90, 0.15)',
+        alignItems: 'center',
+        gap: '8px',
+      }}
+    >
+      {features.map((feature, i) => (
+        <span key={feature} style={{ display: 'contents' }}>
+          {i > 0 && (
+            <span
+              aria-hidden="true"
+              style={{ color: 'rgba(26, 138, 90, 0.3)', fontSize: 11, flexShrink: 0 }}
+            >
+              ·
+            </span>
+          )}
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              flexShrink: 0,
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
+              <path d="M2.5 7L5.5 10L11.5 4" stroke="#1A8A5A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span
+              className="text-[10px] md:text-[11px]"
+              style={{ fontFamily: 'DM Sans, sans-serif', color: '#4A6B58' }}
+            >
+              {feature}
+            </span>
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 // ── Project card ──────────────────────────────────────────────────────────────
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
@@ -202,34 +365,38 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       }}
     >
       {/* Image side — 55% width on desktop, full width on mobile */}
-      <div className="relative overflow-hidden shrink-0 md:w-[55%]">
-        <motion.div
-          animate={{ scale: hovered ? 1.04 : 1 }}
-          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        >
+      <div
+        className="relative shrink-0 md:w-[55%]"
+        style={{ padding: '16px', background: '#141F18' }}
+      >
+        <TerminalFrame terminalPath={project.terminalPath}>
           {imgError ? (
             <ProjectPlaceholder name={project.title} />
           ) : (
-            <img
-              src={project.imgSrc}
-              alt={`${project.title} screenshot`}
-              onError={() => setImgError(true)}
-              style={{
-                width: '100%',
-                height: 'auto',
-                display: 'block',
-                transform: 'scale(0.85)',
-                transformOrigin: 'top left',
-              }}
-            />
+            <div style={{ height: '260px', overflow: 'hidden', position: 'relative', backgroundColor: '#0A1510' }}>
+              <img
+                src={project.imgSrc}
+                alt={`${project.title} screenshot`}
+                onError={() => setImgError(true)}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'top center',
+                  display: 'block',
+                }}
+              />
+            </div>
           )}
-        </motion.div>
+        </TerminalFrame>
+
+        <FeatureBar features={project.features} />
 
         {/* Green tint on hover */}
         <div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+          className="absolute inset-0 pointer-events-none transition-opacity duration-300 rounded-[12px]"
           style={{
-            background: 'rgba(26, 138, 90, 0.08)',
+            background: 'rgba(26, 138, 90, 0.04)',
             opacity: hovered ? 1 : 0,
           }}
           aria-hidden="true"
