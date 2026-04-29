@@ -226,7 +226,6 @@ const PILL_ITEM = {
 };
 
 // Task 5: per-category clip-path delays
-const CLIP_DELAYS = [0, 0.15, 0.3, 0.45] as const;
 
 // ── Pill ──────────────────────────────────────────────────────────────────────
 
@@ -277,12 +276,11 @@ function Pill({ tech }: { tech: Tech }) {
 function TechGroup({ group, index }: { group: TechGroup; index: number }) {
   return (
     <motion.div variants={GROUP_ITEM}>
-      {/* Task 5: clip-path reveal per category */}
       <motion.div
-        initial={{ clipPath: 'inset(0 100% 0 0)' }}
-        whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
+        initial={{ opacity: 0, x: -20 }}
+        whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.6, delay: CLIP_DELAYS[index], ease: [0.25, 0.1, 0.25, 1] as const }}
+        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: index * 0.15 }}
       >
         {/* Task 2: category label slide in */}
         <motion.p
@@ -347,7 +345,7 @@ export default function TechStack() {
           </p>
           {/* Task 1: heading letter reveal */}
           <h2
-            className="font-display font-semibold text-white text-4xl md:text-5xl mb-4"
+            className="font-display font-semibold text-white text-3xl md:text-5xl mb-4"
             style={{ perspective: '400px' }}
           >
             <motion.span
@@ -355,7 +353,7 @@ export default function TechStack() {
               initial="hidden"
               whileInView="show"
               viewport={{ once: true }}
-              style={{ display: 'inline-flex', flexWrap: 'wrap' }}
+              style={{ display: 'inline-flex', flexWrap: 'nowrap', whiteSpace: 'nowrap' }}
             >
               {'Tools we trust.'.split('').map((char, i) => (
                 <motion.span

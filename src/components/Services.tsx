@@ -1,7 +1,15 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useSpring } from 'framer-motion';
+
+const useIsTouch = () => {
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => {
+    setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
+  return isTouch;
+};
 
 // ── Currency hook ─────────────────────────────────────────────────────────────
 
@@ -234,20 +242,24 @@ function CurrencyToggle({
   selectCurrency: (c: Currency) => void;
 }) {
   return (
-    <div
+    <motion.div
       role="group"
       aria-label="Select currency"
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 500, damping: 25 }}
       className="flex items-center gap-0.5 rounded-full p-0.5 border border-[rgba(26,138,90,0.25)] shrink-0 self-start sm:self-auto"
     >
       {(['COP', 'USD'] as const).map((c) => {
         const isActive = currency === c;
         const isDisabled = loading && c === 'USD';
         return (
-          <button
+          <motion.button
             key={c}
             onClick={() => selectCurrency(c)}
             disabled={isDisabled}
             aria-pressed={isActive}
+            whileTap={{ scale: 0.92 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 25 }}
             className={[
               'px-3 py-1.5 rounded-full text-xs font-medium font-sans transition-all duration-200 select-none',
               isActive
@@ -257,10 +269,10 @@ function CurrencyToggle({
             ].join(' ')}
           >
             {c === 'USD' && loading ? '···' : c}
-          </button>
+          </motion.button>
         );
       })}
-    </div>
+    </motion.div>
   );
 }
 
@@ -280,6 +292,10 @@ function ServiceCard({
   loading: boolean;
 }) {
   const [hovered, setHovered] = useState(false);
+  const [beaming, setBeaming] = useState(false);
+  const isTouch = useIsTouch();
+  const scale = useSpring(1, { stiffness: 400, damping: 20 });
+  const iconRotate = useSpring(0, { stiffness: 300, damping: 20 });
 
   return (
     <motion.article
@@ -288,10 +304,27 @@ function ServiceCard({
         scale: 1.02,
         transition: { type: 'spring', stiffness: 300, damping: 25 },
       }}
+      whileTap={{
+        scale: 0.97,
+        transition: { type: 'spring', stiffness: 400, damping: 20 },
+      }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
+      onTouchStart={() => {
+        if (isTouch) scale.set(0.97);
+        setBeaming(true);
+        setTimeout(() => setBeaming(false), 600);
+      }}
+      onTouchEnd={() => scale.set(1)}
+      onClick={() => {
+        if (!isTouch) {
+          setBeaming(true);
+          setTimeout(() => setBeaming(false), 600);
+        }
+      }}
       className="relative overflow-hidden rounded-[8px] p-5 md:p-7 cursor-default flex flex-col"
       style={{
+        scale,
         background: '#1A2820',
         borderWidth: '1px',
         borderStyle: 'solid',
@@ -301,10 +334,33 @@ function ServiceCard({
         transition: 'border-color 300ms',
       }}
     >
-      {/* Top accent line — draws from left on hover */}
+      <AnimatePresence>
+        {beaming && (
+          <motion.div
+            key="beam"
+            initial={{ x: '-100%', opacity: 0.7 }}
+            animate={{ x: '200%', opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '50%',
+              height: '100%',
+              background: 'linear-gradient(90deg, transparent, rgba(26,138,90,0.25), transparent)',
+              pointerEvents: 'none',
+              zIndex: 10,
+              borderRadius: 'inherit',
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Top accent line — draws from left on hover; always visible at 0.4 on touch */}
       <motion.div
-        initial={{ scaleX: 0 }}
-        animate={{ scaleX: hovered ? 1 : 0 }}
+        initial={isTouch ? { scaleX: 1, opacity: 0.4 } : { scaleX: 0 }}
+        animate={isTouch ? { scaleX: 1, opacity: 0.4 } : { scaleX: hovered ? 1 : 0 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
         className="absolute top-0 left-0 right-0 h-[2px] bg-accent rounded-t-[8px]"
         style={{ originX: 0 }}
@@ -314,12 +370,16 @@ function ServiceCard({
       {/* Icon — shakes on own hover, scales on card hover */}
       <motion.div
         className="text-accent mb-5"
-        animate={{ scale: hovered ? 1.15 : 1 }}
+        animate={{ scale: hovered ? 1.15 : 1, rotate: 0 }}
         whileHover={{ rotate: [0, -10, 10, -5, 0] }}
+        whileTap={{ rotate: -10 }}
+        onTouchStart={() => { if (isTouch) iconRotate.set(-10); }}
+        onTouchEnd={() => iconRotate.set(0)}
         transition={{
           scale: { duration: 0.2 },
-          rotate: { duration: 0.4 },
+          rotate: { duration: 0.4, ease: 'easeInOut' },
         }}
+        style={{ rotate: iconRotate }}
       >
         {icon}
       </motion.div>
@@ -334,10 +394,10 @@ function ServiceCard({
         <AnimatePresence mode="wait">
           <motion.p
             key={`${currency}-${copPrice}`}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.85, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 20 }}
             className="font-sans text-accent text-xs font-medium tracking-wide"
           >
             {formatPrice(copPrice, currency, rate, loading)}
@@ -346,9 +406,21 @@ function ServiceCard({
       </div>
 
       {/* Description */}
-      <p className="font-sans text-text-secondary text-sm leading-relaxed mt-auto">
-        {description}
-      </p>
+      {isTouch ? (
+        <motion.p
+          initial={{ opacity: 0.6 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.4 }}
+          className="font-sans text-text-secondary text-sm leading-relaxed mt-auto"
+        >
+          {description}
+        </motion.p>
+      ) : (
+        <p className="font-sans text-text-secondary text-sm leading-relaxed mt-auto">
+          {description}
+        </p>
+      )}
     </motion.article>
   );
 }
