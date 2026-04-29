@@ -333,8 +333,7 @@ function StepIndicator({ step }: { step: Step }) {
           return (
             <div
               key={s.num}
-              className="pb-2"
-              style={{ borderBottom: active ? '2px solid #1A8A5A' : '2px solid transparent' }}
+              className="pb-2 relative"
             >
               <span
                 className="font-sans"
@@ -342,6 +341,23 @@ function StepIndicator({ step }: { step: Step }) {
               >
                 {s.num} — {s.label}
               </span>
+              {active && (
+                <motion.div
+                  key={step}
+                  initial={{ scaleX: 0, originX: 0 }}
+                  animate={{ scaleX: 1 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: '#1A8A5A',
+                    transformOrigin: 'left',
+                  }}
+                />
+              )}
             </div>
           );
         })}
@@ -441,7 +457,7 @@ function SuccessState() {
           justifyContent: 'center',
         }}
       >
-        <svg
+        <motion.svg
           width="32"
           height="32"
           viewBox="0 0 24 24"
@@ -450,14 +466,27 @@ function SuccessState() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          initial={{ strokeDashoffset: 100 }}
+          animate={{ strokeDashoffset: 0 }}
+          transition={{ duration: 0.6, ease: 'easeOut' }}
         >
-          <path d="M20 6L9 17l-5-5" />
-        </svg>
+          <path d="M20 6L9 17l-5-5" strokeDasharray="100" strokeDashoffset="100" />
+        </motion.svg>
       </motion.div>
 
       <div>
         <p className="font-display font-semibold text-white mb-3" style={{ fontSize: '28px' }}>
-          Message sent!
+          {"Message sent!".split(' ').map((word, index) => (
+            <motion.span
+              key={index}
+              initial={{ opacity: 0, filter: 'blur(8px)', y: 10 }}
+              animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              style={{ display: 'inline-block' }}
+            >
+              {word}{' '}
+            </motion.span>
+          ))}
         </p>
         <p
           className="font-sans mb-4"
@@ -843,7 +872,7 @@ function ContactForm() {
                         letterSpacing: '0.01em',
                       }}
                     >
-                      {loading ? 'Sending…' : 'Send message →'}
+                      {loading ? 'Sending…' : <>Send message <motion.span whileHover={{ x: 4 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} style={{ display: 'inline-block' }}>→</motion.span></>}
                     </button>
                   </div>
                 </motion.div>

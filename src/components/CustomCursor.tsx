@@ -55,15 +55,22 @@ export default function CustomCursor() {
   const springY = useSpring(mouseY, SPRING_CFG);
 
   useEffect(() => {
-    const isTouch     = 'ontouchstart' in window;
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     const isPointerFine = window.matchMedia('(pointer: fine)').matches;
-    const isNarrow    = window.innerWidth < 768;
+    const isNarrow = window.innerWidth < 768;
 
-    if (isTouch || !isPointerFine || isNarrow) return;
+    if (isTouch || !isPointerFine || isNarrow) {
+      document.body.classList.remove('custom-cursor-active');
+      return;
+    }
 
     setActive(true);
     document.body.style.cursor = 'none';
     document.body.classList.add('custom-cursor-active');
+
+    const mq = window.matchMedia('(pointer: fine)');
+    const handler = (e: MediaQueryListEvent) => { if (!e.matches) setActive(false); };
+    mq.addEventListener('change', handler);
 
     const onMove = (e: MouseEvent) => {
       mouseX.set(e.clientX);
@@ -80,6 +87,7 @@ export default function CustomCursor() {
     return () => {
       document.body.style.cursor = '';
       document.body.classList.remove('custom-cursor-active');
+      mq.removeEventListener('change', handler);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('mouseover', onOver);
     };
