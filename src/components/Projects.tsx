@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -129,16 +129,18 @@ const HEADER_VARIANT = {
 const GRID_CONTAINER = {
   hidden: {},
   show: {
-    transition: { staggerChildren: 0.1, delayChildren: 0.05 },
+    transition: { staggerChildren: 0.15, delayChildren: 0.05 },
   },
 };
 
+// Task 2: direction-based entrance via custom prop
+// custom=true (index 0,2) → from left (x: -60); custom=false (index 1) → from right (x: 60)
 const CARD_ITEM = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: (fromLeft: boolean) => ({ opacity: 0, x: fromLeft ? -60 : 60 }),
   show: {
     opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const },
+    x: 0,
+    transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] as const },
   },
 };
 
@@ -314,7 +316,7 @@ function CredentialsBlock({ credentials }: { credentials: Credential[] }) {
   );
 }
 
-// ── Feature bar ───────────────────────────────────────────────────────────────
+// ── Feature bar (Task 4: staggered pill entrance) ─────────────────────────────
 
 function FeatureBar({ features }: { features: string[] }) {
   return (
@@ -338,7 +340,11 @@ function FeatureBar({ features }: { features: string[] }) {
               ·
             </span>
           )}
-          <span
+          <motion.span
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3, delay: i * 0.08 }}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -355,7 +361,7 @@ function FeatureBar({ features }: { features: string[] }) {
             >
               {feature}
             </span>
-          </span>
+          </motion.span>
         </span>
       ))}
     </div>
@@ -426,9 +432,15 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   const [imgError, setImgError] = useState(false);
   const isEven = index % 2 === 0;
 
+  // Task 5: useInView to start/stop the Live Demo pulse
+  const cardRef = useRef<HTMLElement>(null);
+  const inView = useInView(cardRef, { once: false });
+
   return (
     <motion.article
+      ref={cardRef}
       variants={CARD_ITEM}
+      custom={isEven}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       className={[
@@ -465,6 +477,27 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                   display: 'block',
                 }}
               />
+              {/* Task 3: scan line on hover */}
+              <AnimatePresence>
+                {hovered && (
+                  <motion.div
+                    key="scanline"
+                    initial={{ top: '-2px' }}
+                    animate={{ top: '100%' }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      width: '100%',
+                      height: '1px',
+                      background: 'linear-gradient(90deg, transparent, rgba(26,138,90,0.6), transparent)',
+                      pointerEvents: 'none',
+                    }}
+                    aria-hidden="true"
+                  />
+                )}
+              </AnimatePresence>
             </div>
           )}
         </TerminalFrame>
@@ -510,14 +543,31 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
         {/* Buttons */}
         <div className="flex flex-wrap items-center gap-4 mt-auto">
-          <a
+          {/* Task 5: pulse animation when card is in viewport */}
+          <motion.a
             href={project.liveUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center border border-accent text-accent font-sans font-medium text-sm rounded-[6px] px-5 py-2.5 transition-all duration-200 hover:bg-accent hover:text-white"
+            animate={
+              inView
+                ? {
+                    boxShadow: [
+                      '0 0 0px rgba(26,138,90,0)',
+                      '0 0 12px rgba(26,138,90,0.4)',
+                      '0 0 0px rgba(26,138,90,0)',
+                    ],
+                  }
+                : { boxShadow: '0 0 0px rgba(26,138,90,0)' }
+            }
+            transition={
+              inView
+                ? { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: index * 0.8 }
+                : { duration: 0.3 }
+            }
           >
             Live Demo →
-          </a>
+          </motion.a>
           <a
             href={project.repoUrl}
             target="_blank"
@@ -559,7 +609,7 @@ export default function Projects() {
       />
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
 
-        {/* Section header — unchanged */}
+        {/* Section header */}
         <motion.div
           variants={HEADER_VARIANT}
           initial="hidden"
@@ -570,8 +620,27 @@ export default function Projects() {
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
             Work in production
           </p>
-          <h2 className="font-display font-semibold text-white text-4xl md:text-5xl mb-4">
-            Projects
+          {/* Task 1: letter reveal on "Projects" */}
+          <h2
+            className="font-display font-semibold text-white text-4xl md:text-5xl mb-4"
+            style={{ perspective: '400px' }}
+          >
+            {'Projects'.split('').map((letter, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 20, rotateX: -90 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.4,
+                  ease: [0.25, 0.1, 0.25, 1],
+                  delay: i * 0.04,
+                }}
+                style={{ display: 'inline-block' }}
+              >
+                {letter}
+              </motion.span>
+            ))}
           </h2>
           <p className="font-sans text-text-secondary text-base leading-relaxed max-w-lg">
             Real software, deployed and used by real businesses.

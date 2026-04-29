@@ -201,6 +201,11 @@ const HEADER_VARIANT = {
   },
 };
 
+const LETTER_TRANSITION = {
+  duration: 0.4,
+  ease: [0.25, 0.1, 0.25, 1] as const,
+};
+
 const GRID_CONTAINER = {
   hidden: {},
   show: {
@@ -296,17 +301,28 @@ function ServiceCard({
         transition: 'border-color 300ms',
       }}
     >
-      {/* Top accent line — scales in from left on hover */}
+      {/* Top accent line — draws from left on hover */}
       <motion.div
+        initial={{ scaleX: 0 }}
         animate={{ scaleX: hovered ? 1 : 0 }}
-        transition={{ duration: 0.22, ease: 'easeOut' }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
         className="absolute top-0 left-0 right-0 h-[2px] bg-accent rounded-t-[8px]"
         style={{ originX: 0 }}
         aria-hidden="true"
       />
 
-      {/* Icon */}
-      <div className="text-accent mb-5">{icon}</div>
+      {/* Icon — shakes on own hover, scales on card hover */}
+      <motion.div
+        className="text-accent mb-5"
+        animate={{ scale: hovered ? 1.15 : 1 }}
+        whileHover={{ rotate: [0, -10, 10, -5, 0] }}
+        transition={{
+          scale: { duration: 0.2 },
+          rotate: { duration: 0.4 },
+        }}
+      >
+        {icon}
+      </motion.div>
 
       {/* Name */}
       <h3 className="font-display font-medium text-white text-[17px] leading-snug mb-1.5">
@@ -317,10 +333,10 @@ function ServiceCard({
       <div className="mb-3 h-4 flex items-center">
         <AnimatePresence mode="wait">
           <motion.p
-            key={currency}
-            initial={{ opacity: 0, y: -4 }}
+            key={`${currency}-${copPrice}`}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 4 }}
+            exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className="font-sans text-accent text-xs font-medium tracking-wide"
           >
@@ -374,8 +390,22 @@ export default function Services() {
             <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
               What we build
             </p>
-            <h2 className="font-display font-semibold text-white text-4xl md:text-5xl mb-4">
-              Services
+            <h2
+              className="font-display font-semibold text-white text-4xl md:text-5xl mb-4"
+              style={{ perspective: '400px' }}
+            >
+              {'Services'.split('').map((letter, i) => (
+                <motion.span
+                  key={i}
+                  initial={{ opacity: 0, y: 20, rotateX: -90 }}
+                  whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ ...LETTER_TRANSITION, delay: i * 0.04 }}
+                  style={{ display: 'inline-block' }}
+                >
+                  {letter}
+                </motion.span>
+              ))}
             </h2>
             <p className="font-sans text-text-secondary text-base leading-relaxed max-w-lg">
               From landing pages to full SaaS platforms — we build what your business needs.
@@ -383,11 +413,18 @@ export default function Services() {
           </div>
 
           {!error && (
-            <CurrencyToggle
-              currency={currency}
-              loading={loading}
-              selectCurrency={selectCurrency}
-            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ type: 'spring', stiffness: 300, delay: 0.4 }}
+            >
+              <CurrencyToggle
+                currency={currency}
+                loading={loading}
+                selectCurrency={selectCurrency}
+              />
+            </motion.div>
           )}
         </motion.div>
 

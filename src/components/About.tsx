@@ -1,6 +1,14 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
+import {
+  motion,
+  useAnimation,
+  useInView,
+  useMotionValue,
+  useTransform,
+  useScroll,
+} from 'framer-motion';
 
 // ── Variants ──────────────────────────────────────────────────────────────────
 
@@ -31,18 +39,89 @@ const COL_RIGHT = {
   },
 };
 
+// ── CountUp ───────────────────────────────────────────────────────────────────
+
+interface CountUpProps {
+  end: number;
+  suffix?: string;
+  prefix?: string;
+  duration?: number;
+}
+
+function CountUp({ end, suffix = '', prefix = '', duration = 1.5 }: CountUpProps) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
+  const motionValue = useMotionValue(0);
+  const rounded = useTransform(motionValue, (v) => Math.round(v));
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    return rounded.on('change', (v) => setDisplayValue(v));
+  }, [rounded]);
+
+  useEffect(() => {
+    if (!isInView) return;
+    const startTime = performance.now();
+    const durationMs = duration * 1000;
+    let rafId: number;
+    const tick = (now: number) => {
+      const progress = Math.min((now - startTime) / durationMs, 1);
+      motionValue.set((1 - Math.pow(1 - progress, 3)) * end);
+      if (progress < 1) rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [isInView, end, duration, motionValue]);
+
+  return (
+    <span ref={ref}>
+      {prefix}{displayValue}{suffix}
+    </span>
+  );
+}
+
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const STATS = [
-  { value: '1 year', label: 'building production software' },
-  { value: '3 apps', label: 'currently in production' },
+  { end: 1, suffix: ' year', label: 'building production software', duration: 1.2 },
+  { end: 3, suffix: ' apps', label: 'currently in production', duration: 1.5 },
 ] as const;
 
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function About() {
+  const aboutRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: aboutRef });
+  const hexagonY = useTransform(scrollYProgress, [0, 1], [0, -30]);
+
+  const hexControls = useAnimation();
+
+  useEffect(() => {
+    hexControls.start({
+      rotate: [0, 360],
+      transition: { duration: 25, repeat: Infinity, ease: 'linear' },
+    });
+  }, [hexControls]);
+
+  const handleLeftHoverStart = () => {
+    hexControls.start({
+      rotate: [0, 360],
+      transition: { duration: 6, repeat: Infinity, ease: 'linear' },
+    });
+  };
+
+  const handleLeftHoverEnd = () => {
+    hexControls.start({
+      rotate: [0, 360],
+      transition: { duration: 25, repeat: Infinity, ease: 'linear' },
+    });
+  };
+
+  const [githubHovered, setGithubHovered] = useState(false);
+
   return (
     <section
+      ref={aboutRef}
       id="about"
       className="relative py-24 md:py-32"
       style={{
@@ -87,10 +166,12 @@ export default function About() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, margin: '-80px' }}
+            onHoverStart={handleLeftHoverStart}
+            onHoverEnd={handleLeftHoverEnd}
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}
           >
             {/* Hexagon + V wrapper — positions glow, rotating hex, and V letter */}
-            <div style={{ position: 'relative', width: '200px', height: '200px' }}>
+            <motion.div style={{ position: 'relative', width: '200px', height: '200px', y: hexagonY }}>
               {/* Ambient glow */}
               <div
                 aria-hidden="true"
@@ -108,8 +189,7 @@ export default function About() {
                 width="200"
                 height="200"
                 viewBox="0 0 200 200"
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
+                animate={hexControls}
                 style={{ position: 'absolute', inset: 0 }}
               >
                 <polygon
@@ -138,7 +218,7 @@ export default function About() {
                   V
                 </span>
               </div>
-            </div>
+            </motion.div>
 
             {/* Name + title */}
             <div style={{ textAlign: 'center' }}>
@@ -177,10 +257,10 @@ export default function About() {
 
             {/* Stats */}
             <div className="flex flex-wrap gap-6 md:gap-10 mt-3">
-              {STATS.map(({ value, label }) => (
-                <div key={value}>
+              {STATS.map(({ end, suffix, label, duration }) => (
+                <div key={suffix}>
                   <p className="font-display font-semibold text-white text-2xl leading-none mb-1">
-                    {value}
+                    <CountUp end={end} suffix={suffix} duration={duration} />
                   </p>
                   <p className="font-sans text-text-secondary text-sm leading-snug">
                     {label}
@@ -195,9 +275,32 @@ export default function About() {
               target="_blank"
               rel="noopener noreferrer"
               className="font-sans text-sm font-medium w-fit transition-colors duration-200 hover:text-white"
-              style={{ color: '#1A8A5A' }}
+              style={{ color: '#1A8A5A', position: 'relative', display: 'inline-block' }}
+              onMouseEnter={() => setGithubHovered(true)}
+              onMouseLeave={() => setGithubHovered(false)}
             >
-              See my GitHub →
+              See my GitHub{' '}
+              <motion.span
+                animate={{ x: githubHovered ? 6 : 0, opacity: githubHovered ? 0.7 : 1 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                style={{ display: 'inline-block' }}
+              >
+                →
+              </motion.span>
+              <motion.span
+                aria-hidden="true"
+                initial={{ width: '0%' }}
+                animate={{ width: githubHovered ? '100%' : '0%' }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                style={{
+                  position: 'absolute',
+                  bottom: -2,
+                  left: 0,
+                  height: 1,
+                  background: '#1A8A5A',
+                  display: 'block',
+                }}
+              />
             </a>
           </motion.div>
 

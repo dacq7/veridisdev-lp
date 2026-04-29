@@ -189,6 +189,25 @@ const GROUP_ITEM = {
   },
 };
 
+// Task 1: heading letter reveal
+const LETTER_CONTAINER = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.04 },
+  },
+};
+
+const LETTER_VARIANT = {
+  hidden: { opacity: 0, y: 20, rotateX: -90 },
+  show: {
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const },
+  },
+};
+
+// Task 3: pills wave entrance (spring + scale)
 const PILLS_CONTAINER = {
   hidden: {},
   show: {
@@ -197,13 +216,17 @@ const PILLS_CONTAINER = {
 };
 
 const PILL_ITEM = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 15, scale: 0.85 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.35, ease: [0.25, 0.1, 0.25, 1] as const },
+    scale: 1,
+    transition: { type: 'spring' as const, stiffness: 300, damping: 20 },
   },
 };
+
+// Task 5: per-category clip-path delays
+const CLIP_DELAYS = [0, 0.15, 0.3, 0.45] as const;
 
 // ── Pill ──────────────────────────────────────────────────────────────────────
 
@@ -228,7 +251,20 @@ function Pill({ tech }: { tech: Tech }) {
         transition: 'background 200ms, border-color 200ms',
       }}
     >
-      <span style={{ width: 16, height: 16, flexShrink: 0, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Task 4: icon color pulse on hover */}
+      <span
+        style={{
+          width: 16,
+          height: 16,
+          flexShrink: 0,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          opacity: hovered ? 1 : 0.8,
+          filter: hovered ? 'drop-shadow(0 0 4px currentColor)' : 'none',
+          transition: 'opacity 200ms, filter 200ms',
+        }}
+      >
         {tech.icon}
       </span>
       {tech.name}
@@ -238,25 +274,38 @@ function Pill({ tech }: { tech: Tech }) {
 
 // ── Group ─────────────────────────────────────────────────────────────────────
 
-function TechGroup({ group }: { group: TechGroup }) {
+function TechGroup({ group, index }: { group: TechGroup; index: number }) {
   return (
     <motion.div variants={GROUP_ITEM}>
-      <p
-        className="font-sans uppercase tracking-wide mb-3"
-        style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
-      >
-        {group.label}
-      </p>
+      {/* Task 5: clip-path reveal per category */}
       <motion.div
-        variants={PILLS_CONTAINER}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, margin: '-40px' }}
-        className="flex flex-wrap gap-2"
+        initial={{ clipPath: 'inset(0 100% 0 0)' }}
+        whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
+        viewport={{ once: true, margin: '-60px' }}
+        transition={{ duration: 0.6, delay: CLIP_DELAYS[index], ease: [0.25, 0.1, 0.25, 1] as const }}
       >
-        {group.techs.map((tech) => (
-          <Pill key={tech.name} tech={tech} />
-        ))}
+        {/* Task 2: category label slide in */}
+        <motion.p
+          className="font-sans uppercase tracking-wide mb-3"
+          style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
+          initial={{ x: -20, opacity: 0 }}
+          whileInView={{ x: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: index * 0.1, ease: 'easeOut' }}
+        >
+          {group.label}
+        </motion.p>
+        <motion.div
+          variants={PILLS_CONTAINER}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-40px' }}
+          className="flex flex-wrap gap-2"
+        >
+          {group.techs.map((tech) => (
+            <Pill key={tech.name} tech={tech} />
+          ))}
+        </motion.div>
       </motion.div>
     </motion.div>
   );
@@ -296,8 +345,28 @@ export default function TechStack() {
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
             Tech Stack
           </p>
-          <h2 className="font-display font-semibold text-white text-4xl md:text-5xl mb-4">
-            Tools we trust.
+          {/* Task 1: heading letter reveal */}
+          <h2
+            className="font-display font-semibold text-white text-4xl md:text-5xl mb-4"
+            style={{ perspective: '400px' }}
+          >
+            <motion.span
+              variants={LETTER_CONTAINER}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              style={{ display: 'inline-flex', flexWrap: 'wrap' }}
+            >
+              {'Tools we trust.'.split('').map((char, i) => (
+                <motion.span
+                  key={i}
+                  variants={LETTER_VARIANT}
+                  style={{ display: 'inline-block', whiteSpace: 'pre' }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </motion.span>
           </h2>
           <p className="font-sans text-text-secondary text-base leading-relaxed max-w-lg">
             Production-tested technologies across every layer of the stack.
@@ -312,8 +381,8 @@ export default function TechStack() {
           viewport={{ once: true, margin: '-80px' }}
           className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12"
         >
-          {GROUPS.map((group) => (
-            <TechGroup key={group.label} group={group} />
+          {GROUPS.map((group, i) => (
+            <TechGroup key={group.label} group={group} index={i} />
           ))}
         </motion.div>
 

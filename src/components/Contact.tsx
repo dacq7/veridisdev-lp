@@ -184,7 +184,12 @@ function ContactInfo() {
       {/* Info rows */}
       <div className="relative flex flex-col gap-7">
         {/* Email */}
-        <div>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0 }}
+        >
           <p
             className="font-sans uppercase tracking-wide mb-1.5"
             style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
@@ -214,10 +219,15 @@ function ContactInfo() {
               <IconCopy done={copied} />
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Location */}
-        <div>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
           <p
             className="font-sans uppercase tracking-wide mb-1.5"
             style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
@@ -227,10 +237,15 @@ function ContactInfo() {
           <p className="font-sans text-white" style={{ fontSize: '15px' }}>
             Medellín, Colombia
           </p>
-        </div>
+        </motion.div>
 
         {/* Response time */}
-        <div>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <p
             className="font-sans uppercase tracking-wide mb-1.5"
             style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
@@ -240,7 +255,7 @@ function ContactInfo() {
           <p className="font-sans" style={{ color: '#1A8A5A', fontSize: '15px' }}>
             We respond within 24 hours
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -868,8 +883,22 @@ export default function Contact() {
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
             Start a project
           </p>
-          <h2 className="font-display font-semibold text-white text-4xl md:text-5xl mb-4">
-            Let&apos;s build something.
+          <h2
+            className="font-display font-semibold text-white text-4xl md:text-5xl mb-4"
+            style={{ perspective: '400px' }}
+          >
+            {"Let's build something.".split('').map((char, index) => (
+              <motion.span
+                key={index}
+                initial={{ opacity: 0, y: 20, rotateX: -90 }}
+                whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.04 }}
+                style={{ display: 'inline-block' }}
+              >
+                {char === ' ' ? ' ' : char}
+              </motion.span>
+            ))}
           </h2>
           <p className="font-sans text-text-secondary text-base leading-relaxed max-w-lg">
             Tell us about your project. We respond within 24 hours.
