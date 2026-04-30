@@ -1,7 +1,13 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, useAnimation, useInView } from 'framer-motion';
+
+const useIsTouch = () => {
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
+  return isTouch;
+};
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -213,6 +219,9 @@ const PILLS_CONTAINER = {
   show: {
     transition: { staggerChildren: 0.04 },
   },
+  bounce: {
+    transition: { staggerChildren: 0.04 },
+  },
 };
 
 const PILL_ITEM = {
@@ -223,6 +232,11 @@ const PILL_ITEM = {
     scale: 1,
     transition: { type: 'spring' as const, stiffness: 300, damping: 20 },
   },
+  bounce: {
+    y: [0, -6, 0],
+    scale: [1, 1.05, 1],
+    transition: { duration: 0.3, ease: 'easeInOut' as const },
+  },
 };
 
 // Task 5: per-category clip-path delays
@@ -231,10 +245,22 @@ const PILL_ITEM = {
 
 function Pill({ tech }: { tech: Tech }) {
   const [hovered, setHovered] = useState(false);
+  const iconControls = useAnimation();
+
+  const handleIconTouch = async () => {
+    await iconControls.start({
+      filter: 'drop-shadow(0 0 6px currentColor)',
+      scale: 1.2,
+      transition: { duration: 0.1 },
+    });
+    await new Promise<void>(r => setTimeout(r, 300));
+    iconControls.start({ filter: 'none', scale: 1, transition: { duration: 0.15 } });
+  };
 
   return (
     <motion.span
       variants={PILL_ITEM}
+      whileTap={{ scale: 0.88, transition: { type: 'spring', stiffness: 500, damping: 20 } }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       className="font-sans inline-flex items-center cursor-default select-none"
@@ -250,8 +276,10 @@ function Pill({ tech }: { tech: Tech }) {
         transition: 'background 200ms, border-color 200ms',
       }}
     >
-      {/* Task 4: icon color pulse on hover */}
-      <span
+      <motion.span
+        animate={iconControls}
+        whileHover={{ filter: 'drop-shadow(0 0 4px currentColor)', opacity: 1 }}
+        onTouchStart={handleIconTouch}
         style={{
           width: 16,
           height: 16,
@@ -259,13 +287,11 @@ function Pill({ tech }: { tech: Tech }) {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          opacity: hovered ? 1 : 0.8,
-          filter: hovered ? 'drop-shadow(0 0 4px currentColor)' : 'none',
-          transition: 'opacity 200ms, filter 200ms',
+          opacity: 0.8,
         }}
       >
         {tech.icon}
-      </span>
+      </motion.span>
       {tech.name}
     </motion.span>
   );
@@ -274,15 +300,24 @@ function Pill({ tech }: { tech: Tech }) {
 // ── Group ─────────────────────────────────────────────────────────────────────
 
 function TechGroup({ group, index }: { group: TechGroup; index: number }) {
+  const pillsControls = useAnimation();
+  const pillsRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(pillsRef, { once: true, margin: '-40px' });
+
+  useEffect(() => {
+    if (inView) pillsControls.start('show');
+  }, [inView, pillsControls]);
+
+  const handleCategoryTouch = () => pillsControls.start('bounce');
+
   return (
-    <motion.div variants={GROUP_ITEM}>
+    <motion.div variants={GROUP_ITEM} onTouchStart={handleCategoryTouch}>
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true, margin: '-60px' }}
         transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: index * 0.15 }}
       >
-        {/* Task 2: category label slide in */}
         <motion.p
           className="font-sans uppercase tracking-wide mb-3"
           style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
@@ -294,10 +329,10 @@ function TechGroup({ group, index }: { group: TechGroup; index: number }) {
           {group.label}
         </motion.p>
         <motion.div
+          ref={pillsRef}
           variants={PILLS_CONTAINER}
           initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: '-40px' }}
+          animate={pillsControls}
           className="flex flex-wrap gap-2"
         >
           {group.techs.map((tech) => (

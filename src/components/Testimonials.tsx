@@ -1,7 +1,13 @@
 'use client';
 
-import { useRef } from 'react';
-import { motion, useMotionValue, useSpring } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+
+const useIsTouch = () => {
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
+  return isTouch;
+};
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -124,7 +130,18 @@ export default function Testimonials() {
             style={{ fontFamily: 'Syne, sans-serif', color: '#FFFFFF' }}
             className="text-4xl md:text-5xl font-bold"
           >
-            Trusted by real businesses.
+            {['Trusted', 'by', 'real', 'businesses.'].map((word, index) => (
+              <motion.span
+                key={word}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                style={{ display: 'inline-block', marginRight: '0.25em' }}
+              >
+                {word}
+              </motion.span>
+            ))}
           </h2>
         </motion.div>
 
@@ -149,6 +166,8 @@ export default function Testimonials() {
 
 function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
   const { quote, name, role, badge, initials } = testimonial;
+  const [tapped, setTapped] = useState(false);
+  const [beaming, setBeaming] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
   const rotateX = useMotionValue(0);
@@ -177,25 +196,44 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       ref={cardRef}
       variants={cardVariants}
       whileHover="hover"
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={() => { setBeaming(true); setTimeout(() => setBeaming(false), 600); }}
       style={{
         backgroundColor: '#1A2820',
         border: '1px solid rgba(26, 138, 90, 0.12)',
         borderRadius: '12px',
         padding: '32px',
         position: 'relative',
+        overflow: 'hidden',
         rotateX: springX,
         rotateY: springY,
         perspective: '800px',
         transformStyle: 'preserve-3d',
       }}
     >
+      <AnimatePresence>
+        {beaming && (
+          <motion.div
+            key="beam"
+            initial={{ x: '-100%', opacity: 0.7 }}
+            animate={{ x: '200%', opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+            style={{ position: 'absolute', top: 0, left: 0, width: '50%', height: '100%', background: 'linear-gradient(90deg, transparent, rgba(26,138,90,0.25), transparent)', pointerEvents: 'none', zIndex: 10, borderRadius: 'inherit' }}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Decorative opening quote mark */}
       <motion.span
         aria-hidden="true"
         variants={quoteVariants}
+        animate={tapped ? { scale: [1, 1.4, 1] } : undefined}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        onTouchStart={() => { setTapped(true); setTimeout(() => setTapped(false), 400); }}
         style={{
           fontFamily: 'Syne, sans-serif',
           fontSize: '64px',
@@ -211,7 +249,11 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       </motion.span>
 
       {/* Quote */}
-      <p
+      <motion.p
+        initial={{ opacity: 0.7 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.4 }}
         style={{
           fontFamily: 'DM Sans, sans-serif',
           fontSize: '15px',
@@ -222,7 +264,7 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         }}
       >
         {quote}
-      </p>
+      </motion.p>
 
       {/* Divider */}
       <div
@@ -238,6 +280,8 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         {/* Avatar */}
         <motion.div
           variants={avatarVariants}
+          whileTap={{ boxShadow: '0 0 0 3px rgba(26,138,90,0.8)' }}
+          transition={{ duration: 0.2 }}
           style={{
             width: '40px',
             height: '40px',
@@ -263,7 +307,9 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
 
         {/* Name + role */}
         <div className="flex-1 min-w-0">
-          <p
+          <motion.p
+            whileTap={{ color: '#1A8A5A' }}
+            transition={{ duration: 0.2 }}
             style={{
               fontFamily: 'DM Sans, sans-serif',
               fontSize: '14px',
@@ -273,8 +319,12 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
             }}
           >
             {name}
-          </p>
-          <p
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0.6 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: '-30px' }}
+            transition={{ duration: 0.4, delay: 0.2 }}
             style={{
               fontFamily: 'DM Sans, sans-serif',
               fontSize: '12px',
@@ -283,12 +333,14 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
             }}
           >
             {role}
-          </p>
+          </motion.p>
         </div>
 
         {/* Project badge */}
         <motion.span
           variants={badgeVariants}
+          whileTap={{ scale: 0.9, backgroundColor: 'rgba(26,138,90,0.25)' }}
+          transition={{ type: 'spring', stiffness: 500, damping: 20 }}
           style={{
             fontFamily: 'DM Sans, sans-serif',
             fontSize: '11px',

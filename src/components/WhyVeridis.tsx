@@ -1,7 +1,15 @@
 'use client';
 
-import { useState, useRef } from 'react';
-import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useAnimation } from 'framer-motion';
+
+// ── Touch detection ───────────────────────────────────────────────────────────
+
+const useIsTouch = () => {
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
+  return isTouch;
+};
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -146,9 +154,16 @@ function HighlightedDescription({
 }) {
   if (!highlights.length) {
     return (
-      <p className="font-sans text-text-secondary" style={{ fontSize: '15px', lineHeight: '1.6' }}>
+      <motion.p
+        className="font-sans text-text-secondary"
+        style={{ fontSize: '15px', lineHeight: '1.6' }}
+        initial={{ opacity: 0.6 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.4, delay: 0.15 }}
+      >
         {text}
-      </p>
+      </motion.p>
     );
   }
 
@@ -157,14 +172,25 @@ function HighlightedDescription({
   const parts = text.split(pattern);
 
   return (
-    <p className="font-sans text-text-secondary" style={{ fontSize: '15px', lineHeight: '1.6' }}>
+    <motion.p
+      className="font-sans text-text-secondary"
+      style={{ fontSize: '15px', lineHeight: '1.6' }}
+      initial={{ opacity: 0.6 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.4, delay: 0.15 }}
+    >
       {parts.map((part, i) =>
         highlights.includes(part) ? (
           <motion.span
             key={i}
             initial={{ color: '#4A6B58' }}
             animate={{ color: inView ? '#1A8A5A' : '#4A6B58' }}
-            transition={{ duration: 0.5, delay: delay + 0.3 }}
+            whileTap={{ color: '#1A8A5A', scale: 1.05 }}
+            transition={{
+              color: { duration: 0.5, delay: delay + 0.3 },
+              default: { type: 'spring', stiffness: 400, damping: 20 },
+            }}
           >
             {part}
           </motion.span>
@@ -172,7 +198,7 @@ function HighlightedDescription({
           part
         )
       )}
-    </p>
+    </motion.p>
   );
 }
 
@@ -180,6 +206,7 @@ function HighlightedDescription({
 
 function DiffCard({ item, index }: { item: Differentiator; index: number }) {
   const [hovered, setHovered] = useState(false);
+  const [beaming, setBeaming] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(cardRef, { once: true });
 
@@ -191,6 +218,28 @@ function DiffCard({ item, index }: { item: Differentiator; index: number }) {
   const breathingDelay = index * 0.6;
   const entranceDelay = 0.05 + index * 0.1;
   const highlights = HIGHLIGHT_TERMS[item.id] ?? [];
+  const isTouch = useIsTouch();
+  const iconControls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      iconControls.start({
+        boxShadow: [
+          '0 0 0px rgba(26,138,90,0)',
+          '0 0 16px rgba(26,138,90,0.35)',
+          '0 0 0px rgba(26,138,90,0)',
+        ],
+        transition: { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: breathingDelay },
+      });
+    }
+  }, [isInView]);
+
+  async function handleIconTouch() {
+    await iconControls.start({
+      scale: [1, 1.2, 1],
+      transition: { duration: 0.3, ease: 'easeInOut' },
+    });
+  }
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const rect = cardRef.current?.getBoundingClientRect();
@@ -212,9 +261,18 @@ function DiffCard({ item, index }: { item: Differentiator; index: number }) {
         rawRotateY.set(0);
       }}
       onMouseMove={handleMouseMove}
+      onTouchStart={() => { setBeaming(true); setTimeout(() => setBeaming(false), 600); }}
       whileHover={{
         scale: 1.02,
         transition: { type: 'spring', stiffness: 300, damping: 25 },
+      }}
+      whileTap={{
+        scale: 0.97,
+        boxShadow: '0 0 0 1px rgba(26,138,90,0.5), 0 0 16px rgba(26,138,90,0.12)',
+        transition: {
+          scale: { type: 'spring', stiffness: 400, damping: 20 },
+          boxShadow: { duration: 0.2 },
+        },
       }}
       className="p-5 md:p-9"
       style={{
@@ -227,26 +285,26 @@ function DiffCard({ item, index }: { item: Differentiator; index: number }) {
         perspective: '800px',
         rotateX: springRotateX,
         rotateY: springRotateY,
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <AnimatePresence>
+        {beaming && (
+          <motion.div
+            key="beam"
+            initial={{ x: '-100%', opacity: 0.7 }}
+            animate={{ x: '200%', opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+            style={{ position: 'absolute', top: 0, left: 0, width: '50%', height: '100%', background: 'linear-gradient(90deg, transparent, rgba(26,138,90,0.25), transparent)', pointerEvents: 'none', zIndex: 10, borderRadius: 'inherit' }}
+          />
+        )}
+      </AnimatePresence>
       {/* Icon container — breathing glow */}
       <motion.div
-        animate={
-          isInView
-            ? {
-                boxShadow: [
-                  '0 0 0px rgba(26,138,90,0)',
-                  '0 0 16px rgba(26,138,90,0.35)',
-                  '0 0 0px rgba(26,138,90,0)',
-                ],
-              }
-            : {}
-        }
-        transition={
-          isInView
-            ? { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: breathingDelay }
-            : {}
-        }
+        animate={iconControls}
+        onTouchStart={handleIconTouch}
         style={{
           width: '48px',
           height: '48px',
@@ -271,8 +329,12 @@ function DiffCard({ item, index }: { item: Differentiator; index: number }) {
           {item.title}
         </h3>
         <motion.span
-          initial={{ width: '0%' }}
-          animate={{ width: hovered ? '100%' : '0%' }}
+          initial={{ width: isTouch ? '100%' : '0%', opacity: isTouch ? 0.4 : 1 }}
+          animate={
+            isTouch
+              ? { width: '100%', opacity: 0.4 }
+              : { width: hovered ? '100%' : '0%', opacity: 1 }
+          }
           transition={{ duration: 0.3, ease: 'easeOut' }}
           style={{
             display: 'block',
@@ -332,9 +394,15 @@ export default function WhyVeridis() {
           viewport={{ once: true, margin: '-100px' }}
           className="mb-14 md:mb-16"
         >
-          <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
+          <motion.p
+            className="font-sans text-xs tracking-widest uppercase text-accent mb-3"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          >
             Why Veridis Dev
-          </p>
+          </motion.p>
 
           {/* Heading — letter reveal */}
           <h2
@@ -355,9 +423,15 @@ export default function WhyVeridis() {
             ))}
           </h2>
 
-          <p className="font-sans text-text-secondary text-base leading-relaxed max-w-lg">
+          <motion.p
+            className="font-sans text-text-secondary text-base leading-relaxed max-w-lg"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             Not a freelancer. Not a big agency. A focused software company that ships.
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* 2×2 grid */}

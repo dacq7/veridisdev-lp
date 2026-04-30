@@ -1,7 +1,13 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
+
+const useIsTouch = () => {
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
+  return isTouch;
+};
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -430,9 +436,10 @@ function MetricsRow({ metrics }: { metrics: Metric[] }) {
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   const [hovered, setHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [beaming, setBeaming] = useState(false);
+  const [scanning, setScanning] = useState(false);
   const isEven = index % 2 === 0;
 
-  // Task 5: useInView to start/stop the Live Demo pulse
   const cardRef = useRef<HTMLElement>(null);
   const inView = useInView(cardRef, { once: false });
 
@@ -443,11 +450,15 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       custom={isEven}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
+      onTouchStart={() => { setBeaming(true); setTimeout(() => setBeaming(false), 700); }}
+      whileTap={{ scale: 0.98, boxShadow: '0 0 0 1px rgba(26,138,90,0.6), 0 0 20px rgba(26,138,90,0.15)' }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={[
         'flex flex-col overflow-hidden rounded-[12px]',
         isEven ? 'md:flex-row' : 'md:flex-row-reverse',
       ].join(' ')}
       style={{
+        position: 'relative',
         background: '#1A2820',
         borderWidth: '1px',
         borderStyle: 'solid',
@@ -455,10 +466,23 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         transition: 'border-color 300ms',
       }}
     >
+      <AnimatePresence>
+        {beaming && (
+          <motion.div
+            key="beam"
+            initial={{ x: '-100%', opacity: 0.8 }}
+            animate={{ x: '200%', opacity: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6, ease: 'easeInOut' }}
+            style={{ position: 'absolute', top: 0, left: 0, width: '40%', height: '100%', background: 'linear-gradient(90deg, transparent, rgba(26,138,90,0.2), transparent)', pointerEvents: 'none', zIndex: 20, borderRadius: 'inherit' }}
+          />
+        )}
+      </AnimatePresence>
       {/* Image side — 55% width on desktop, full width on mobile */}
       <div
         className="relative shrink-0 md:w-[55%]"
         style={{ padding: '16px', background: '#141F18' }}
+        onTouchStart={() => { setScanning(true); setTimeout(() => setScanning(false), 900); }}
       >
         <TerminalFrame terminalPath={project.terminalPath}>
           {imgError ? (
@@ -479,7 +503,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               />
               {/* Task 3: scan line on hover */}
               <AnimatePresence>
-                {hovered && (
+                {(hovered || scanning) && (
                   <motion.div
                     key="scanline"
                     initial={{ top: '-2px' }}
@@ -560,22 +584,29 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                   }
                 : { boxShadow: '0 0 0px rgba(26,138,90,0)' }
             }
+            whileTap={{ scale: 0.95, boxShadow: '0 0 12px rgba(26,138,90,0.5)', transition: { type: 'spring', stiffness: 500, damping: 20 } }}
             transition={
               inView
                 ? { duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: index * 0.8 }
                 : { duration: 0.3 }
             }
           >
-            Live Demo →
+            Live Demo{' '}
+            <motion.span
+              whileTap={{ x: 4 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 20 }}
+            >→</motion.span>
           </motion.a>
-          <a
+          <motion.a
             href={project.repoUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center font-sans font-medium text-sm text-text-secondary hover:text-white transition-colors duration-200 py-2.5"
+            whileTap={{ scale: 0.95, color: '#ffffff' }}
+            transition={{ duration: 0.15 }}
           >
             View Code
-          </a>
+          </motion.a>
         </div>
 
         {/* Demo credentials */}
