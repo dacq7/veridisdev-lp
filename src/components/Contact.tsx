@@ -1,7 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+
+// ── Hooks ─────────────────────────────────────────────────────────────────────
+
+function useIsTouch() {
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => {
+    setIsTouch(navigator.maxTouchPoints > 0);
+  }, []);
+  return isTouch;
+}
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -295,25 +305,37 @@ function SelectField({
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: { value: string; label: string }[];
 }) {
+  const isTouch = useIsTouch();
+  const scaleCtrl = useAnimation();
+  const borderCtrl = useAnimation();
+
+  function handleTouchStart() {
+    if (!isTouch) return;
+    scaleCtrl.start({ scale: [0.98, 1], transition: { type: 'spring', stiffness: 400, damping: 20 } });
+    borderCtrl.start({ borderColor: ['#1A8A5A', 'rgba(26, 138, 90, 0.2)'], transition: { duration: 0.3 } });
+  }
+
   return (
-    <div className="relative">
-      <select
+    <motion.div className="relative" animate={scaleCtrl}>
+      <motion.select
         id={id}
         className="contact-field font-sans appearance-none cursor-pointer"
         style={{ ...FIELD_BASE, paddingRight: '36px' }}
+        animate={borderCtrl}
         value={value}
         onChange={onChange}
+        onTouchStart={handleTouchStart}
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}
           </option>
         ))}
-      </select>
+      </motion.select>
       <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true">
         <IconChevron />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -325,22 +347,42 @@ function StepIndicator({ step }: { step: Step }) {
     { num: '02', label: 'Project details' },
   ];
 
+  const ctrl1 = useAnimation();
+  const ctrl2 = useAnimation();
+
+  useEffect(() => {
+    const ctrl = step === 1 ? ctrl1 : ctrl2;
+    async function runSequence() {
+      await ctrl.start({ scale: 1.3, color: '#1A8A5A', transition: { duration: 0.15, ease: 'easeOut' } });
+      ctrl.start({ scale: 1, color: '#ffffff', transition: { type: 'spring', stiffness: 400, damping: 20 } });
+    }
+    runSequence();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
   return (
     <div className="mb-6">
       <div className="flex gap-6 mb-3">
         {steps.map((s, i) => {
           const active = step === i + 1;
+          const ctrl = i === 0 ? ctrl1 : ctrl2;
           return (
             <div
               key={s.num}
               className="pb-2 relative"
             >
-              <span
+              <motion.span
+                animate={ctrl}
                 className="font-sans"
-                style={{ fontSize: '13px', color: active ? '#ffffff' : '#4A6B58', letterSpacing: '0.02em' }}
+                style={{
+                  fontSize: '13px',
+                  color: active ? '#ffffff' : '#4A6B58',
+                  letterSpacing: '0.02em',
+                  display: 'inline-block',
+                }}
               >
                 {s.num} — {s.label}
-              </span>
+              </motion.span>
               {active && (
                 <motion.div
                   key={step}
@@ -517,6 +559,19 @@ function ContactForm() {
   const [stepError, setStepError] = useState('');
   const [direction, setDirection] = useState<Direction>('forward');
 
+  const isTouch = useIsTouch();
+  const nextBtnScale = useAnimation();
+  const nextBtnFlash = useAnimation();
+  const submitBtnScale = useAnimation();
+  const submitBtnFlash = useAnimation();
+  const backBtnCtrl = useAnimation();
+
+  function firePress(scaleCtrl: ReturnType<typeof useAnimation>, flashCtrl: ReturnType<typeof useAnimation>) {
+    if (!isTouch) return;
+    scaleCtrl.start({ scale: [0.93, 1], transition: { type: 'spring', stiffness: 400, damping: 18 } });
+    flashCtrl.start({ backgroundColor: ['rgba(26,138,90,0.25)', 'rgba(26,138,90,0)'], transition: { duration: 0.4 } });
+  }
+
   function update(field: keyof FormData) {
     return (
       e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -595,7 +650,6 @@ function ContactForm() {
       <style>{`
         .contact-field:focus {
           border-color: rgba(26, 138, 90, 0.6) !important;
-          box-shadow: 0 0 0 3px rgba(26, 138, 90, 0.08);
         }
         .contact-field option {
           background: #1A2820;
@@ -627,13 +681,15 @@ function ContactForm() {
                     <FieldLabel htmlFor="cf-name" required>
                       Full name
                     </FieldLabel>
-                    <input
+                    <motion.input
                       id="cf-name"
                       type="text"
                       className="contact-field font-sans"
                       style={FIELD_BASE}
                       value={form.name}
                       onChange={update('name')}
+                      initial={{ boxShadow: '0 0 0px rgba(26,138,90,0)' }}
+                      whileFocus={{ boxShadow: '0 0 0 2px rgba(26,138,90,0.4)', transition: { duration: 0.3, ease: 'easeOut' } }}
                     />
                   </div>
 
@@ -642,13 +698,15 @@ function ContactForm() {
                     <FieldLabel htmlFor="cf-email" required>
                       Email
                     </FieldLabel>
-                    <input
+                    <motion.input
                       id="cf-email"
                       type="email"
                       className="contact-field font-sans"
                       style={FIELD_BASE}
                       value={form.email}
                       onChange={update('email')}
+                      initial={{ boxShadow: '0 0 0px rgba(26,138,90,0)' }}
+                      whileFocus={{ boxShadow: '0 0 0 2px rgba(26,138,90,0.4)', transition: { duration: 0.3, ease: 'easeOut' } }}
                     />
                   </div>
 
@@ -657,7 +715,7 @@ function ContactForm() {
                     <FieldLabel htmlFor="cf-country" required>
                       Country / City
                     </FieldLabel>
-                    <input
+                    <motion.input
                       id="cf-country"
                       type="text"
                       placeholder="e.g. Medellín, Colombia or Austin, TX"
@@ -665,6 +723,8 @@ function ContactForm() {
                       style={FIELD_BASE}
                       value={form.country}
                       onChange={update('country')}
+                      initial={{ boxShadow: '0 0 0px rgba(26,138,90,0)' }}
+                      whileFocus={{ boxShadow: '0 0 0 2px rgba(26,138,90,0.4)', transition: { duration: 0.3, ease: 'easeOut' } }}
                     />
                   </div>
 
@@ -694,8 +754,10 @@ function ContactForm() {
                   )}
 
                   {/* Next button */}
-                  <button
+                  <motion.button
                     type="button"
+                    animate={nextBtnScale}
+                    onTouchStart={() => firePress(nextBtnScale, nextBtnFlash)}
                     onClick={handleNext}
                     className="font-sans font-medium text-white rounded-[6px] transition-all duration-200"
                     style={{
@@ -706,10 +768,22 @@ function ContactForm() {
                       border: 'none',
                       cursor: 'pointer',
                       letterSpacing: '0.01em',
+                      position: 'relative',
+                      overflow: 'hidden',
                     }}
                   >
+                    <motion.span
+                      animate={nextBtnFlash}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: '6px',
+                        pointerEvents: 'none',
+                        backgroundColor: 'rgba(26,138,90,0)',
+                      }}
+                    />
                     Next →
-                  </button>
+                  </motion.button>
                 </motion.div>
               ) : (
                 <motion.div
@@ -727,7 +801,7 @@ function ContactForm() {
                     <FieldLabel htmlFor="cf-description" required>
                       Project description
                     </FieldLabel>
-                    <textarea
+                    <motion.textarea
                       id="cf-description"
                       rows={5}
                       className="contact-field font-sans resize-none"
@@ -735,6 +809,8 @@ function ContactForm() {
                       value={form.description}
                       onChange={update('description')}
                       placeholder="What problem does it solve? Who will use it? Do you have an existing system we need to integrate with?"
+                      initial={{ boxShadow: '0 0 0px rgba(26,138,90,0)' }}
+                      whileFocus={{ boxShadow: '0 0 0 2px rgba(26,138,90,0.4)', transition: { duration: 0.3, ease: 'easeOut' } }}
                     />
                   </div>
 
@@ -841,9 +917,21 @@ function ContactForm() {
 
                   {/* Back + Submit buttons */}
                   <div className="flex gap-3">
-                    <button
+                    <motion.button
                       type="button"
                       onClick={handleBack}
+                      animate={backBtnCtrl}
+                      onTouchStart={() => {
+                        if (!isTouch) return;
+                        backBtnCtrl.start({
+                          scale: [0.92, 1],
+                          opacity: [1, 0.5, 1],
+                          transition: {
+                            scale: { type: 'spring', stiffness: 400, damping: 18 },
+                            opacity: { duration: 0.3 },
+                          },
+                        });
+                      }}
                       className="font-sans font-medium rounded-[6px] transition-all duration-200"
                       style={{
                         padding: '14px 20px',
@@ -857,10 +945,12 @@ function ContactForm() {
                       }}
                     >
                       ← Back
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       type="submit"
                       disabled={loading}
+                      animate={submitBtnScale}
+                      onTouchStart={() => firePress(submitBtnScale, submitBtnFlash)}
                       className="font-sans font-medium text-white rounded-[6px] transition-all duration-200"
                       style={{
                         flex: 1,
@@ -870,10 +960,22 @@ function ContactForm() {
                         border: 'none',
                         cursor: loading ? 'not-allowed' : 'pointer',
                         letterSpacing: '0.01em',
+                        position: 'relative',
+                        overflow: 'hidden',
                       }}
                     >
+                      <motion.span
+                        animate={submitBtnFlash}
+                        style={{
+                          position: 'absolute',
+                          inset: 0,
+                          borderRadius: '6px',
+                          pointerEvents: 'none',
+                          backgroundColor: 'rgba(26,138,90,0)',
+                        }}
+                      />
                       {loading ? 'Sending…' : <>Send message <motion.span whileHover={{ x: 4 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} style={{ display: 'inline-block' }}>→</motion.span></>}
-                    </button>
+                    </motion.button>
                   </div>
                 </motion.div>
               )}
@@ -912,7 +1014,11 @@ export default function Contact() {
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
             Start a project
           </p>
-          <h2
+          <motion.h2
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
             className="font-display font-semibold text-white text-4xl md:text-5xl mb-4"
             style={{ perspective: '400px' }}
           >
@@ -925,13 +1031,19 @@ export default function Contact() {
                 transition={{ duration: 0.4, delay: index * 0.04 }}
                 style={{ display: 'inline-block' }}
               >
-                {char === ' ' ? ' ' : char}
+                {char === ' ' ? ' ' : char}
               </motion.span>
             ))}
-          </h2>
-          <p className="font-sans text-text-secondary text-base leading-relaxed max-w-lg">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="font-sans text-text-secondary text-base leading-relaxed max-w-lg"
+          >
             Tell us about your project. We respond within 24 hours.
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* Two-column layout */}
@@ -949,10 +1061,10 @@ export default function Contact() {
 
           {/* Right — form */}
           <motion.div
-            variants={COL_RIGHT}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: '-80px' }}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.5, delay: 0.15 }}
           >
             <ContactForm />
           </motion.div>
