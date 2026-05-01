@@ -1009,7 +1009,7 @@ export default function Contact() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-100px' }}
-          className="mb-14 md:mb-16"
+          className="mb-14 md:mb-16 max-sm:overflow-x-hidden"
         >
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
             Start a project
@@ -1019,7 +1019,7 @@ export default function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
-            className="font-display font-semibold text-white text-4xl md:text-5xl mb-4"
+            className="font-display font-semibold text-white text-4xl md:text-5xl mb-4 break-words hyphens-auto"
             style={{ perspective: '400px' }}
           >
             {"Let's build something.".split('').map((char, index) => (

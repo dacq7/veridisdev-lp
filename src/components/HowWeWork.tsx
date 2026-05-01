@@ -387,7 +387,7 @@ export default function HowWeWork() {
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
         {/* Section header */}
         <motion.div
-          className="mb-16"
+          className="mb-16 max-sm:overflow-x-hidden"
           variants={headerVariants}
           initial="hidden"
           whileInView="visible"
@@ -403,7 +403,7 @@ export default function HowWeWork() {
             The Process
           </p>
           <motion.h2
-            className="text-4xl md:text-5xl font-semibold text-white mb-4"
+            className="text-4xl md:text-5xl font-semibold text-white mb-4 break-words"
             style={{ fontFamily: 'Syne, sans-serif' }}
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}

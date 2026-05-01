@@ -646,14 +646,14 @@ export default function Projects() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-100px' }}
-          className="mb-14 md:mb-16"
+          className="mb-14 md:mb-16 max-sm:overflow-x-hidden"
         >
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
             Work in production
           </p>
           {/* Task 1: letter reveal on "Projects" */}
           <h2
-            className="font-display font-semibold text-white text-4xl md:text-5xl mb-4"
+            className="font-display font-semibold text-white text-4xl md:text-5xl mb-4 break-words"
             style={{ perspective: '400px' }}
           >
             {'Projects'.split('').map((letter, i) => (
@@ -690,6 +690,23 @@ export default function Projects() {
             <ProjectCard key={project.id} project={project} index={index} />
           ))}
         </motion.div>
+
+        {/* CTA */}
+        <div className="flex flex-col items-center gap-4 mt-16 md:mt-20">
+          <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            Could your project be next?
+          </p>
+          <motion.button
+            onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            className="px-6 py-3 rounded-full text-white font-sans text-sm font-medium"
+            style={{ background: '#1A8A5A' }}
+          >
+            Start a project →
+          </motion.button>
+        </div>
 
       </div>
     </section>

@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar';
+import FloatingCTA from '@/components/FloatingCTA';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
 import Marquee from '@/components/Marquee';
@@ -29,6 +30,7 @@ export default function Home() {
         <Contact />
       </main>
       <Footer />
+      <FloatingCTA />
     </>
   );
 }

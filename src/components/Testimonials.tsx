@@ -118,7 +118,7 @@ export default function Testimonials() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mb-16"
+          className="mb-16 max-sm:overflow-x-hidden"
         >
           <p
             style={{ fontFamily: 'DM Sans, sans-serif', color: '#1A8A5A' }}
@@ -128,7 +128,7 @@ export default function Testimonials() {
           </p>
           <h2
             style={{ fontFamily: 'Syne, sans-serif', color: '#FFFFFF' }}
-            className="text-4xl md:text-5xl font-bold"
+            className="text-4xl md:text-5xl font-bold break-words"
           >
             {['Trusted', 'by', 'real', 'businesses.'].map((word, index) => (
               <motion.span
@@ -157,6 +157,23 @@ export default function Testimonials() {
             <TestimonialCard key={t.name} testimonial={t} />
           ))}
         </motion.div>
+
+        {/* CTA */}
+        <div className="flex flex-col items-center gap-4 mt-16 md:mt-20">
+          <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            Join the companies that trust Veridis
+          </p>
+          <motion.button
+            onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            className="px-6 py-3 rounded-full text-white font-sans text-sm font-medium"
+            style={{ background: '#1A8A5A' }}
+          >
+            Work with us →
+          </motion.button>
+        </div>
       </div>
     </section>
   );

@@ -458,12 +458,12 @@ export default function Services() {
           viewport={{ once: true, margin: '-100px' }}
           className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-14 md:mb-16"
         >
-          <div>
+          <div className="max-sm:overflow-x-hidden">
             <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
               What we build
             </p>
             <h2
-              className="font-display font-semibold text-white text-4xl md:text-5xl mb-4"
+              className="font-display font-semibold text-white text-4xl md:text-5xl mb-4 break-words"
               style={{ perspective: '400px' }}
             >
               {'Services'.split('').map((letter, i) => (
@@ -521,6 +521,23 @@ export default function Services() {
             />
           ))}
         </motion.div>
+
+        {/* CTA */}
+        <div className="flex flex-col items-center gap-4 mt-16 md:mt-20">
+          <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
+            Ready to build something?
+          </p>
+          <motion.button
+            onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+            className="px-6 py-3 rounded-full text-white font-sans text-sm font-medium"
+            style={{ background: '#1A8A5A' }}
+          >
+            Let&apos;s talk →
+          </motion.button>
+        </div>
 
       </div>  {/* end relative z-10 */}
     </section>

@@ -427,14 +427,14 @@ export default function TechStack() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-100px' }}
-          className="mb-14 md:mb-16"
+          className="mb-14 md:mb-16 max-sm:overflow-x-hidden"
         >
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
             Tech Stack
           </p>
           {/* Task 1: heading letter reveal */}
           <motion.h2
-            className="font-display font-semibold text-white text-3xl md:text-5xl mb-4"
+            className="font-display font-semibold text-white text-3xl md:text-5xl mb-4 break-words"
             style={{ perspective: '400px' }}
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
