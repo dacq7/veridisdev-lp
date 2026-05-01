@@ -1031,7 +1031,7 @@ export default function Contact() {
                 transition={{ duration: 0.4, delay: index * 0.04 }}
                 style={{ display: 'inline-block' }}
               >
-                {char === ' ' ? ' ' : char}
+                {char === ' ' ? ' ' : char}
               </motion.span>
             ))}
           </motion.h2>
