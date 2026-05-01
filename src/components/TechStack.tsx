@@ -239,13 +239,30 @@ const PILL_ITEM = {
   },
 };
 
-// Task 5: per-category clip-path delays
-
 // ── Pill ──────────────────────────────────────────────────────────────────────
 
-function Pill({ tech }: { tech: Tech }) {
+type PillProps = {
+  tech: Tech;
+  index: number;
+  waveSource: number | null;
+  onTouchPill: (i: number) => void;
+};
+
+function Pill({ tech, index, waveSource, onTouchPill }: PillProps) {
   const [hovered, setHovered] = useState(false);
   const iconControls = useAnimation();
+  const waveControls = useAnimation();
+
+  // Task 2: wave effect — animate adjacent pills with staggered translateY
+  useEffect(() => {
+    if (waveSource === null) return;
+    const dist = Math.abs(waveSource - index);
+    if (dist === 0 || dist > 2) return;
+    waveControls.start({
+      y: [-4, 0],
+      transition: { duration: 0.25, ease: 'easeOut' as const, delay: dist * 0.08 },
+    });
+  }, [waveSource, index, waveControls]);
 
   const handleIconTouch = async () => {
     await iconControls.start({
@@ -263,6 +280,7 @@ function Pill({ tech }: { tech: Tech }) {
       whileTap={{ scale: 0.88, transition: { type: 'spring', stiffness: 500, damping: 20 } }}
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
+      onTouchStart={() => onTouchPill(index)}
       className="font-sans inline-flex items-center cursor-default select-none"
       style={{
         background: hovered ? 'rgba(26, 138, 90, 0.15)' : 'rgba(26, 138, 90, 0.08)',
@@ -272,27 +290,32 @@ function Pill({ tech }: { tech: Tech }) {
         color: '#1A8A5A',
         fontSize: '13px',
         lineHeight: '1',
-        gap: '6px',
         transition: 'background 200ms, border-color 200ms',
       }}
     >
       <motion.span
-        animate={iconControls}
-        whileHover={{ filter: 'drop-shadow(0 0 4px currentColor)', opacity: 1 }}
-        onTouchStart={handleIconTouch}
-        style={{
-          width: 16,
-          height: 16,
-          flexShrink: 0,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: 0.8,
-        }}
+        animate={waveControls}
+        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
       >
-        {tech.icon}
+        <motion.span
+          animate={iconControls}
+          whileHover={{ filter: 'drop-shadow(0 0 4px currentColor)', opacity: 1 }}
+          whileTap={{ filter: 'drop-shadow(0 0 6px #1A8A5A)' }}
+          onTouchStart={handleIconTouch}
+          style={{
+            width: 16,
+            height: 16,
+            flexShrink: 0,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            opacity: 0.8,
+          }}
+        >
+          {tech.icon}
+        </motion.span>
+        {tech.name}
       </motion.span>
-      {tech.name}
     </motion.span>
   );
 }
@@ -301,8 +324,11 @@ function Pill({ tech }: { tech: Tech }) {
 
 function TechGroup({ group, index }: { group: TechGroup; index: number }) {
   const pillsControls = useAnimation();
+  const labelControls = useAnimation();
+  const isTouch = useIsTouch();
   const pillsRef = useRef<HTMLDivElement>(null);
   const inView = useInView(pillsRef, { once: true, margin: '-40px' });
+  const [waveSource, setWaveSource] = useState<number | null>(null);
 
   useEffect(() => {
     if (inView) pillsControls.start('show');
@@ -310,8 +336,28 @@ function TechGroup({ group, index }: { group: TechGroup; index: number }) {
 
   const handleCategoryTouch = () => pillsControls.start('bounce');
 
+  // Task 1: label scale feedback on touch
+  const handleLabelTouch = async () => {
+    if (!isTouch) return;
+    await labelControls.start({ scale: 1.08, transition: { duration: 0.125, ease: 'easeOut' as const } });
+    labelControls.start({ scale: 1, transition: { duration: 0.125, ease: 'easeIn' as const } });
+  };
+
+  // Task 2: notify pill index so adjacent pills can wave
+  const handleTouchPill = (i: number) => {
+    setWaveSource(i);
+    setTimeout(() => setWaveSource(null), 500);
+  };
+
   return (
-    <motion.div variants={GROUP_ITEM} onTouchStart={handleCategoryTouch}>
+    // Task 3: scroll reveal per category with staggered delay
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const, delay: index * 0.1 }}
+      onTouchStart={handleCategoryTouch}
+    >
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         whileInView={{ opacity: 1, x: 0 }}
@@ -319,12 +365,14 @@ function TechGroup({ group, index }: { group: TechGroup; index: number }) {
         transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: index * 0.15 }}
       >
         <motion.p
+          animate={labelControls}
           className="font-sans uppercase tracking-wide mb-3"
           style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
           initial={{ x: -20, opacity: 0 }}
           whileInView={{ x: 0, opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.4, delay: index * 0.1, ease: 'easeOut' }}
+          onTouchStart={handleLabelTouch}
         >
           {group.label}
         </motion.p>
@@ -335,8 +383,14 @@ function TechGroup({ group, index }: { group: TechGroup; index: number }) {
           animate={pillsControls}
           className="flex flex-wrap gap-2"
         >
-          {group.techs.map((tech) => (
-            <Pill key={tech.name} tech={tech} />
+          {group.techs.map((tech, i) => (
+            <Pill
+              key={tech.name}
+              tech={tech}
+              index={i}
+              waveSource={waveSource}
+              onTouchPill={handleTouchPill}
+            />
           ))}
         </motion.div>
       </motion.div>
@@ -379,9 +433,13 @@ export default function TechStack() {
             Tech Stack
           </p>
           {/* Task 1: heading letter reveal */}
-          <h2
+          <motion.h2
             className="font-display font-semibold text-white text-3xl md:text-5xl mb-4"
             style={{ perspective: '400px' }}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
           >
             <motion.span
               variants={LETTER_CONTAINER}
@@ -400,10 +458,16 @@ export default function TechStack() {
                 </motion.span>
               ))}
             </motion.span>
-          </h2>
-          <p className="font-sans text-text-secondary text-base leading-relaxed max-w-lg">
+          </motion.h2>
+          <motion.p
+            className="font-sans text-text-secondary text-base leading-relaxed max-w-lg"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             Production-tested technologies across every layer of the stack.
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* 2×2 category grid */}

@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
+import { useEffect, useState, useCallback } from 'react';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -40,11 +41,21 @@ const colVariants = {
   },
 };
 
+// ── Hooks ─────────────────────────────────────────────────────────────────────
+
+function useIsTouch() {
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => {
+    setIsTouch(navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
+  }, []);
+  return isTouch;
+}
+
 // ── Column label ──────────────────────────────────────────────────────────────
 
-function ColLabel({ children }: { children: React.ReactNode }) {
+function ColLabel({ children, index = 0 }: { children: React.ReactNode; index?: number }) {
   return (
-    <p
+    <motion.h3
       className="font-sans uppercase"
       style={{
         color: '#4A6B58',
@@ -52,15 +63,131 @@ function ColLabel({ children }: { children: React.ReactNode }) {
         letterSpacing: '0.12em',
         marginBottom: '16px',
       }}
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
     >
       {children}
-    </p>
+    </motion.h3>
+  );
+}
+
+// ── TouchNavLink — Task 1 (press 0.94→1) + Task 2 (beam sweep) ───────────────
+
+function TouchNavLink({
+  href,
+  color = '#4A6B58',
+  hoverWhite = true,
+  external,
+  children,
+}: {
+  href: string;
+  color?: string;
+  hoverWhite?: boolean;
+  external?: boolean;
+  children: React.ReactNode;
+}) {
+  const isTouch = useIsTouch();
+  const controls = useAnimation();
+  const beamControls = useAnimation();
+
+  const handleTouchStart = useCallback(() => {
+    if (!isTouch) return;
+    controls.set({ scale: 0.94 });
+    controls.start({ scale: 1, transition: { type: 'spring', stiffness: 400, damping: 20 } });
+    beamControls.set({ x: '-100%', opacity: 1 });
+    beamControls.start({ x: '100%', opacity: 0, transition: { duration: 0.4, ease: 'easeOut' } });
+  }, [isTouch, controls, beamControls]);
+
+  return (
+    <div className="relative overflow-hidden">
+      <motion.div
+        animate={beamControls}
+        className="absolute inset-y-0 left-0 w-full pointer-events-none"
+        style={{ background: 'rgba(26,138,90,0.15)' }}
+      />
+      <motion.a
+        href={href}
+        target={external ? '_blank' : undefined}
+        rel={external ? 'noopener noreferrer' : undefined}
+        className={`font-sans transition-colors duration-200 break-all relative z-10${hoverWhite ? ' hover:text-white' : ''}`}
+        style={{ color, fontSize: '14px' }}
+        animate={controls}
+        whileHover={{ x: 4 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+        onTouchStart={isTouch ? handleTouchStart : undefined}
+      >
+        {children}
+      </motion.a>
+    </div>
+  );
+}
+
+// ── TouchSocialLink — Task 2 (beam sweep) + Task 3 (scale 1→1.2→1, color flash) ─
+
+function TouchSocialLink({ label, href }: { label: string; href: string }) {
+  const isTouch = useIsTouch();
+  const controls = useAnimation();
+  const beamControls = useAnimation();
+
+  const handleTouchStart = useCallback(() => {
+    if (!isTouch) return;
+    controls.start({
+      scale: [1, 1.2, 1],
+      color: ['#4A6B58', '#1A8A5A', '#4A6B58'],
+      transition: { duration: 0.3, ease: 'easeInOut' },
+    });
+    beamControls.set({ x: '-100%', opacity: 1 });
+    beamControls.start({ x: '100%', opacity: 0, transition: { duration: 0.4, ease: 'easeOut' } });
+  }, [isTouch, controls, beamControls]);
+
+  return (
+    <div className="relative overflow-hidden">
+      <motion.div
+        animate={beamControls}
+        className="absolute inset-y-0 left-0 w-full pointer-events-none"
+        style={{ background: 'rgba(26,138,90,0.15)' }}
+      />
+      <motion.a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-sans transition-colors duration-200 hover:text-white break-all relative z-10"
+        style={{ color: '#4A6B58', fontSize: '14px' }}
+        animate={controls}
+        whileHover={{ x: 4 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+        onTouchStart={isTouch ? handleTouchStart : undefined}
+      >
+        {label}
+      </motion.a>
+    </div>
   );
 }
 
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function Footer() {
+  const isTouch = useIsTouch();
+  const logoControls = useAnimation();
+  const hexControls = useAnimation();
+
+  const handleLogoTouch = useCallback(() => {
+    if (!isTouch) return;
+    logoControls.set({ scale: 1.05, filter: 'drop-shadow(0 0 8px rgba(26,138,90,0.4))' });
+    logoControls.start({
+      scale: 1,
+      filter: 'drop-shadow(0 0 0px rgba(26,138,90,0))',
+      transition: { type: 'spring', stiffness: 300, damping: 18 },
+    });
+    hexControls.set({ strokeDashoffset: 400 });
+    hexControls.start({
+      strokeDashoffset: 0,
+      transition: { duration: 0.6, ease: 'easeInOut' },
+    });
+  }, [isTouch, logoControls, hexControls]);
+
   return (
     <footer
       style={{
@@ -86,8 +213,10 @@ export default function Footer() {
               href="/"
               className="flex items-center gap-2.5 w-fit"
               aria-label="Veridis Dev — home"
+              animate={logoControls}
               whileHover={{ x: 4 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+              onTouchStart={isTouch ? handleLogoTouch : undefined}
             >
               <svg
                 width="28"
@@ -103,6 +232,7 @@ export default function Footer() {
                   strokeWidth="3"
                   strokeDasharray="400"
                   initial={{ strokeDashoffset: 400, opacity: 0 }}
+                  animate={hexControls}
                   whileInView={{ strokeDashoffset: 0, opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.5, ease: [0.25, 0.1, 0.25, 1], delay: 0.3 }}
@@ -131,72 +261,70 @@ export default function Footer() {
               Software you can trust.
             </p>
 
-            <motion.p
+            <motion.div
               className="font-sans mt-auto"
               style={{ color: '#4A6B58', fontSize: '12px', marginTop: '32px' }}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1], delay: 0.8 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true, margin: '-20px' }}
+              transition={{ duration: 0.5, delay: 0.3 }}
             >
               © 2026 Veridis Dev. All rights reserved.
-            </motion.p>
+            </motion.div>
           </motion.div>
 
           {/* ── Center: navigation ───────────────────────────────────── */}
           <motion.div variants={colVariants}>
-            <ColLabel>Navigation</ColLabel>
+            <ColLabel index={0}>Navigation</ColLabel>
             <ul className="flex flex-col gap-3">
-              {NAV_LINKS.map(({ label, href }) => (
-                <li key={href}>
-                  <motion.a
-                    href={href}
-                    className="font-sans transition-colors duration-200 hover:text-white break-all"
-                    style={{ color: '#4A6B58', fontSize: '14px' }}
-                    whileHover={{ x: 4 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  >
-                    {label}
-                  </motion.a>
-                </li>
+              {NAV_LINKS.map(({ label, href }, index) => (
+                <motion.li
+                  key={href}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: '-30px' }}
+                  transition={{ duration: 0.3, delay: index * 0.07 }}
+                >
+                  <TouchNavLink href={href}>{label}</TouchNavLink>
+                </motion.li>
               ))}
             </ul>
           </motion.div>
 
           {/* ── Right: contact ───────────────────────────────────────── */}
           <motion.div variants={colVariants}>
-            <ColLabel>Contact</ColLabel>
+            <ColLabel index={1}>Contact</ColLabel>
             <ul className="flex flex-col gap-3">
-              <li>
-                <motion.a
-                  href="mailto:team@veridisdev.com"
-                  className="font-sans footer-email-link transition-colors duration-200"
-                  style={{ color: '#1A8A5A', fontSize: '14px' }}
-                  whileHover={{ x: 4 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                >
+              <motion.li
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-30px' }}
+                transition={{ duration: 0.3, delay: 0 * 0.07 }}
+              >
+                <TouchNavLink href="mailto:team@veridisdev.com" color="#1A8A5A" hoverWhite={false}>
                   team@veridisdev.com
-                </motion.a>
-              </li>
-              <li>
+                </TouchNavLink>
+              </motion.li>
+              <motion.li
+                initial={{ opacity: 0, x: -10 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-30px' }}
+                transition={{ duration: 0.3, delay: 1 * 0.07 }}
+              >
                 <span className="font-sans" style={{ color: '#4A6B58', fontSize: '14px' }}>
                   Medellín, Colombia
                 </span>
-              </li>
-              {EXTERNAL_LINKS.map(({ label, href }) => (
-                <li key={href}>
-                  <motion.a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-sans transition-colors duration-200 hover:text-white break-all"
-                    style={{ color: '#4A6B58', fontSize: '14px' }}
-                    whileHover={{ x: 4 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                  >
-                    {label}
-                  </motion.a>
-                </li>
+              </motion.li>
+              {EXTERNAL_LINKS.map(({ label, href }, index) => (
+                <motion.li
+                  key={href}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: '-30px' }}
+                  transition={{ duration: 0.3, delay: (index + 2) * 0.07 }}
+                >
+                  <TouchSocialLink label={label} href={href} />
+                </motion.li>
               ))}
             </ul>
           </motion.div>
