@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import {
   motion,
   useAnimation,
@@ -9,6 +9,16 @@ import {
   useTransform,
   useScroll,
 } from 'framer-motion';
+
+// ── useIsTouch ─────────────────────────────────────────────────────────────────
+
+function useIsTouch() {
+  const [isTouch, setIsTouch] = useState(false);
+  useEffect(() => {
+    setIsTouch(navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
+  }, []);
+  return isTouch;
+}
 
 // ── Variants ──────────────────────────────────────────────────────────────────
 
@@ -80,6 +90,51 @@ function CountUp({ end, suffix = '', prefix = '', duration = 1.5 }: CountUpProps
   );
 }
 
+// ── StatItem ──────────────────────────────────────────────────────────────────
+
+interface StatItemProps {
+  end: number;
+  suffix: string;
+  label: string;
+  duration: number;
+}
+
+function StatItem({ end, suffix, label, duration }: StatItemProps) {
+  const isTouch = useIsTouch();
+  const scaleControls = useAnimation();
+  const colorControls = useAnimation();
+
+  const handleTouchStart = useCallback(async () => {
+    if (!isTouch) return;
+    await Promise.all([
+      scaleControls.start({ scale: 1.15, transition: { duration: 0.15, ease: 'easeOut' } }),
+      colorControls.start({ color: '#1A8A5A', transition: { duration: 0.15, ease: 'easeOut' } }),
+    ]);
+    scaleControls.start({ scale: 1, transition: { type: 'spring', stiffness: 400, damping: 20 } });
+    colorControls.start({ color: '#ffffff', transition: { type: 'spring', stiffness: 400, damping: 20 } });
+  }, [isTouch, scaleControls, colorControls]);
+
+  return (
+    <motion.div animate={scaleControls} onTouchStart={handleTouchStart}>
+      <motion.p
+        className="font-display font-semibold text-2xl leading-none mb-1"
+        animate={colorControls}
+        style={{ color: '#ffffff' }}
+      >
+        <CountUp end={end} suffix={suffix} duration={duration} />
+      </motion.p>
+      <motion.span
+        className="font-sans text-text-secondary text-sm leading-snug"
+        style={{ display: 'block' }}
+        whileTap={{ color: '#1A8A5A', scale: 1.05 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+      >
+        {label}
+      </motion.span>
+    </motion.div>
+  );
+}
+
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const STATS = [
@@ -95,6 +150,24 @@ export default function About() {
   const hexagonY = useTransform(scrollYProgress, [0, 1], [0, -30]);
 
   const hexControls = useAnimation();
+  const isTouch = useIsTouch();
+  const githubControls = useAnimation();
+  const beamControls = useAnimation();
+  const bioControls = useAnimation();
+
+  const handleSectionTouch = useCallback(async () => {
+    if (!isTouch) return;
+    beamControls.set({ x: '-100%' });
+    await beamControls.start({ x: '100%', transition: { duration: 0.6, ease: 'easeOut' } });
+  }, [isTouch, beamControls]);
+
+  const handleBioTouch = useCallback(async () => {
+    if (!isTouch) return;
+    await bioControls.start({
+      opacity: [1, 0.7, 1],
+      transition: { duration: 0.4, ease: 'easeInOut', times: [0, 0.5, 1] },
+    });
+  }, [isTouch, bioControls]);
 
   useEffect(() => {
     hexControls.start({
@@ -117,18 +190,59 @@ export default function About() {
     });
   };
 
+  const handleHexTouchStart = useCallback(() => {
+    if (!isTouch) return;
+    hexControls.start({
+      rotate: [0, 360],
+      transition: { duration: 0.3, repeat: Infinity, ease: 'linear' },
+    });
+    setTimeout(() => {
+      hexControls.start({
+        rotate: [0, 360],
+        transition: { duration: 25, repeat: Infinity, ease: 'linear' },
+      });
+    }, 1000);
+  }, [isTouch, hexControls]);
+
+  const handleGithubTouch = useCallback(async () => {
+    if (!isTouch) return;
+    await githubControls.start({
+      scale: 0.92,
+      backgroundColor: 'rgba(26,138,90,0.2)',
+      transition: { duration: 0.1, ease: 'easeOut' },
+    });
+    githubControls.start({
+      scale: 1,
+      backgroundColor: 'rgba(26,138,90,0)',
+      transition: {
+        scale: { type: 'spring', stiffness: 400, damping: 18 },
+        backgroundColor: { duration: 0.4 },
+      },
+    });
+  }, [isTouch, githubControls]);
+
   const [githubHovered, setGithubHovered] = useState(false);
 
   return (
     <section
       ref={aboutRef}
       id="about"
-      className="relative py-24 md:py-32"
+      className="relative py-24 md:py-32 overflow-hidden"
+      onTouchStart={handleSectionTouch}
       style={{
         backgroundImage: 'radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px)',
         backgroundSize: '24px 24px',
       }}
     >
+      {/* Touch beam */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ x: '-100%' }}
+        animate={beamControls}
+        className="absolute inset-y-0 left-0 w-full pointer-events-none"
+        style={{ background: 'linear-gradient(90deg, transparent, rgba(26,138,90,0.12), transparent)', zIndex: 1 }}
+      />
+
       {/* Ambient glow — bottom-right */}
       <div
         aria-hidden="true"
@@ -149,12 +263,24 @@ export default function About() {
           viewport={{ once: true, margin: '-100px' }}
           className="mb-14 md:mb-16"
         >
-          <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
+          <motion.p
+            className="font-sans text-xs tracking-widest uppercase text-accent mb-3"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             About
-          </p>
-          <h2 className="font-display font-semibold text-white text-4xl md:text-5xl">
+          </motion.p>
+          <motion.h2
+            className="font-display font-semibold text-white text-4xl md:text-5xl"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          >
             A developer who ships.
-          </h2>
+          </motion.h2>
         </motion.div>
 
         {/* Two-column layout */}
@@ -171,7 +297,10 @@ export default function About() {
             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}
           >
             {/* Hexagon + V wrapper — positions glow, rotating hex, and V letter */}
-            <motion.div style={{ position: 'relative', width: '200px', height: '200px', y: hexagonY }}>
+            <motion.div
+              style={{ position: 'relative', width: '200px', height: '200px', y: hexagonY }}
+              onTouchStart={handleHexTouchStart}
+            >
               {/* Ambient glow */}
               <div
                 aria-hidden="true"
@@ -239,11 +368,15 @@ export default function About() {
             viewport={{ once: true, margin: '-80px' }}
             className="flex flex-col gap-5"
           >
-            <p className="font-sans text-text-secondary text-base leading-relaxed">
+            <motion.p
+              className="font-sans text-text-secondary text-base leading-relaxed"
+              animate={bioControls}
+              onTouchStart={handleBioTouch}
+            >
               I&apos;m Diego Correa, a full stack developer based in Medellín, Colombia.
               I founded Veridis Dev to build software the right way — tested, documented
               and production-ready from day one.
-            </p>
+            </motion.p>
             <p className="font-sans text-text-secondary text-base leading-relaxed">
               I work across the entire stack — from React and Next.js frontends to FastAPI
               and Node.js backends, PostgreSQL databases and cloud deployments on Vercel
@@ -257,25 +390,28 @@ export default function About() {
 
             {/* Stats */}
             <div className="flex flex-wrap gap-6 md:gap-10 mt-3">
-              {STATS.map(({ end, suffix, label, duration }) => (
-                <div key={suffix}>
-                  <p className="font-display font-semibold text-white text-2xl leading-none mb-1">
-                    <CountUp end={end} suffix={suffix} duration={duration} />
-                  </p>
-                  <p className="font-sans text-text-secondary text-sm leading-snug">
-                    {label}
-                  </p>
-                </div>
+              {STATS.map(({ end, suffix, label, duration }, index) => (
+                <motion.div
+                  key={suffix}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                >
+                  <StatItem end={end} suffix={suffix} label={label} duration={duration} />
+                </motion.div>
               ))}
             </div>
 
             {/* GitHub CTA */}
-            <a
+            <motion.a
               href="https://github.com/dacq7"
               target="_blank"
               rel="noopener noreferrer"
               className="font-sans text-sm font-medium w-fit transition-colors duration-200 hover:text-white"
-              style={{ color: '#1A8A5A', position: 'relative', display: 'inline-block' }}
+              style={{ color: '#1A8A5A', position: 'relative', display: 'inline-block', backgroundColor: 'rgba(26,138,90,0)' }}
+              animate={githubControls}
+              onTouchStart={handleGithubTouch}
               onMouseEnter={() => setGithubHovered(true)}
               onMouseLeave={() => setGithubHovered(false)}
             >
@@ -301,7 +437,7 @@ export default function About() {
                   display: 'block',
                 }}
               />
-            </a>
+            </motion.a>
           </motion.div>
 
         </div>
