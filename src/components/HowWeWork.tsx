@@ -184,7 +184,13 @@ function StepItem({ step, index, total }: { step: (typeof steps)[0]; index: numb
   };
 
   return (
-    <div className="relative flex flex-col">
+    <motion.div
+      className="relative flex flex-col"
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.4, delay: index * 0.12 }}
+    >
       {/* Connector line — desktop only, between cards */}
       {!isLast && (
         <div
@@ -356,7 +362,7 @@ function StepItem({ step, index, total }: { step: (typeof steps)[0]; index: numb
           {step.tag}
         </motion.span>
       </motion.div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -396,18 +402,26 @@ export default function HowWeWork() {
           >
             The Process
           </p>
-          <h2
+          <motion.h2
             className="text-4xl md:text-5xl font-semibold text-white mb-4"
             style={{ fontFamily: 'Syne, sans-serif' }}
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
           >
             Simple. Transparent. Fast.
-          </h2>
-          <p
+          </motion.h2>
+          <motion.p
             className="text-base max-w-xl"
             style={{ fontFamily: 'DM Sans, sans-serif', color: '#4A6B58', lineHeight: 1.6 }}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
             No surprises, no endless back-and-forth. Here&apos;s exactly how we work.
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* Steps grid */}
