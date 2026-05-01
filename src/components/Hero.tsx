@@ -472,7 +472,7 @@ export default function Hero() {
       </svg>
 
       {/* ── Main content ─────────────────────────────────────────────── */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-16 pt-20 pb-10">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-8 lg:px-16 pt-20 pb-10 max-sm:pt-8 max-sm:pb-8">
         <div
           className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center"
           style={{ perspective: '1000px' }}
@@ -480,6 +480,67 @@ export default function Hero() {
 
           {/* ── Left column: headline + subtext + buttons ────────────── */}
           <motion.div initial="hidden" animate="show">
+
+            {/* ── Mobile terminal — visible ONLY below 640px ───────────── */}
+            <div
+              className="block sm:hidden mb-5 relative overflow-hidden rounded-lg px-4 py-3 w-full max-w-sm"
+              style={{
+                background: 'rgba(26, 138, 90, 0.06)',
+                border: '1px solid rgba(26, 138, 90, 0.2)',
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 0.3 }}
+                className="font-mono text-xs"
+                style={{ color: 'rgba(26, 138, 90, 0.85)' }}
+              >
+                {'> building veridisdev.com'}
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 1.2 }}
+                className="font-mono text-xs"
+                style={{ color: 'rgba(26, 138, 90, 0.85)' }}
+              >
+                {'> stack: Next.js · TypeScript · Tailwind'}
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut', delay: 2.1 }}
+                className="font-mono text-xs"
+                style={{ color: 'rgba(26, 138, 90, 0.85)' }}
+              >
+                {'> status: live '}
+                <span style={{ color: '#1A8A5A' }}>✓</span>
+                <motion.span
+                  className="font-mono"
+                  style={{ color: '#1A8A5A' }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [1, 0, 1] }}
+                  transition={{ duration: 0.8, repeat: Infinity, delay: 2.5 }}
+                >
+                  _
+                </motion.span>
+              </motion.div>
+              {/* Scan line — Task 2 */}
+              <motion.div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  right: 0,
+                  height: '1px',
+                  background: 'linear-gradient(90deg, transparent, rgba(26,138,90,0.4), transparent)',
+                  pointerEvents: 'none',
+                }}
+                animate={{ top: ['-1px', '100%'] }}
+                transition={{ duration: 2, ease: 'easeInOut', repeat: Infinity, delay: 2.5 }}
+              />
+            </div>
 
             {/* Badge — mobile only (Phase 4: drops from above) */}
             <motion.div variants={BADGE} className="md:hidden mb-6">
