@@ -109,7 +109,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   }
 
   const { error } = await resend.emails.send({
-    from: 'onboarding@resend.dev',
+    from: 'Veridis Dev <team@veridisdev.com>',
     to: 'team@veridisdev.com',
     subject: `New project inquiry — ${projectType} from ${country}`,
     html: buildHtml(body),
