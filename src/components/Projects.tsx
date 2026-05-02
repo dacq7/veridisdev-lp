@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 const useIsTouch = () => {
   const [isTouch, setIsTouch] = useState(false);
@@ -293,7 +294,7 @@ function StackBadge({ tech }: { tech: string }) {
 
 // ── Credentials block ─────────────────────────────────────────────────────────
 
-function CredentialsBlock({ credentials }: { credentials: Credential[] }) {
+function CredentialsBlock({ credentials, demoLabel }: { credentials: Credential[]; demoLabel: string }) {
   return (
     <div
       style={{
@@ -306,7 +307,7 @@ function CredentialsBlock({ credentials }: { credentials: Credential[] }) {
         className="font-sans uppercase tracking-wide mb-1.5"
         style={{ color: '#4A6B58', fontSize: '11px' }}
       >
-        Demo credentials
+        {demoLabel}
       </p>
       {credentials.map(({ role, user, pass }) => (
         <p key={role} className="flex flex-wrap gap-x-2 leading-relaxed" style={{ fontSize: '11px' }}>
@@ -439,6 +440,19 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   const [beaming, setBeaming] = useState(false);
   const [scanning, setScanning] = useState(false);
   const isEven = index % 2 === 0;
+  const t = useTranslations('projects');
+  const tProjectItems = t.raw('items') as Array<{
+    category: string;
+    title: string;
+    description: string;
+    credentials: Array<{ role: string }>;
+    features: string[];
+    metrics: Array<{ label: string }>;
+  }>;
+  const tItem = tProjectItems[index];
+  const tFeatures = tItem.features;
+  const tMetrics = project.metrics.map((m, mi) => ({ ...m, label: tItem.metrics[mi].label }));
+  const tCredentials = project.credentials.map((c, ci) => ({ ...c, role: tItem.credentials[ci].role }));
 
   const cardRef = useRef<HTMLElement>(null);
   const inView = useInView(cardRef, { once: false });
@@ -526,7 +540,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           )}
         </TerminalFrame>
 
-        <FeatureBar features={project.features} />
+        <FeatureBar features={tFeatures} />
 
         {/* Green tint on hover */}
         <div
@@ -541,21 +555,21 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
       {/* Content side — 45% width on desktop */}
       <div className="flex flex-col flex-1 md:w-[45%]">
-        <MetricsRow metrics={project.metrics} />
+        <MetricsRow metrics={tMetrics} />
         <div className="flex flex-col flex-1 p-5 md:p-12">
         {/* Category label */}
         <p className="font-sans text-xs tracking-widest uppercase text-accent mb-2">
-          {project.category}
+          {tItem.category}
         </p>
 
         {/* Title */}
         <h3 className="font-display font-semibold text-white text-xl leading-snug mb-3">
-          {project.title}
+          {tItem.title}
         </h3>
 
         {/* Description */}
         <p className="font-sans text-text-secondary text-sm leading-relaxed mb-5">
-          {project.description}
+          {tItem.description}
         </p>
 
         {/* Stack badges */}
@@ -591,7 +605,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                 : { duration: 0.3 }
             }
           >
-            Live Demo{' '}
+            {t('liveDemo')}{' '}
             <motion.span
               whileTap={{ x: 4 }}
               transition={{ type: 'spring', stiffness: 500, damping: 20 }}
@@ -605,12 +619,12 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             whileTap={{ scale: 0.95, color: '#ffffff' }}
             transition={{ duration: 0.15 }}
           >
-            View Code
+            {t('viewCode')}
           </motion.a>
         </div>
 
         {/* Demo credentials */}
-        <CredentialsBlock credentials={project.credentials} />
+        <CredentialsBlock credentials={tCredentials} demoLabel={t('demoCredentials')} />
         </div>
       </div>
     </motion.article>
@@ -620,6 +634,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function Projects() {
+  const t = useTranslations('projects');
   return (
     <section
       id="projects"
@@ -649,14 +664,14 @@ export default function Projects() {
           className="mb-14 md:mb-16 max-sm:overflow-x-hidden"
         >
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
-            Work in production
+            {t('label')}
           </p>
           {/* Task 1: letter reveal on "Projects" */}
           <h2
             className="font-display font-semibold text-white text-4xl md:text-5xl mb-4 break-words"
             style={{ perspective: '400px' }}
           >
-            {'Projects'.split('').map((letter, i) => (
+            {t('heading').split('').map((letter, i) => (
               <motion.span
                 key={i}
                 initial={{ opacity: 0, y: 20, rotateX: -90 }}
@@ -674,7 +689,7 @@ export default function Projects() {
             ))}
           </h2>
           <p className="font-sans text-text-secondary text-base leading-relaxed max-w-lg">
-            Real software, deployed and used by real businesses.
+            {t('subtitle')}
           </p>
         </motion.div>
 
@@ -694,7 +709,7 @@ export default function Projects() {
         {/* CTA */}
         <div className="flex flex-col items-center gap-4 mt-16 md:mt-20">
           <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-            Could your project be next?
+            {t('cta.question')}
           </p>
           <motion.button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
@@ -704,7 +719,7 @@ export default function Projects() {
             className="px-6 py-3 rounded-full text-white font-sans text-sm font-medium"
             style={{ background: '#1A8A5A' }}
           >
-            Start a project →
+            {t('cta.button')}
           </motion.button>
         </div>
 

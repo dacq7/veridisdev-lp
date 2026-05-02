@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 const useIsTouch = () => {
   const [isTouch, setIsTouch] = useState(false);
@@ -101,6 +102,9 @@ const avatarVariants = {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function Testimonials() {
+  const t = useTranslations('testimonials');
+  const headingWords = t.raw('headingWords') as string[];
+  const tItems = t.raw('items') as Array<{ quote: string; name: string; role: string; badge: string }>;
   return (
     <section
       style={{
@@ -124,13 +128,13 @@ export default function Testimonials() {
             style={{ fontFamily: 'DM Sans, sans-serif', color: '#1A8A5A' }}
             className="text-xs uppercase tracking-widest mb-4"
           >
-            WHAT CLIENTS SAY
+            {t('label')}
           </p>
           <h2
             style={{ fontFamily: 'Syne, sans-serif', color: '#FFFFFF' }}
             className="text-4xl md:text-5xl font-bold break-words"
           >
-            {['Trusted', 'by', 'real', 'businesses.'].map((word, index) => (
+            {headingWords.map((word, index) => (
               <motion.span
                 key={word}
                 initial={{ opacity: 0, y: 20 }}
@@ -153,15 +157,24 @@ export default function Testimonials() {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          {TESTIMONIALS.map((t) => (
-            <TestimonialCard key={t.name} testimonial={t} />
+          {TESTIMONIALS.map((item, i) => (
+            <TestimonialCard
+              key={item.name}
+              testimonial={{
+                ...item,
+                quote: tItems[i].quote,
+                name: tItems[i].name,
+                role: tItems[i].role,
+                badge: tItems[i].badge,
+              }}
+            />
           ))}
         </motion.div>
 
         {/* CTA */}
         <div className="flex flex-col items-center gap-4 mt-16 md:mt-20">
           <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-            Join the companies that trust Veridis
+            {t('cta.question')}
           </p>
           <motion.button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
@@ -171,7 +184,7 @@ export default function Testimonials() {
             className="px-6 py-3 rounded-full text-white font-sans text-sm font-medium"
             style={{ background: '#1A8A5A' }}
           >
-            Work with us →
+            {t('cta.button')}
           </motion.button>
         </div>
       </div>

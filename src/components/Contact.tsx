@@ -479,70 +479,65 @@ function ContactInfoStrip() {
 function SuccessState() {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
       className="flex flex-col items-center text-center gap-6 py-16"
     >
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.1 }}
-        style={{
-          width: '72px',
-          height: '72px',
-          borderRadius: '50%',
-          background: 'rgba(26, 138, 90, 0.12)',
-          border: '1px solid rgba(26, 138, 90, 0.3)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <motion.svg
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#1A8A5A"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={{ strokeDashoffset: 100 }}
-          animate={{ strokeDashoffset: 0 }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
+      <div className="relative">
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: '-20px',
+            background: 'radial-gradient(circle, rgba(26,138,90,0.15), transparent 70%)',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+          }}
+        />
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+          style={{
+            width: '72px',
+            height: '72px',
+            borderRadius: '50%',
+            border: '1px solid #1A8A5A',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+          }}
         >
-          <path d="M20 6L9 17l-5-5" strokeDasharray="100" strokeDashoffset="100" />
-        </motion.svg>
-      </motion.div>
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#1A8A5A"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <motion.path
+              d="M20 6L9 17l-5-5"
+              strokeDasharray="100"
+              initial={{ strokeDashoffset: 100 }}
+              animate={{ strokeDashoffset: 0 }}
+              transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' }}
+            />
+          </svg>
+        </motion.div>
+      </div>
 
       <div>
-        <p className="font-display font-semibold text-white mb-3" style={{ fontSize: '28px' }}>
-          {"Message sent!".split(' ').map((word, index) => (
-            <motion.span
-              key={index}
-              initial={{ opacity: 0, filter: 'blur(8px)', y: 10 }}
-              animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              style={{ display: 'inline-block' }}
-            >
-              {word}{' '}
-            </motion.span>
-          ))}
+        <p className="font-display font-bold text-3xl text-white mb-3">
+          Message sent!
         </p>
-        <p
-          className="font-sans mb-4"
-          style={{ color: '#4A6B58', fontSize: '15px', lineHeight: '1.6' }}
-        >
-          We&apos;ll review your project and get back to you within 24 hours.
+        <p className="font-sans text-sm text-white opacity-70">
+          We&apos;ll get back to you within 24 hours.
         </p>
-        <a
-          href="#projects"
-          className="font-sans transition-colors duration-200 hover:opacity-80"
-          style={{ color: '#1A8A5A', fontSize: '14px' }}
-        >
-          While you wait, check out our work →
-        </a>
       </div>
     </motion.div>
   );

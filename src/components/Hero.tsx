@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import MagneticButton from '@/components/MagneticButton';
 
 // ── Animation variants ────────────────────────────────────────────────────────
@@ -102,21 +103,6 @@ const STAT_ITEM = {
 
 type GlitchSeg = { glitch: string; glitchDelay: number };
 
-const TERMINAL_LINES: { segments: (string | GlitchSeg)[]; delay: number }[] = [
-  { segments: ['▲ Next.js 16 ready in ', { glitch: '797', glitchDelay: 1200 }, 'ms'], delay: 0.9 },
-  { segments: ['✓ TypeScript — zero errors'],                                          delay: 1.4 },
-  { segments: ['✓ ', { glitch: '110', glitchDelay: 1800 }, ' tests passing'],         delay: 1.9 },
-  { segments: ['✓ ', { glitch: '3',   glitchDelay: 2100 }, ' apps in production'],    delay: 2.4 },
-  { segments: ['→ veridisdev.com'],                                                    delay: 2.9 },
-];
-
-const STATS: { value: string; label: string }[] = [
-  { value: '3',               label: 'Apps in production' },
-  { value: '110+',            label: 'Tests passing' },
-  { value: 'React · FastAPI', label: 'Core stack' },
-  { value: 'Vercel · Railway', label: 'Deployed on' },
-];
-
 // ── GlitchNumber ─────────────────────────────────────────────────────────────
 
 function GlitchNumber({ finalValue, delay }: { finalValue: string; delay: number }) {
@@ -158,6 +144,7 @@ const BADGE_STYLE = {
 } as const;
 
 function BadgeInner() {
+  const t = useTranslations('hero');
   return (
     <div
       className="inline-flex items-center gap-2.5 rounded-full px-4 py-2.5 border"
@@ -172,7 +159,7 @@ function BadgeInner() {
         <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
       </span>
       <span className="font-sans text-xs font-medium text-white/75 whitespace-nowrap tracking-wide">
-        3 projects in production
+        {t('badge')}
       </span>
     </div>
   );
@@ -181,6 +168,15 @@ function BadgeInner() {
 // ── Terminal window ───────────────────────────────────────────────────────────
 
 function TerminalWindow() {
+  const t = useTranslations('hero');
+  const terminalLines: { segments: (string | GlitchSeg)[]; delay: number }[] = [
+    { segments: [t('terminal.line1pre'), { glitch: '797', glitchDelay: 1200 }, t('terminal.line1post')], delay: 0.9 },
+    { segments: [t('terminal.line2')],                                                                    delay: 1.4 },
+    { segments: [t('terminal.line3pre'), { glitch: '110', glitchDelay: 1800 }, t('terminal.line3post')], delay: 1.9 },
+    { segments: [t('terminal.line4pre'), { glitch: '3',   glitchDelay: 2100 }, t('terminal.line4post')], delay: 2.4 },
+    { segments: [t('terminal.line5')],                                                                    delay: 2.9 },
+  ];
+
   return (
     <div
       className="rounded-[12px] overflow-hidden"
@@ -255,7 +251,7 @@ function TerminalWindow() {
 
       {/* Terminal body */}
       <div className="px-4 py-4 space-y-1">
-        {TERMINAL_LINES.map(({ segments, delay }, i) => (
+        {terminalLines.map(({ segments, delay }, i) => (
           <div
             key={i}
             className="font-mono text-[12px] leading-relaxed"
@@ -271,7 +267,7 @@ function TerminalWindow() {
                 ? seg
                 : <GlitchNumber key={j} finalValue={seg.glitch} delay={seg.glitchDelay} />
             )}
-            {i === TERMINAL_LINES.length - 1 && (
+            {i === terminalLines.length - 1 && (
               <span
                 className="inline-block ml-0.5 font-mono"
                 style={{
@@ -294,6 +290,9 @@ function TerminalWindow() {
 // ── Stats grid ────────────────────────────────────────────────────────────────
 
 function StatsGrid() {
+  const t = useTranslations('hero');
+  const stats = t.raw('stats') as Array<{ value: string; label: string }>;
+
   return (
     <motion.div
       variants={STATS_CONTAINER}
@@ -301,7 +300,7 @@ function StatsGrid() {
       animate="show"
       className="grid grid-cols-2 gap-2.5"
     >
-      {STATS.map(({ value, label }) => (
+      {stats.map(({ value, label }) => (
         <motion.div
           key={label}
           variants={STAT_ITEM}
@@ -326,6 +325,7 @@ function StatsGrid() {
 // ── Hero ──────────────────────────────────────────────────────────────────────
 
 export default function Hero() {
+  const t = useTranslations('hero');
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -496,7 +496,7 @@ export default function Hero() {
                 className="font-mono text-xs"
                 style={{ color: 'rgba(26, 138, 90, 0.85)' }}
               >
-                {'> building veridisdev.com'}
+                {t('mobileTerminal.line1')}
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: -8 }}
@@ -505,7 +505,7 @@ export default function Hero() {
                 className="font-mono text-xs"
                 style={{ color: 'rgba(26, 138, 90, 0.85)' }}
               >
-                {'> stack: Next.js · TypeScript · Tailwind'}
+                {t('mobileTerminal.line2')}
               </motion.div>
               <motion.div
                 initial={{ opacity: 0, x: -8 }}
@@ -514,7 +514,7 @@ export default function Hero() {
                 className="font-mono text-xs"
                 style={{ color: 'rgba(26, 138, 90, 0.85)' }}
               >
-                {'> status: live '}
+                {t('mobileTerminal.line3')}{' '}
                 <span style={{ color: '#1A8A5A' }}>✓</span>
                 <motion.span
                   className="font-mono"
@@ -526,7 +526,7 @@ export default function Hero() {
                   _
                 </motion.span>
               </motion.div>
-              {/* Scan line — Task 2 */}
+              {/* Scan line */}
               <motion.div
                 aria-hidden="true"
                 style={{
@@ -560,20 +560,19 @@ export default function Hero() {
             >
               <span className="block text-white" style={{ fontSize: 'clamp(48px, 8vw, 110px)' }}>
                 <motion.span variants={WORD_REVEAL} style={{ display: 'inline-block' }}>
-                  Software
+                  {t('headline.line1')}
                 </motion.span>
               </span>
               <span className="block text-text-secondary" style={{ fontSize: 'clamp(48px, 8vw, 110px)' }}>
-                <motion.span variants={WORD_REVEAL} style={{ display: 'inline-block' }}>
-                  {'you '}
-                </motion.span>
-                <motion.span variants={WORD_REVEAL} style={{ display: 'inline-block' }}>
-                  can
-                </motion.span>
+                {t('headline.line2').split(' ').map((word, i, arr) => (
+                  <motion.span key={i} variants={WORD_REVEAL} style={{ display: 'inline-block' }}>
+                    {i < arr.length - 1 ? `${word} ` : word}
+                  </motion.span>
+                ))}
               </span>
               <span className="block text-accent" style={{ fontSize: 'clamp(48px, 8vw, 110px)' }}>
                 <motion.span variants={WORD_REVEAL} style={{ display: 'inline-block' }}>
-                  trust.
+                  {t('headline.line3')}
                 </motion.span>
               </span>
             </motion.h1>
@@ -589,7 +588,7 @@ export default function Hero() {
               variants={SUBHEADLINE}
               className="font-sans text-text-secondary text-base leading-relaxed max-w-[420px]"
             >
-              We build reliable web and mobile software for businesses — faster than traditional agencies, with enterprise-level quality.
+              {t('subheadline')}
             </motion.p>
 
             {/* CTA buttons — spring scale-in (Phase 4) */}
@@ -602,7 +601,7 @@ export default function Hero() {
                   href="#projects"
                   className="inline-flex items-center justify-center w-full md:w-auto border border-accent text-accent font-sans font-medium text-sm rounded-[6px] px-6 py-3 transition-all duration-200 hover:bg-accent hover:text-white"
                 >
-                  See our work
+                  {t('seeOurWork')}
                 </a>
               </MagneticButton>
               <MagneticButton>
@@ -610,7 +609,7 @@ export default function Hero() {
                   href="#contact"
                   className="inline-flex items-center justify-center w-full md:w-auto bg-accent text-white font-sans font-medium text-sm rounded-[6px] px-6 py-3 transition-all duration-200 hover:bg-primary"
                 >
-                  Get in touch
+                  {t('getInTouch')}
                 </a>
               </MagneticButton>
             </motion.div>
@@ -649,7 +648,7 @@ export default function Hero() {
         aria-label="Scroll down"
       >
         <span className="font-sans text-[10px] tracking-[0.2em] uppercase text-text-secondary/60 select-none">
-          scroll
+          {t('scroll')}
         </span>
         <motion.div
           animate={{ y: [0, 7, 0] }}

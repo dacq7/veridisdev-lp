@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Syne, DM_Sans } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import CustomCursor from "@/components/CustomCursor";
 import TouchRipple from "@/components/TouchRipple";
+import { NextIntlClientProvider } from "next-intl";
+import { setRequestLocale, getMessages } from "next-intl/server";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -46,14 +48,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const messages = await getMessages();
+
   return (
     <html
-      lang="es"
+      lang={locale}
       className={`${dmSans.variable} ${syne.variable}`}
     >
       <body className="bg-background text-white antialiased">
@@ -83,7 +91,9 @@ export default function RootLayout({
             <rect width="100%" height="100%" filter="url(#page-grain)" />
           </svg>
         </div>
-        {children}
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   );

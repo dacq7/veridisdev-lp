@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, useSpring } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 const useIsTouch = () => {
   const [isTouch, setIsTouch] = useState(false);
@@ -384,6 +385,8 @@ function ServiceCard({
 
 export default function Services() {
   const { currency, selectCurrency } = useCurrency();
+  const t = useTranslations('services');
+  const tItems = t.raw('items') as Array<{ name: string; description: string }>;
 
   return (
     <section
@@ -415,13 +418,13 @@ export default function Services() {
         >
           <div className="max-sm:overflow-x-hidden">
             <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
-              What we build
+              {t('label')}
             </p>
             <h2
               className="font-display font-semibold text-white text-4xl md:text-5xl mb-4 break-words"
               style={{ perspective: '400px' }}
             >
-              {'Services'.split('').map((letter, i) => (
+              {t('heading').split('').map((letter, i) => (
                 <motion.span
                   key={i}
                   initial={{ opacity: 0, y: 20, rotateX: -90 }}
@@ -435,7 +438,7 @@ export default function Services() {
               ))}
             </h2>
             <p className="font-sans text-text-secondary text-base leading-relaxed max-w-lg">
-              From landing pages to full SaaS platforms — we build what your business needs.
+              {t('subtitle')}
             </p>
           </div>
 
@@ -458,14 +461,14 @@ export default function Services() {
           viewport={{ once: true, margin: '-100px' }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         >
-          {SERVICES.map(({ id, icon, name, copPrice, usdPrice, description }) => (
+          {SERVICES.map(({ id, icon, copPrice, usdPrice }, i) => (
             <ServiceCard
               key={id}
               icon={icon}
-              name={name}
+              name={tItems[i].name}
               copPrice={copPrice}
               usdPrice={usdPrice}
-              description={description}
+              description={tItems[i].description}
               currency={currency}
             />
           ))}
@@ -474,7 +477,7 @@ export default function Services() {
         {/* CTA */}
         <div className="flex flex-col items-center gap-4 mt-16 md:mt-20">
           <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-            Ready to build something?
+            {t('cta.question')}
           </p>
           <motion.button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
@@ -484,7 +487,7 @@ export default function Services() {
             className="px-6 py-3 rounded-full text-white font-sans text-sm font-medium"
             style={{ background: '#1A8A5A' }}
           >
-            Let&apos;s talk →
+            {t('cta.button')}
           </motion.button>
         </div>
 

@@ -1,9 +1,11 @@
-// No 'use client' — pure CSS @keyframes animation
+'use client';
 
-const TRACK =
-  'REACT · NEXT.JS · FASTAPI · PYTHON · NODE.JS · POSTGRESQL · PRISMA · SUPABASE · TYPESCRIPT · VERCEL · RAILWAY · JEST · PYTEST · DOCKER · TAILWIND CSS · FRAMER MOTION · ';
+import { useTranslations } from 'next-intl';
 
 export default function Marquee() {
+  const t = useTranslations('marquee');
+  const track = t('track');
+
   return (
     <div
       aria-hidden="true"
@@ -40,8 +42,8 @@ export default function Marquee() {
           letterSpacing: '2px',
         }}
       >
-        <span>{TRACK}</span>
-        <span aria-hidden="true">{TRACK}</span>
+        <span>{track}</span>
+        <span aria-hidden="true">{track}</span>
       </div>
     </div>
   );

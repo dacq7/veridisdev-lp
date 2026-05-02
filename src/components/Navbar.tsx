@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import Image from 'next/image';
+import { useTranslations, useLocale } from 'next-intl';
+import { useRouter, usePathname } from '@/i18n/navigation';
 import MagneticButton from '@/components/MagneticButton';
 
 function useScrolled(threshold = 50): boolean {
@@ -27,10 +29,10 @@ function useIsTouch(): boolean {
 }
 
 const NAV_LINKS = [
-  { label: 'Services', href: '#services' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
+  { key: 'services', href: '#services' },
+  { key: 'projects', href: '#projects' },
+  { key: 'about',    href: '#about' },
+  { key: 'contact',  href: '#contact' },
 ] as const;
 
 function useActiveSection(): string {
@@ -53,7 +55,6 @@ function useActiveSection(): string {
   return active;
 }
 
-// Task 1: nav link with touch press physics + active section indicator
 function NavLink({
   href,
   label,
@@ -116,10 +117,13 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const isTouch = useIsTouch();
   const activeSection = useActiveSection();
+  const t = useTranslations('navbar');
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
-  // Task 2: hamburger bar animation controls (handle both open/close and touch scale)
   const bar1Controls = useAnimation();
   const bar2Controls = useAnimation();
   const bar3Controls = useAnimation();
@@ -151,7 +155,6 @@ export default function Navbar() {
     }, 100);
   }, [isTouch, bar1Controls, bar2Controls, bar3Controls]);
 
-  // Logo touch animation
   const logoControls = useAnimation();
   const handleLogoTouch = useCallback(() => {
     if (!isTouch) return;
@@ -162,7 +165,6 @@ export default function Navbar() {
     });
   }, [isTouch, logoControls]);
 
-  // Task 3: CTA touch animation controls
   const ctaScaleControls = useAnimation();
   const ctaFlashControls = useAnimation();
 
@@ -217,7 +219,7 @@ export default function Navbar() {
       >
         <nav
           role="navigation"
-          aria-label="Main navigation"
+          aria-label={t('mainNav')}
           className="w-full max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between"
         >
           {/* Logo */}
@@ -226,7 +228,7 @@ export default function Navbar() {
             animate={logoControls}
             onTouchStart={handleLogoTouch}
             className="flex items-center gap-2.5 shrink-0"
-            aria-label="Veridis Dev — home"
+            aria-label={t('logoLabel')}
           >
             <Image
               src="/logo/veridis-icon.svg"
@@ -244,15 +246,32 @@ export default function Navbar() {
 
           {/* Desktop nav links */}
           <ul className="hidden md:flex items-center gap-8" role="list">
-            {NAV_LINKS.map(({ label, href }) => (
+            {NAV_LINKS.map(({ key, href }) => (
               <li key={href}>
-                <NavLink href={href} label={label} isActive={activeSection === href.slice(1)} />
+                <NavLink href={href} label={t(key)} isActive={activeSection === href.slice(1)} />
               </li>
             ))}
           </ul>
 
-          {/* Desktop CTA — Task 3 */}
-          <div className="hidden md:block">
+          {/* Desktop CTA + language toggle */}
+          <div className="hidden md:flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => router.replace(pathname, { locale: 'en' })}
+                className="font-mono text-xs transition-colors duration-200"
+                style={{ color: locale === 'en' ? '#1A8A5A' : 'rgba(255,255,255,0.5)' }}
+              >
+                EN
+              </button>
+              <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>|</span>
+              <button
+                onClick={() => router.replace(pathname, { locale: 'es' })}
+                className="font-mono text-xs transition-colors duration-200"
+                style={{ color: locale === 'es' ? '#1A8A5A' : 'rgba(255,255,255,0.5)' }}
+              >
+                ES
+              </button>
+            </div>
             <MagneticButton>
               <motion.a
                 href="#contact"
@@ -266,19 +285,19 @@ export default function Navbar() {
                   className="absolute inset-0 rounded-[6px] pointer-events-none"
                   style={{ backgroundColor: 'rgba(26,138,90,0.3)' }}
                 />
-                Start a project
+                {t('cta')}
               </motion.a>
             </MagneticButton>
           </div>
 
-          {/* Mobile hamburger — Task 3 */}
+          {/* Mobile hamburger */}
           <motion.button
             className="md:hidden flex flex-col justify-center items-center w-11 h-11 gap-[5px] shrink-0 pr-4"
             onClick={() => setMenuOpen((v) => !v)}
             onTouchStart={handleHamburgerTouch}
             whileTap={{ scale: 0.85 }}
             transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-label={menuOpen ? t('closeMenu') : t('openMenu')}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
           >
@@ -305,7 +324,7 @@ export default function Navbar() {
             id="mobile-menu"
             role="dialog"
             aria-modal="true"
-            aria-label="Navigation menu"
+            aria-label={t('mobileMenu')}
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -313,14 +332,14 @@ export default function Navbar() {
             className="fixed inset-0 z-40 bg-background flex flex-col pt-24 px-6 pb-10 md:hidden"
           >
             <ul className="flex flex-col gap-2" role="list">
-              {NAV_LINKS.map(({ label, href }, i) => (
+              {NAV_LINKS.map(({ key, href }, i) => (
                 <motion.li
                   key={href}
                   initial={{ opacity: 0, x: -12 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.06, duration: 0.2 }}
                 >
-                  <NavLink href={href} label={label} onClick={closeMenu} mobile />
+                  <NavLink href={href} label={t(key)} onClick={closeMenu} mobile />
                 </motion.li>
               ))}
             </ul>
@@ -331,7 +350,6 @@ export default function Navbar() {
               transition={{ delay: 0.3, duration: 0.25 }}
               className="mt-10"
             >
-              {/* Mobile CTA — Task 3 */}
               <motion.a
                 href="#contact"
                 onClick={closeMenu}
@@ -345,7 +363,7 @@ export default function Navbar() {
                   className="absolute inset-0 rounded-[6px] pointer-events-none"
                   style={{ backgroundColor: 'rgba(26,138,90,0.3)' }}
                 />
-                Start a project
+                {t('cta')}
               </motion.a>
             </motion.div>
           </motion.div>

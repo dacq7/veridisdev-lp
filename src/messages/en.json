@@ -1,0 +1,381 @@
+{
+  "navbar": {
+    "services": "Services",
+    "projects": "Projects",
+    "about": "About",
+    "contact": "Contact",
+    "cta": "Start a project",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mainNav": "Main navigation",
+    "mobileMenu": "Navigation menu",
+    "logoLabel": "Veridis Dev — home"
+  },
+  "hero": {
+    "badge": "3 projects in production",
+    "headline": {
+      "line1": "Software",
+      "line2": "you can",
+      "line3": "trust."
+    },
+    "subheadline": "We build reliable web and mobile software for businesses — faster than traditional agencies, with enterprise-level quality.",
+    "seeOurWork": "See our work",
+    "getInTouch": "Get in touch",
+    "scroll": "scroll",
+    "stats": [
+      { "value": "3",               "label": "Apps in production" },
+      { "value": "110+",            "label": "Tests passing" },
+      { "value": "React · FastAPI", "label": "Core stack" },
+      { "value": "Vercel · Railway","label": "Deployed on" }
+    ],
+    "terminal": {
+      "line1pre": "▲ Next.js 16 ready in ",
+      "line1post": "ms",
+      "line2": "✓ TypeScript — zero errors",
+      "line3pre": "✓ ",
+      "line3post": " tests passing",
+      "line4pre": "✓ ",
+      "line4post": " apps in production",
+      "line5": "→ veridisdev.com"
+    },
+    "mobileTerminal": {
+      "line1": "> building veridisdev.com",
+      "line2": "> stack: Next.js · TypeScript · Tailwind",
+      "line3": "> status: live"
+    }
+  },
+  "marquee": {
+    "track": "REACT · NEXT.JS · FASTAPI · PYTHON · NODE.JS · POSTGRESQL · PRISMA · SUPABASE · TYPESCRIPT · VERCEL · RAILWAY · JEST · PYTEST · DOCKER · TAILWIND CSS · FRAMER MOTION · "
+  },
+  "services": {
+    "label": "What we build",
+    "heading": "Services",
+    "subtitle": "From landing pages to full SaaS platforms — we build what your business needs.",
+    "currencyToggleLabel": "Select currency",
+    "priceFrom": "From",
+    "cta": {
+      "question": "Ready to build something?",
+      "button": "Let's talk →"
+    },
+    "items": [
+      {
+        "id": "landing",
+        "name": "Professional Landing Page",
+        "description": "Professional web presence that converts visitors into clients."
+      },
+      {
+        "id": "booking",
+        "name": "Booking System",
+        "description": "Online booking system for clinics, salons and service businesses."
+      },
+      {
+        "id": "webapp",
+        "name": "Custom Web App",
+        "description": "Custom web application built around your business logic."
+      },
+      {
+        "id": "ecommerce",
+        "name": "E-commerce Store",
+        "description": "Full ecommerce store with payments, inventory and order management."
+      },
+      {
+        "id": "mobile",
+        "name": "Mobile App",
+        "description": "Native-quality mobile app for Android and iOS."
+      },
+      {
+        "id": "maintenance",
+        "name": "Monthly Maintenance",
+        "description": "Monthly support, updates and monitoring for your software."
+      }
+    ]
+  },
+  "projects": {
+    "label": "Work in production",
+    "heading": "Projects",
+    "subtitle": "Real software, deployed and used by real businesses.",
+    "liveDemo": "Live Demo",
+    "viewCode": "View Code",
+    "demoCredentials": "Demo credentials",
+    "cta": {
+      "question": "Could your project be next?",
+      "button": "Start a project →"
+    },
+    "items": [
+      {
+        "id": "budokan",
+        "category": "Karate Dojo Management",
+        "title": "Budokan SKIF",
+        "description": "Full-featured management platform for a real karate dojo. Student registration, attendance tracking, belt progression, payments and inventory.",
+        "credentials": [
+          { "role": "Sensei" },
+          { "role": "Karateca" }
+        ],
+        "features": [
+          "Belt progression & exam auth",
+          "Real-time attendance tracking",
+          "Automated fee & mora detection"
+        ],
+        "metrics": [
+          { "label": "active students" },
+          { "label": "user roles" },
+          { "label": "automated payments" }
+        ]
+      },
+      {
+        "id": "barberos",
+        "category": "Barbershop SaaS",
+        "title": "BarberOS",
+        "description": "Complete SaaS platform for barbershop owners. Online booking, barber schedules, commission tracking and inventory. Role-based access for owners and barbers.",
+        "credentials": [
+          { "role": "Admin" },
+          { "role": "Barber" }
+        ],
+        "features": [
+          "3-step public booking",
+          "40/60 commission split",
+          "Inventory with stock alerts"
+        ],
+        "metrics": [
+          { "label": "barbers" },
+          { "label": "daily appointments" },
+          { "label": "commission split" }
+        ]
+      },
+      {
+        "id": "trucking",
+        "category": "Insurance Pipeline",
+        "title": "Trucking CRM",
+        "description": "CRM for U.S. trucking insurance companies. 8-stage pipeline, role-based access, fleet vehicles, CDL drivers and revenue dashboard.",
+        "credentials": [
+          { "role": "Admin" },
+          { "role": "Vendor" }
+        ],
+        "features": [
+          "8-stage insurance pipeline",
+          "ADMIN/VENDOR role isolation",
+          "DOT/MC profiles & fleet registry"
+        ],
+        "metrics": [
+          { "label": "active clients" },
+          { "label": "pipeline stages" },
+          { "label": "Still in daily operation" }
+        ]
+      }
+    ]
+  },
+  "testimonials": {
+    "label": "WHAT CLIENTS SAY",
+    "headingWords": ["Trusted", "by", "real", "businesses."],
+    "cta": {
+      "question": "Join the companies that trust Veridis",
+      "button": "Work with us →"
+    },
+    "items": [
+      {
+        "quote": "The system Diego built transformed how we manage our dojo. Attendance, payments and student records — everything in one place. It just works.",
+        "name": "Andrés M.",
+        "role": "Student, Budokan SKIF",
+        "badge": "Budokan SKIF"
+      },
+      {
+        "quote": "We went from managing bookings on paper to a fully automated system in under two weeks. Our barbers love it and clients book online without calling us.",
+        "name": "Miguel T.",
+        "role": "Owner, The Barber's Post",
+        "badge": "BarberOS"
+      },
+      {
+        "quote": "Finally a CRM that understands trucking insurance. Pipeline tracking, client records, policy management — built exactly for how we operate.",
+        "name": "Sarah K.",
+        "role": "Operations Manager, Premier Trucking Ins.",
+        "badge": "Trucking CRM"
+      }
+    ]
+  },
+  "howWeWork": {
+    "label": "The Process",
+    "heading": "Simple. Transparent. Fast.",
+    "subtitle": "No surprises, no endless back-and-forth. Here's exactly how we work.",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Tell us your idea",
+        "description": "Schedule a free call or send us a message. We listen, ask the right questions and tell you honestly if we're the right fit.",
+        "tag": "Free · No commitment"
+      },
+      {
+        "number": "02",
+        "title": "We send a proposal",
+        "description": "Within 24 hours you get a clear proposal — scope, timeline, price. No vague estimates, no hidden fees.",
+        "tag": "Within 24 hours"
+      },
+      {
+        "number": "03",
+        "title": "We build and keep you posted",
+        "description": "We start with a deposit and split payments based on project milestones — so you only pay for what's delivered. You get weekly updates and a staging environment to review progress at any time.",
+        "tag": "Milestone-based payments"
+      },
+      {
+        "number": "04",
+        "title": "Delivery + support",
+        "description": "We deploy, hand over the code and stay available for 30 days post-launch at no extra cost. Your software, your ownership.",
+        "tag": "30 days free support"
+      }
+    ]
+  },
+  "whyVeridis": {
+    "label": "Why Veridis Dev",
+    "heading": "Built different.",
+    "subtitle": "Not a freelancer. Not a big agency. A focused software company that ships.",
+    "cta": {
+      "question": "Professional software, delivered in weeks.",
+      "button": "Get in touch →"
+    },
+    "items": [
+      {
+        "id": "ai",
+        "title": "AI-assisted development",
+        "description": "We use Cursor and Claude to build faster without cutting corners. What takes agencies weeks, we ship in days — with tests and documentation included."
+      },
+      {
+        "id": "production",
+        "title": "Production-ready from day one",
+        "description": "Every project is deployed, monitored and running with real users. No demos, no prototypes — working software that businesses rely on daily."
+      },
+      {
+        "id": "fullstack",
+        "title": "Full stack, end to end",
+        "description": "Frontend, backend, database, deployment and maintenance — one team, one point of contact, zero handoff problems."
+      },
+      {
+        "id": "tested",
+        "title": "Tested and documented",
+        "description": "110+ tests across our production projects. Every codebase ships with a test suite and documentation — not just working code, but maintainable code."
+      }
+    ]
+  },
+  "techStack": {
+    "label": "Tech Stack",
+    "heading": "Tools we trust.",
+    "subtitle": "Production-tested technologies across every layer of the stack.",
+    "groups": [
+      { "label": "Frontend" },
+      { "label": "Backend" },
+      { "label": "Database & Infra" },
+      { "label": "Deploy & Testing" }
+    ]
+  },
+  "about": {
+    "label": "About",
+    "heading": "A developer who ships.",
+    "bio1": "I'm Diego Correa, a full stack developer based in Medellín, Colombia. I founded Veridis Dev to build software the right way — tested, documented and production-ready from day one.",
+    "bio2": "I work across the entire stack — from React and Next.js frontends to FastAPI and Node.js backends, PostgreSQL databases and cloud deployments on Vercel and Railway. Every project I take on gets the same attention to quality, regardless of size.",
+    "bio3": "Currently studying Software Analysis and Development at SENA while building real products for real businesses. I believe the best way to learn is to ship.",
+    "founderName": "Diego Correa",
+    "founderTitle": "Founder · Veridis Dev",
+    "githubCta": "See my GitHub →",
+    "stats": [
+      { "suffix": " year",  "label": "building production software" },
+      { "suffix": " apps",  "label": "currently in production" }
+    ]
+  },
+  "contact": {
+    "label": "Start a project",
+    "heading": "Let's build something.",
+    "subtitle": "Tell us about your project. We respond within 24 hours.",
+    "steps": [
+      { "num": "01", "label": "Your info" },
+      { "num": "02", "label": "Project details" }
+    ],
+    "fields": {
+      "name": "Full name",
+      "email": "Email",
+      "country": "Country / City",
+      "countryPlaceholder": "e.g. Medellín, Colombia or Austin, TX",
+      "projectType": "Project type",
+      "description": "Project description",
+      "descriptionPlaceholder": "What problem does it solve? Who will use it? Do you have an existing system we need to integrate with?",
+      "contactTime": "Preferred contact time",
+      "timeline": "Timeline",
+      "budget": "Budget range",
+      "source": "How did you find us?"
+    },
+    "options": {
+      "projectTypes": [
+        { "value": "",                    "label": "Select a project type" },
+        { "value": "Web Application",     "label": "Web Application" },
+        { "value": "Mobile App",          "label": "Mobile App" },
+        { "value": "Landing Page",        "label": "Landing Page" },
+        { "value": "E-commerce Store",    "label": "E-commerce Store" },
+        { "value": "CRM / Internal Tool", "label": "CRM / Internal Tool" },
+        { "value": "Not sure yet",        "label": "Not sure yet" }
+      ],
+      "contactTimes": [
+        { "value": "Morning (9am — 12pm)",   "label": "Morning (9am — 12pm)" },
+        { "value": "Afternoon (12pm — 5pm)", "label": "Afternoon (12pm — 5pm)" },
+        { "value": "Evening (5pm — 8pm)",    "label": "Evening (5pm — 8pm)" },
+        { "value": "Anytime",                "label": "Anytime" }
+      ],
+      "timelines": [
+        { "value": "",                    "label": "Select a timeline" },
+        { "value": "As soon as possible", "label": "As soon as possible" },
+        { "value": "1 — 3 months",        "label": "1 — 3 months" },
+        { "value": "3 — 6 months",        "label": "3 — 6 months" },
+        { "value": "Flexible",            "label": "Flexible" }
+      ],
+      "budgets": [
+        { "value": "",                    "label": "Select a budget range" },
+        { "value": "< $500 USD",          "label": "< $500 USD" },
+        { "value": "$500 — $1.500 USD",   "label": "$500 — $1.500 USD" },
+        { "value": "$1.500 — $5.000 USD", "label": "$1.500 — $5.000 USD" },
+        { "value": "$5.000+ USD",         "label": "$5.000+ USD" },
+        { "value": "Let's talk",          "label": "Let's talk" }
+      ],
+      "sources": [
+        { "value": "",          "label": "Select an option" },
+        { "value": "Google",   "label": "Google" },
+        { "value": "LinkedIn", "label": "LinkedIn" },
+        { "value": "GitHub",   "label": "GitHub" },
+        { "value": "Referral", "label": "Referral" },
+        { "value": "Other",    "label": "Other" }
+      ]
+    },
+    "buttons": {
+      "next": "Next →",
+      "back": "← Back",
+      "send": "Send message →",
+      "sending": "Sending…"
+    },
+    "errors": {
+      "nameRequired": "Please enter your full name.",
+      "emailRequired": "Please enter your email.",
+      "countryRequired": "Please enter your country or city.",
+      "projectTypeRequired": "Please select a project type.",
+      "descriptionRequired": "Please describe your project.",
+      "generic": "Something went wrong"
+    },
+    "success": {
+      "title": "Message sent!",
+      "subtitle": "We'll get back to you within 24 hours."
+    },
+    "info": {
+      "emailLabel": "Email",
+      "locationLabel": "Location",
+      "responseTimeLabel": "Response time",
+      "responseTime": "We respond within 24 hours",
+      "location": "Medellín, Colombia",
+      "copyEmail": "Copy email",
+      "copied": "Copied!",
+      "stripResponse": "We respond within 24 hours",
+      "stripLocation": "Medellín, Colombia 🇨🇴 · Working globally"
+    }
+  },
+  "footer": {
+    "tagline": "Software you can trust.",
+    "copyright": "© 2026 Veridis Dev. All rights reserved.",
+    "navLabel": "Navigation",
+    "contactLabel": "Contact",
+    "logoLabel": "Veridis Dev — home",
+    "location": "Medellín, Colombia"
+  }
+}
