@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, useSpring } from 'framer-motion';
 
 const useIsTouch = () => {
@@ -15,50 +15,10 @@ const useIsTouch = () => {
 
 type Currency = 'COP' | 'USD';
 
-type ExchangeRateResponse = {
-  result: string;
-  rates: { USD: number };
-};
-
-function useCurrencyRate() {
+function useCurrency() {
   const [currency, setCurrency] = useState<Currency>('COP');
-  const [rate, setRate] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const fetchedRef = useRef(false);
-
-  const fetchRate = useCallback(async () => {
-    if (fetchedRef.current) return;
-    fetchedRef.current = true;
-    setLoading(true);
-    try {
-      const res = await fetch('https://open.er-api.com/v6/latest/COP');
-      if (!res.ok) throw new Error('API error');
-      const data = (await res.json()) as ExchangeRateResponse;
-      if (data.result !== 'success') throw new Error('API result error');
-      setRate(data.rates.USD);
-    } catch {
-      setError(true);
-      setCurrency('COP');
-      fetchedRef.current = false;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchRate();
-  }, [fetchRate]);
-
-  const selectCurrency = useCallback(
-    (next: Currency) => {
-      setCurrency(next);
-      if (next === 'USD') fetchRate();
-    },
-    [fetchRate],
-  );
-
-  return { currency, rate, loading, error, selectCurrency };
+  const selectCurrency = useCallback((next: Currency) => setCurrency(next), []);
+  return { currency, selectCurrency };
 }
 
 // ── Price formatting ──────────────────────────────────────────────────────────
@@ -67,15 +27,9 @@ function formatCOPNumber(n: number): string {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
-function formatPrice(
-  usdPrice: number,
-  currency: Currency,
-  rate: number | null,
-  loading: boolean,
-): string {
+function formatPrice(copPrice: number, usdPrice: number, currency: Currency): string {
   if (currency === 'USD') return `From $${usdPrice.toLocaleString('en-US')} USD`;
-  if (loading || rate === null) return '···';
-  return `From $${formatCOPNumber(Math.round(usdPrice / rate))} COP`;
+  return `From $${formatCOPNumber(copPrice)} COP`;
 }
 
 // ── Icons — stroke-only SVG, 24×24 viewBox, hand-drawn style ────────────────
@@ -153,6 +107,7 @@ type ServiceDef = {
   id: string;
   icon: React.ReactNode;
   name: string;
+  copPrice: number;
   usdPrice: number;
   description: string;
 };
@@ -162,6 +117,7 @@ const SERVICES: ServiceDef[] = [
     id: 'landing',
     icon: <IconBrowser />,
     name: 'Professional Landing Page',
+    copPrice: 2500000,
     usdPrice: 600,
     description: 'Professional web presence that converts visitors into clients.',
   },
@@ -169,6 +125,7 @@ const SERVICES: ServiceDef[] = [
     id: 'booking',
     icon: <IconCalendar />,
     name: 'Booking System',
+    copPrice: 5000000,
     usdPrice: 1200,
     description: 'Online booking system for clinics, salons and service businesses.',
   },
@@ -176,6 +133,7 @@ const SERVICES: ServiceDef[] = [
     id: 'webapp',
     icon: <IconCode />,
     name: 'Custom Web App',
+    copPrice: 7000000,
     usdPrice: 1700,
     description: 'Custom web application built around your business logic.',
   },
@@ -183,6 +141,7 @@ const SERVICES: ServiceDef[] = [
     id: 'ecommerce',
     icon: <IconBag />,
     name: 'E-commerce Store',
+    copPrice: 8000000,
     usdPrice: 1900,
     description: 'Full ecommerce store with payments, inventory and order management.',
   },
@@ -190,6 +149,7 @@ const SERVICES: ServiceDef[] = [
     id: 'mobile',
     icon: <IconPhone />,
     name: 'Mobile App',
+    copPrice: 12000000,
     usdPrice: 2900,
     description: 'Native-quality mobile app for Android and iOS.',
   },
@@ -197,6 +157,7 @@ const SERVICES: ServiceDef[] = [
     id: 'maintenance',
     icon: <IconGear />,
     name: 'Monthly Maintenance',
+    copPrice: 800000,
     usdPrice: 200,
     description: 'Monthly support, updates and monitoring for your software.',
   },
@@ -238,11 +199,9 @@ const CARD_ITEM = {
 
 function CurrencyToggle({
   currency,
-  loading,
   selectCurrency,
 }: {
   currency: Currency;
-  loading: boolean;
   selectCurrency: (c: Currency) => void;
 }) {
   return (
@@ -255,24 +214,21 @@ function CurrencyToggle({
     >
       {(['COP', 'USD'] as const).map((c) => {
         const isActive = currency === c;
-        const isDisabled = loading && c === 'USD';
         return (
           <motion.button
             key={c}
             onClick={() => selectCurrency(c)}
-            disabled={isDisabled}
             aria-pressed={isActive}
             whileTap={{ scale: 0.92 }}
             transition={{ type: 'spring', stiffness: 500, damping: 25 }}
             className={[
-              'px-3 py-1.5 rounded-full text-xs font-medium font-sans transition-all duration-200 select-none',
+              'px-3 py-1.5 rounded-full text-xs font-medium font-sans transition-all duration-200 select-none cursor-pointer',
               isActive
                 ? 'bg-accent text-white'
                 : 'text-text-secondary hover:text-white',
-              isDisabled ? 'opacity-40 cursor-wait' : 'cursor-pointer',
             ].join(' ')}
           >
-            {c === 'USD' && loading ? '···' : c}
+            {c}
           </motion.button>
         );
       })}
@@ -285,16 +241,11 @@ function CurrencyToggle({
 function ServiceCard({
   icon,
   name,
+  copPrice,
   usdPrice,
   description,
   currency,
-  rate,
-  loading,
-}: Omit<ServiceDef, 'id'> & {
-  currency: Currency;
-  rate: number | null;
-  loading: boolean;
-}) {
+}: Omit<ServiceDef, 'id'> & { currency: Currency }) {
   const [hovered, setHovered] = useState(false);
   const [beaming, setBeaming] = useState(false);
   const isTouch = useIsTouch();
@@ -404,7 +355,7 @@ function ServiceCard({
             transition={{ type: 'spring', stiffness: 500, damping: 20 }}
             className="font-sans text-accent text-xs font-medium tracking-wide"
           >
-            {formatPrice(usdPrice, currency, rate, loading)}
+            {formatPrice(copPrice, usdPrice, currency)}
           </motion.p>
         </AnimatePresence>
       </div>
@@ -432,7 +383,7 @@ function ServiceCard({
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function Services() {
-  const { currency, rate, loading, error, selectCurrency } = useCurrencyRate();
+  const { currency, selectCurrency } = useCurrency();
 
   return (
     <section
@@ -488,21 +439,15 @@ export default function Services() {
             </p>
           </div>
 
-          {!error && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ type: 'spring', stiffness: 300, delay: 0.4 }}
-              className="w-fit"
-            >
-              <CurrencyToggle
-                currency={currency}
-                loading={loading}
-                selectCurrency={selectCurrency}
-              />
-            </motion.div>
-          )}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ type: 'spring', stiffness: 300, delay: 0.4 }}
+            className="w-fit"
+          >
+            <CurrencyToggle currency={currency} selectCurrency={selectCurrency} />
+          </motion.div>
         </motion.div>
 
         {/* Services grid */}
@@ -513,16 +458,15 @@ export default function Services() {
           viewport={{ once: true, margin: '-100px' }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         >
-          {SERVICES.map(({ id, icon, name, usdPrice, description }) => (
+          {SERVICES.map(({ id, icon, name, copPrice, usdPrice, description }) => (
             <ServiceCard
               key={id}
               icon={icon}
               name={name}
+              copPrice={copPrice}
               usdPrice={usdPrice}
               description={description}
               currency={currency}
-              rate={rate}
-              loading={loading}
             />
           ))}
         </motion.div>
