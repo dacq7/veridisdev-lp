@@ -46,6 +46,10 @@ function useCurrencyRate() {
     }
   }, []);
 
+  useEffect(() => {
+    fetchRate();
+  }, [fetchRate]);
+
   const selectCurrency = useCallback(
     (next: Currency) => {
       setCurrency(next);
@@ -64,14 +68,14 @@ function formatCOPNumber(n: number): string {
 }
 
 function formatPrice(
-  copBase: number,
+  usdPrice: number,
   currency: Currency,
   rate: number | null,
   loading: boolean,
 ): string {
-  if (currency === 'COP') return `From $${formatCOPNumber(copBase)} COP`;
+  if (currency === 'USD') return `From $${usdPrice.toLocaleString('en-US')} USD`;
   if (loading || rate === null) return '···';
-  return `From $${Math.round(copBase * rate)} USD`;
+  return `From $${formatCOPNumber(Math.round(usdPrice / rate))} COP`;
 }
 
 // ── Icons — stroke-only SVG, 24×24 viewBox, hand-drawn style ────────────────
@@ -149,7 +153,7 @@ type ServiceDef = {
   id: string;
   icon: React.ReactNode;
   name: string;
-  copPrice: number;
+  usdPrice: number;
   description: string;
 };
 
@@ -158,42 +162,42 @@ const SERVICES: ServiceDef[] = [
     id: 'landing',
     icon: <IconBrowser />,
     name: 'Professional Landing Page',
-    copPrice: 600000,
+    usdPrice: 600,
     description: 'Professional web presence that converts visitors into clients.',
   },
   {
     id: 'booking',
     icon: <IconCalendar />,
     name: 'Booking System',
-    copPrice: 1800000,
+    usdPrice: 1200,
     description: 'Online booking system for clinics, salons and service businesses.',
   },
   {
     id: 'webapp',
     icon: <IconCode />,
     name: 'Custom Web App',
-    copPrice: 2500000,
+    usdPrice: 1700,
     description: 'Custom web application built around your business logic.',
   },
   {
     id: 'ecommerce',
     icon: <IconBag />,
     name: 'E-commerce Store',
-    copPrice: 3500000,
+    usdPrice: 1900,
     description: 'Full ecommerce store with payments, inventory and order management.',
   },
   {
     id: 'mobile',
     icon: <IconPhone />,
     name: 'Mobile App',
-    copPrice: 4000000,
+    usdPrice: 2900,
     description: 'Native-quality mobile app for Android and iOS.',
   },
   {
     id: 'maintenance',
     icon: <IconGear />,
     name: 'Monthly Maintenance',
-    copPrice: 200000,
+    usdPrice: 200,
     description: 'Monthly support, updates and monitoring for your software.',
   },
 ];
@@ -281,7 +285,7 @@ function CurrencyToggle({
 function ServiceCard({
   icon,
   name,
-  copPrice,
+  usdPrice,
   description,
   currency,
   rate,
@@ -393,14 +397,14 @@ function ServiceCard({
       <div className="mb-3 h-4 flex items-center">
         <AnimatePresence mode="wait">
           <motion.p
-            key={`${currency}-${copPrice}`}
+            key={`${currency}-${usdPrice}`}
             initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.85, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 500, damping: 20 }}
             className="font-sans text-accent text-xs font-medium tracking-wide"
           >
-            {formatPrice(copPrice, currency, rate, loading)}
+            {formatPrice(usdPrice, currency, rate, loading)}
           </motion.p>
         </AnimatePresence>
       </div>
@@ -490,6 +494,7 @@ export default function Services() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ type: 'spring', stiffness: 300, delay: 0.4 }}
+              className="w-fit"
             >
               <CurrencyToggle
                 currency={currency}
@@ -508,12 +513,12 @@ export default function Services() {
           viewport={{ once: true, margin: '-100px' }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         >
-          {SERVICES.map(({ id, icon, name, copPrice, description }) => (
+          {SERVICES.map(({ id, icon, name, usdPrice, description }) => (
             <ServiceCard
               key={id}
               icon={icon}
               name={name}
-              copPrice={copPrice}
+              usdPrice={usdPrice}
               description={description}
               currency={currency}
               rate={rate}

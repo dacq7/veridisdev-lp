@@ -101,7 +101,7 @@ function TouchNavLink({
   }, [isTouch, controls, beamControls]);
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden w-fit">
       <motion.div
         animate={beamControls}
         className="absolute inset-y-0 left-0 w-full pointer-events-none"
@@ -143,7 +143,7 @@ function TouchSocialLink({ label, href }: { label: string; href: string }) {
   }, [isTouch, controls, beamControls]);
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden w-fit">
       <motion.div
         animate={beamControls}
         className="absolute inset-y-0 left-0 w-full pointer-events-none"

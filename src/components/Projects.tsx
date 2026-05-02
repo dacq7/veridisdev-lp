@@ -51,7 +51,7 @@ const PROJECTS: Project[] = [
     liveUrl: 'https://budokan-app.vercel.app',
     repoUrl: 'https://github.com/dacq7/budokan-app',
     imgSrc: '/images/budokan-screenshot.png',
-    terminalPath: 'diego@veridis:~/budokan-app',
+    terminalPath: 'root@veridis:~/budokan-app',
     credentials: [
       { role: 'Sensei', user: '11111111', pass: 'demo2025' },
       { role: 'Karateca', user: '22222222', pass: 'demo2025' },
@@ -77,7 +77,7 @@ const PROJECTS: Project[] = [
     liveUrl: 'https://barberos-os.vercel.app/admin/login',
     repoUrl: 'https://github.com/dacq7/barberos-os',
     imgSrc: '/images/barberos-screenshot.png',
-    terminalPath: 'diego@veridis:~/barberos-os',
+    terminalPath: 'root@veridis:~/barberos-os',
     credentials: [
       { role: 'Admin', user: 'admin@barberos.com', pass: 'demo1234' },
       { role: 'Barber', user: 'carlos@barberos.com', pass: 'demo1234' },
@@ -103,7 +103,7 @@ const PROJECTS: Project[] = [
     liveUrl: 'https://trucking-crm-one.vercel.app/login',
     repoUrl: 'https://github.com/dacq7/trucking-crm',
     imgSrc: '/images/trucking-screenshot.png',
-    terminalPath: 'diego@veridis:~/trucking-crm',
+    terminalPath: 'root@veridis:~/trucking-crm',
     credentials: [
       { role: 'Admin', user: 'admin@premiertruckins.com', pass: 'Admin1234!' },
       { role: 'Vendor', user: 'maria.gonzalez@premiertruckins.com', pass: 'Vendor1234!' },

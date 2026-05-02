@@ -235,7 +235,7 @@ function TerminalWindow() {
             pointerEvents: 'none',
           }}
         >
-          diego@veridis:~$ npm run dev
+          root@veridis:~$ npm run dev
         </span>
 
         {/* Running indicator — CSS pulsing green dot */}
