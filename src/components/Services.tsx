@@ -28,9 +28,9 @@ function formatCOPNumber(n: number): string {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
-function formatPrice(copPrice: number, usdPrice: number, currency: Currency): string {
-  if (currency === 'USD') return `From $${usdPrice.toLocaleString('en-US')} USD`;
-  return `From $${formatCOPNumber(copPrice)} COP`;
+function formatPrice(copPrice: number, usdPrice: number, currency: Currency, fromText: string): string {
+  if (currency === 'USD') return `${fromText} $${usdPrice.toLocaleString('en-US')} USD`;
+  return `${fromText} $${formatCOPNumber(copPrice)} COP`;
 }
 
 // ── Icons — stroke-only SVG, 24×24 viewBox, hand-drawn style ────────────────
@@ -201,14 +201,16 @@ const CARD_ITEM = {
 function CurrencyToggle({
   currency,
   selectCurrency,
+  label,
 }: {
   currency: Currency;
   selectCurrency: (c: Currency) => void;
+  label: string;
 }) {
   return (
     <motion.div
       role="group"
-      aria-label="Select currency"
+      aria-label={label}
       whileTap={{ scale: 0.95 }}
       transition={{ type: 'spring', stiffness: 500, damping: 25 }}
       className="flex items-center gap-0.5 rounded-full p-0.5 border border-[rgba(26,138,90,0.25)] shrink-0 self-start sm:self-auto"
@@ -246,7 +248,8 @@ function ServiceCard({
   usdPrice,
   description,
   currency,
-}: Omit<ServiceDef, 'id'> & { currency: Currency }) {
+  fromText,
+}: Omit<ServiceDef, 'id'> & { currency: Currency; fromText: string }) {
   const [hovered, setHovered] = useState(false);
   const [beaming, setBeaming] = useState(false);
   const isTouch = useIsTouch();
@@ -356,7 +359,7 @@ function ServiceCard({
             transition={{ type: 'spring', stiffness: 500, damping: 20 }}
             className="font-sans text-accent text-xs font-medium tracking-wide"
           >
-            {formatPrice(copPrice, usdPrice, currency)}
+            {formatPrice(copPrice, usdPrice, currency, fromText)}
           </motion.p>
         </AnimatePresence>
       </div>
@@ -449,7 +452,7 @@ export default function Services() {
             transition={{ type: 'spring', stiffness: 300, delay: 0.4 }}
             className="w-fit"
           >
-            <CurrencyToggle currency={currency} selectCurrency={selectCurrency} />
+            <CurrencyToggle currency={currency} selectCurrency={selectCurrency} label={t('currencyToggleLabel')} />
           </motion.div>
         </motion.div>
 
@@ -470,6 +473,7 @@ export default function Services() {
               usdPrice={usdPrice}
               description={tItems[i].description}
               currency={currency}
+              fromText={t('priceFrom')}
             />
           ))}
         </motion.div>

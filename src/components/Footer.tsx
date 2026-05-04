@@ -2,14 +2,15 @@
 
 import { motion, useAnimation } from 'framer-motion';
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const NAV_LINKS = [
-  { label: 'Services', href: '#services' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
+const NAV_HREFS = [
+  { key: 'services', href: '#services' },
+  { key: 'projects', href: '#projects' },
+  { key: 'about', href: '#about' },
+  { key: 'contact', href: '#contact' },
 ] as const;
 
 const EXTERNAL_LINKS = [
@@ -169,6 +170,10 @@ function TouchSocialLink({ label, href }: { label: string; href: string }) {
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function Footer() {
+  const t = useTranslations('footer');
+  const tNav = useTranslations('navbar');
+  const navLinks = NAV_HREFS.map(({ key, href }) => ({ label: tNav(key), href }));
+
   const isTouch = useIsTouch();
   const logoControls = useAnimation();
   const hexControls = useAnimation();
@@ -212,7 +217,7 @@ export default function Footer() {
             <motion.a
               href="/"
               className="flex items-center gap-2.5 w-fit"
-              aria-label="Veridis Dev — home"
+              aria-label={t('logoLabel')}
               animate={logoControls}
               whileHover={{ x: 4 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
@@ -258,7 +263,7 @@ export default function Footer() {
             </motion.a>
 
             <p className="font-sans" style={{ color: '#4A6B58', fontSize: '13px', lineHeight: '1.6' }}>
-              Software you can trust.
+              {t('tagline')}
             </p>
 
             <motion.div
@@ -269,15 +274,15 @@ export default function Footer() {
               viewport={{ once: true, margin: '-20px' }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              © 2026 Veridis Dev. All rights reserved.
+              {t('copyright')}
             </motion.div>
           </motion.div>
 
           {/* ── Center: navigation ───────────────────────────────────── */}
           <motion.div variants={colVariants}>
-            <ColLabel index={0}>Navigation</ColLabel>
+            <ColLabel index={0}>{t('navLabel')}</ColLabel>
             <ul className="flex flex-col gap-3">
-              {NAV_LINKS.map(({ label, href }, index) => (
+              {navLinks.map(({ label, href }, index) => (
                 <motion.li
                   key={href}
                   initial={{ opacity: 0, x: -10 }}
@@ -293,7 +298,7 @@ export default function Footer() {
 
           {/* ── Right: contact ───────────────────────────────────────── */}
           <motion.div variants={colVariants}>
-            <ColLabel index={1}>Contact</ColLabel>
+            <ColLabel index={1}>{t('contactLabel')}</ColLabel>
             <ul className="flex flex-col gap-3">
               <motion.li
                 initial={{ opacity: 0, x: -10 }}
@@ -312,7 +317,7 @@ export default function Footer() {
                 transition={{ duration: 0.3, delay: 1 * 0.07 }}
               >
                 <span className="font-sans" style={{ color: '#4A6B58', fontSize: '14px' }}>
-                  Medellín, Colombia
+                  {t('location')}
                 </span>
               </motion.li>
               {EXTERNAL_LINKS.map(({ label, href }, index) => (

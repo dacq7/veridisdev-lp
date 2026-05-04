@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export default function FloatingCTA() {
+  const t = useTranslations('navbar');
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function FloatingCTA() {
           style={{ right: 24, bottom: 24 }}
           className="fixed z-50 bg-[#1A8A5A] text-white font-mono text-sm px-4 py-3 rounded-full"
         >
-          Start a project →
+          {t('cta')} →
         </motion.button>
       )}
     </AnimatePresence>

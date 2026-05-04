@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, useAnimation, useInView } from 'framer-motion';
 
 const useIsTouch = () => {
@@ -128,9 +129,8 @@ const Icons: Record<string, React.ReactNode> = {
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const GROUPS: TechGroup[] = [
+const TECH_DATA: { techs: Tech[] }[] = [
   {
-    label: 'Frontend',
     techs: [
       { name: 'React', icon: Icons['React'] },
       { name: 'Next.js', icon: Icons['Next.js'] },
@@ -140,7 +140,6 @@ const GROUPS: TechGroup[] = [
     ],
   },
   {
-    label: 'Backend',
     techs: [
       { name: 'Python', icon: Icons['Python'] },
       { name: 'FastAPI', icon: Icons['FastAPI'] },
@@ -149,7 +148,6 @@ const GROUPS: TechGroup[] = [
     ],
   },
   {
-    label: 'Database & Infra',
     techs: [
       { name: 'PostgreSQL', icon: Icons['PostgreSQL'] },
       { name: 'Supabase', icon: Icons['Supabase'] },
@@ -158,7 +156,6 @@ const GROUPS: TechGroup[] = [
     ],
   },
   {
-    label: 'Deploy & Testing',
     techs: [
       { name: 'Vercel', icon: Icons['Vercel'] },
       { name: 'Railway', icon: Icons['Railway'] },
@@ -401,6 +398,13 @@ function TechGroup({ group, index }: { group: TechGroup; index: number }) {
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function TechStack() {
+  const t = useTranslations('techStack');
+  const GROUPS: TechGroup[] = [
+    { label: t('groups.0.label'), techs: TECH_DATA[0].techs },
+    { label: t('groups.1.label'), techs: TECH_DATA[1].techs },
+    { label: t('groups.2.label'), techs: TECH_DATA[2].techs },
+    { label: t('groups.3.label'), techs: TECH_DATA[3].techs },
+  ];
   return (
     <section
       id="stack"
@@ -430,7 +434,7 @@ export default function TechStack() {
           className="mb-14 md:mb-16 max-sm:overflow-x-hidden"
         >
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
-            Tech Stack
+            {t('label')}
           </p>
           {/* Task 1: heading letter reveal */}
           <motion.h2
@@ -448,7 +452,7 @@ export default function TechStack() {
               viewport={{ once: true }}
               style={{ display: 'inline-flex', flexWrap: 'nowrap', whiteSpace: 'nowrap' }}
             >
-              {'Tools we trust.'.split('').map((char, i) => (
+              {t('heading').split('').map((char, i) => (
                 <motion.span
                   key={i}
                   variants={LETTER_VARIANT}
@@ -466,7 +470,7 @@ export default function TechStack() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Production-tested technologies across every layer of the stack.
+            {t('subtitle')}
           </motion.p>
         </motion.div>
 

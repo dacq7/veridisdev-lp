@@ -273,7 +273,7 @@
     "bio3": "Currently studying Software Analysis and Development at SENA while building real products for real businesses. I believe the best way to learn is to ship.",
     "founderName": "Diego Correa",
     "founderTitle": "Founder · Veridis Dev",
-    "githubCta": "See my GitHub →",
+    "githubCta": "See my GitHub",
     "stats": [
       { "suffix": " year",  "label": "building production software" },
       { "suffix": " apps",  "label": "currently in production" }
@@ -343,7 +343,7 @@
     "buttons": {
       "next": "Next →",
       "back": "← Back",
-      "send": "Send message →",
+      "send": "Send message",
       "sending": "Sending…"
     },
     "errors": {

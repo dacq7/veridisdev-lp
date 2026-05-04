@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 // ── Hooks ─────────────────────────────────────────────────────────────────────
 
@@ -32,48 +33,7 @@ type Direction = 'forward' | 'back';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const PROJECT_TYPES = [
-  { value: '', label: 'Select a project type' },
-  { value: 'Web Application', label: 'Web Application' },
-  { value: 'Mobile App', label: 'Mobile App' },
-  { value: 'Landing Page', label: 'Landing Page' },
-  { value: 'E-commerce Store', label: 'E-commerce Store' },
-  { value: 'CRM / Internal Tool', label: 'CRM / Internal Tool' },
-  { value: 'Not sure yet', label: 'Not sure yet' },
-];
-
-const CONTACT_TIMES = [
-  { value: 'Morning (9am — 12pm)', label: 'Morning (9am — 12pm)' },
-  { value: 'Afternoon (12pm — 5pm)', label: 'Afternoon (12pm — 5pm)' },
-  { value: 'Evening (5pm — 8pm)', label: 'Evening (5pm — 8pm)' },
-  { value: 'Anytime', label: 'Anytime' },
-];
-
-const TIMELINES = [
-  { value: '', label: 'Select a timeline' },
-  { value: 'As soon as possible', label: 'As soon as possible' },
-  { value: '1 — 3 months', label: '1 — 3 months' },
-  { value: '3 — 6 months', label: '3 — 6 months' },
-  { value: 'Flexible', label: 'Flexible' },
-];
-
-const BUDGETS = [
-  { value: '', label: 'Select a budget range' },
-  { value: '< $500 USD', label: '< $500 USD' },
-  { value: '$500 — $1.500 USD', label: '$500 — $1.500 USD' },
-  { value: '$1.500 — $5.000 USD', label: '$1.500 — $5.000 USD' },
-  { value: '$5.000+ USD', label: '$5.000+ USD' },
-  { value: "Let's talk", label: "Let's talk" },
-];
-
-const SOURCES = [
-  { value: '', label: 'Select an option' },
-  { value: 'Google', label: 'Google' },
-  { value: 'LinkedIn', label: 'LinkedIn' },
-  { value: 'GitHub', label: 'GitHub' },
-  { value: 'Referral', label: 'Referral' },
-  { value: 'Other', label: 'Other' },
-];
+type SelectOption = { value: string; label: string };
 
 const INITIAL_FORM: FormData = {
   name: '',
@@ -166,6 +126,7 @@ function IconChevron() {
 // ── Left column ───────────────────────────────────────────────────────────────
 
 function ContactInfo() {
+  const t = useTranslations('contact');
   const [copied, setCopied] = useState(false);
 
   function handleCopy() {
@@ -204,7 +165,7 @@ function ContactInfo() {
             className="font-sans uppercase tracking-wide mb-1.5"
             style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
           >
-            Email
+            {t('info.emailLabel')}
           </p>
           <div className="flex items-center gap-3">
             <a
@@ -216,7 +177,7 @@ function ContactInfo() {
             </a>
             <button
               onClick={handleCopy}
-              title={copied ? 'Copied!' : 'Copy email'}
+              title={copied ? t('info.copied') : t('info.copyEmail')}
               className="flex items-center justify-center rounded transition-colors duration-200"
               style={{
                 color: copied ? '#1A8A5A' : '#4A6B58',
@@ -242,10 +203,10 @@ function ContactInfo() {
             className="font-sans uppercase tracking-wide mb-1.5"
             style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
           >
-            Location
+            {t('info.locationLabel')}
           </p>
           <p className="font-sans text-white" style={{ fontSize: '15px' }}>
-            Medellín, Colombia
+            {t('info.location')}
           </p>
         </motion.div>
 
@@ -260,10 +221,10 @@ function ContactInfo() {
             className="font-sans uppercase tracking-wide mb-1.5"
             style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
           >
-            Response time
+            {t('info.responseTimeLabel')}
           </p>
           <p className="font-sans" style={{ color: '#1A8A5A', fontSize: '15px' }}>
-            We respond within 24 hours
+            {t('info.responseTime')}
           </p>
         </motion.div>
       </div>
@@ -342,10 +303,8 @@ function SelectField({
 // ── Step indicator ────────────────────────────────────────────────────────────
 
 function StepIndicator({ step }: { step: Step }) {
-  const steps = [
-    { num: '01', label: 'Your info' },
-    { num: '02', label: 'Project details' },
-  ];
+  const t = useTranslations('contact');
+  const steps = t.raw('steps') as Array<{ num: string; label: string }>;
 
   const ctrl1 = useAnimation();
   const ctrl2 = useAnimation();
@@ -426,6 +385,7 @@ function StepIndicator({ step }: { step: Step }) {
 // ── Contact info strip ────────────────────────────────────────────────────────
 
 function ContactInfoStrip() {
+  const t = useTranslations('contact');
   const [copied, setCopied] = useState(false);
 
   function handleCopy() {
@@ -450,7 +410,7 @@ function ContactInfoStrip() {
         </a>
         <button
           onClick={handleCopy}
-          title={copied ? 'Copied!' : 'Copy email'}
+          title={copied ? t('info.copied') : t('info.copyEmail')}
           className="flex items-center justify-center rounded transition-colors duration-200"
           style={{
             color: copied ? '#1A8A5A' : '#4A6B58',
@@ -464,11 +424,11 @@ function ContactInfoStrip() {
         </button>
       </div>
       <span className="font-sans" style={{ color: '#4A6B58', fontSize: '13px' }}>
-        We respond within 24 hours
+        {t('info.stripResponse')}
       </span>
       <span style={{ color: '#4A6B58' }}>·</span>
       <span className="font-sans" style={{ color: '#4A6B58', fontSize: '13px' }}>
-        Medellín, Colombia 🇨🇴 · Working globally
+        {t('info.stripLocation')}
       </span>
     </div>
   );
@@ -477,6 +437,7 @@ function ContactInfoStrip() {
 // ── Success state ─────────────────────────────────────────────────────────────
 
 function SuccessState() {
+  const t = useTranslations('contact');
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -533,10 +494,10 @@ function SuccessState() {
 
       <div>
         <p className="font-display font-bold text-3xl text-white mb-3">
-          Message sent!
+          {t('success.title')}
         </p>
         <p className="font-sans text-sm text-white opacity-70">
-          We&apos;ll get back to you within 24 hours.
+          {t('success.subtitle')}
         </p>
       </div>
     </motion.div>
@@ -546,6 +507,13 @@ function SuccessState() {
 // ── Form ──────────────────────────────────────────────────────────────────────
 
 function ContactForm() {
+  const t = useTranslations('contact');
+  const projectTypes = t.raw('options.projectTypes') as SelectOption[];
+  const contactTimes = t.raw('options.contactTimes') as SelectOption[];
+  const timelines = t.raw('options.timelines') as SelectOption[];
+  const budgets = t.raw('options.budgets') as SelectOption[];
+  const sources = t.raw('options.sources') as SelectOption[];
+
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
@@ -581,19 +549,19 @@ function ContactForm() {
 
   function validateStep1(): boolean {
     if (!form.name.trim()) {
-      setStepError('Please enter your full name.');
+      setStepError(t('errors.nameRequired'));
       return false;
     }
     if (!form.email.trim()) {
-      setStepError('Please enter your email.');
+      setStepError(t('errors.emailRequired'));
       return false;
     }
     if (!form.country.trim()) {
-      setStepError('Please enter your country or city.');
+      setStepError(t('errors.countryRequired'));
       return false;
     }
     if (!form.projectType) {
-      setStepError('Please select a project type.');
+      setStepError(t('errors.projectTypeRequired'));
       return false;
     }
     setStepError('');
@@ -614,7 +582,7 @@ function ContactForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.description.trim()) {
-      setError('Please describe your project.');
+      setError(t('errors.descriptionRequired'));
       return;
     }
     setLoading(true);
@@ -629,7 +597,7 @@ function ContactForm() {
 
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
-        throw new Error(data.error ?? 'Something went wrong');
+        throw new Error(data.error ?? t('errors.generic'));
       }
 
       setSuccess(true);
@@ -674,7 +642,7 @@ function ContactForm() {
                   {/* Full name */}
                   <div className="flex flex-col gap-1.5">
                     <FieldLabel htmlFor="cf-name" required>
-                      Full name
+                      {t('fields.name')}
                     </FieldLabel>
                     <motion.input
                       id="cf-name"
@@ -691,7 +659,7 @@ function ContactForm() {
                   {/* Email */}
                   <div className="flex flex-col gap-1.5">
                     <FieldLabel htmlFor="cf-email" required>
-                      Email
+                      {t('fields.email')}
                     </FieldLabel>
                     <motion.input
                       id="cf-email"
@@ -708,12 +676,12 @@ function ContactForm() {
                   {/* Country / City */}
                   <div className="flex flex-col gap-1.5">
                     <FieldLabel htmlFor="cf-country" required>
-                      Country / City
+                      {t('fields.country')}
                     </FieldLabel>
                     <motion.input
                       id="cf-country"
                       type="text"
-                      placeholder="e.g. Medellín, Colombia or Austin, TX"
+                      placeholder={t('fields.countryPlaceholder')}
                       className="contact-field font-sans"
                       style={FIELD_BASE}
                       value={form.country}
@@ -726,13 +694,13 @@ function ContactForm() {
                   {/* Project type */}
                   <div className="flex flex-col gap-1.5">
                     <FieldLabel htmlFor="cf-projectType" required>
-                      Project type
+                      {t('fields.projectType')}
                     </FieldLabel>
                     <SelectField
                       id="cf-projectType"
                       value={form.projectType}
                       onChange={update('projectType')}
-                      options={PROJECT_TYPES}
+                      options={projectTypes}
                     />
                   </div>
 
@@ -777,7 +745,7 @@ function ContactForm() {
                         backgroundColor: 'rgba(26,138,90,0)',
                       }}
                     />
-                    Next →
+                    {t('buttons.next')}
                   </motion.button>
                 </motion.div>
               ) : (
@@ -794,7 +762,7 @@ function ContactForm() {
                   {/* Project description */}
                   <div className="flex flex-col gap-1.5">
                     <FieldLabel htmlFor="cf-description" required>
-                      Project description
+                      {t('fields.description')}
                     </FieldLabel>
                     <motion.textarea
                       id="cf-description"
@@ -803,7 +771,7 @@ function ContactForm() {
                       style={FIELD_BASE}
                       value={form.description}
                       onChange={update('description')}
-                      placeholder="What problem does it solve? Who will use it? Do you have an existing system we need to integrate with?"
+                      placeholder={t('fields.descriptionPlaceholder')}
                       initial={{ boxShadow: '0 0 0px rgba(26,138,90,0)' }}
                       whileFocus={{ boxShadow: '0 0 0 2px rgba(26,138,90,0.4)', transition: { duration: 0.3, ease: 'easeOut' } }}
                     />
@@ -815,10 +783,10 @@ function ContactForm() {
                       className="font-sans uppercase tracking-wide"
                       style={{ color: '#4A6B58', fontSize: '11px', letterSpacing: '0.12em' }}
                     >
-                      Preferred contact time
+                      {t('fields.contactTime')}
                     </p>
                     <div className="flex flex-col gap-2">
-                      {CONTACT_TIMES.map((ct) => (
+                      {contactTimes.map((ct) => (
                         <button
                           key={ct.value}
                           type="button"
@@ -867,34 +835,34 @@ function ContactForm() {
 
                   {/* Timeline */}
                   <div className="flex flex-col gap-1.5">
-                    <FieldLabel htmlFor="cf-timeline">Timeline</FieldLabel>
+                    <FieldLabel htmlFor="cf-timeline">{t('fields.timeline')}</FieldLabel>
                     <SelectField
                       id="cf-timeline"
                       value={form.timeline}
                       onChange={update('timeline')}
-                      options={TIMELINES}
+                      options={timelines}
                     />
                   </div>
 
                   {/* Budget range */}
                   <div className="flex flex-col gap-1.5">
-                    <FieldLabel htmlFor="cf-budget">Budget range</FieldLabel>
+                    <FieldLabel htmlFor="cf-budget">{t('fields.budget')}</FieldLabel>
                     <SelectField
                       id="cf-budget"
                       value={form.budget}
                       onChange={update('budget')}
-                      options={BUDGETS}
+                      options={budgets}
                     />
                   </div>
 
                   {/* How did you find us */}
                   <div className="flex flex-col gap-1.5">
-                    <FieldLabel htmlFor="cf-source">How did you find us?</FieldLabel>
+                    <FieldLabel htmlFor="cf-source">{t('fields.source')}</FieldLabel>
                     <SelectField
                       id="cf-source"
                       value={form.source}
                       onChange={update('source')}
-                      options={SOURCES}
+                      options={sources}
                     />
                   </div>
 
@@ -939,7 +907,7 @@ function ContactForm() {
                         flexShrink: 0,
                       }}
                     >
-                      ← Back
+                      {t('buttons.back')}
                     </motion.button>
                     <motion.button
                       type="submit"
@@ -969,7 +937,7 @@ function ContactForm() {
                           backgroundColor: 'rgba(26,138,90,0)',
                         }}
                       />
-                      {loading ? 'Sending…' : <>Send message <motion.span whileHover={{ x: 4 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} style={{ display: 'inline-block' }}>→</motion.span></>}
+                      {loading ? t('buttons.sending') : <>{t('buttons.send')} <motion.span whileHover={{ x: 4 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }} style={{ display: 'inline-block' }}>→</motion.span></>}
                     </motion.button>
                   </div>
                 </motion.div>
@@ -987,6 +955,7 @@ function ContactForm() {
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function Contact() {
+  const t = useTranslations('contact');
   return (
     <section
       id="contact"
@@ -1007,7 +976,7 @@ export default function Contact() {
           className="mb-14 md:mb-16 max-sm:overflow-x-hidden"
         >
           <p className="font-sans text-xs tracking-widest uppercase text-accent mb-3">
-            Start a project
+            {t('label')}
           </p>
           <motion.h2
             initial={{ opacity: 0, x: -20 }}
@@ -1017,7 +986,7 @@ export default function Contact() {
             className="font-display font-semibold text-white text-4xl md:text-5xl mb-4 break-words hyphens-auto"
             style={{ perspective: '400px' }}
           >
-            {"Let's build something.".split('').map((char, index) => (
+            {t('heading').split('').map((char, index) => (
               <motion.span
                 key={index}
                 initial={{ opacity: 0, y: 20, rotateX: -90 }}
@@ -1037,7 +1006,7 @@ export default function Contact() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="font-sans text-text-secondary text-base leading-relaxed max-w-lg"
           >
-            Tell us about your project. We respond within 24 hours.
+            {t('subtitle')}
           </motion.p>
         </motion.div>
 

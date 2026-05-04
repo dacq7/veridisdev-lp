@@ -273,7 +273,7 @@
     "bio3": "Actualmente estudio Análisis y Desarrollo de Software en el SENA mientras construyo productos reales para negocios reales. Creo que la mejor manera de aprender es entregando.",
     "founderName": "Diego Correa",
     "founderTitle": "Fundador · Veridis Dev",
-    "githubCta": "Ver mi GitHub →",
+    "githubCta": "Ver mi GitHub",
     "stats": [
       { "suffix": " año",  "label": "construyendo software en producción" },
       { "suffix": " apps", "label": "actualmente en producción" }
@@ -343,7 +343,7 @@
     "buttons": {
       "next": "Siguiente →",
       "back": "← Volver",
-      "send": "Enviar mensaje →",
+      "send": "Enviar mensaje",
       "sending": "Enviando…"
     },
     "errors": {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useAnimation } from 'framer-motion';
 
 // ── Touch detection ───────────────────────────────────────────────────────────
@@ -74,36 +75,6 @@ function IconShield() {
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const DIFFERENTIATORS: Differentiator[] = [
-  {
-    id: 'ai',
-    icon: <IconCpu />,
-    title: 'AI-assisted development',
-    description:
-      'We use Cursor and Claude to build faster without cutting corners. What takes agencies weeks, we ship in days — with tests and documentation included.',
-  },
-  {
-    id: 'production',
-    icon: <IconRocket />,
-    title: 'Production-ready from day one',
-    description:
-      'Every project is deployed, monitored and running with real users. No demos, no prototypes — working software that businesses rely on daily.',
-  },
-  {
-    id: 'fullstack',
-    icon: <IconLayers />,
-    title: 'Full stack, end to end',
-    description:
-      'Frontend, backend, database, deployment and maintenance — one team, one point of contact, zero handoff problems.',
-  },
-  {
-    id: 'tested',
-    icon: <IconShield />,
-    title: 'Tested and documented',
-    description:
-      '110+ tests across our production projects. Every codebase ships with a test suite and documentation — not just working code, but maintainable code.',
-  },
-];
 
 // ── Variants ──────────────────────────────────────────────────────────────────
 
@@ -360,9 +331,15 @@ function DiffCard({ item, index }: { item: Differentiator; index: number }) {
 
 // ── Section ───────────────────────────────────────────────────────────────────
 
-const HEADING_LETTERS = 'Built different.'.split('');
-
 export default function WhyVeridis() {
+  const t = useTranslations('whyVeridis');
+  const HEADING_LETTERS = t('heading').split('');
+  const DIFFERENTIATORS: Differentiator[] = [
+    { id: 'ai',         icon: <IconCpu />,    title: t('items.0.title'), description: t('items.0.description') },
+    { id: 'production', icon: <IconRocket />, title: t('items.1.title'), description: t('items.1.description') },
+    { id: 'fullstack',  icon: <IconLayers />, title: t('items.2.title'), description: t('items.2.description') },
+    { id: 'tested',     icon: <IconShield />, title: t('items.3.title'), description: t('items.3.description') },
+  ];
   return (
     <section
       id="why"
@@ -401,7 +378,7 @@ export default function WhyVeridis() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
-            Why Veridis Dev
+            {t('label')}
           </motion.p>
 
           {/* Heading — letter reveal */}
@@ -430,7 +407,7 @@ export default function WhyVeridis() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Not a freelancer. Not a big agency. A focused software company that ships.
+            {t('subtitle')}
           </motion.p>
         </motion.div>
 
@@ -450,7 +427,7 @@ export default function WhyVeridis() {
         {/* CTA */}
         <div className="flex flex-col items-center gap-4 mt-16 md:mt-20">
           <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>
-            Professional software, delivered in weeks.
+            {t('cta.question')}
           </p>
           <motion.button
             onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
@@ -460,7 +437,7 @@ export default function WhyVeridis() {
             className="px-6 py-3 rounded-full text-white font-sans text-sm font-medium"
             style={{ background: '#1A8A5A' }}
           >
-            Get in touch →
+            {t('cta.button')}
           </motion.button>
         </div>
 

@@ -9,6 +9,7 @@ import {
   useTransform,
   useScroll,
 } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 // ── useIsTouch ─────────────────────────────────────────────────────────────────
 
@@ -137,14 +138,22 @@ function StatItem({ end, suffix, label, duration }: StatItemProps) {
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const STATS = [
-  { end: 1, suffix: ' year', label: 'building production software', duration: 1.2 },
-  { end: 3, suffix: ' apps', label: 'currently in production', duration: 1.5 },
-] as const;
+const STAT_BASE = [
+  { end: 1, duration: 1.2 },
+  { end: 3, duration: 1.5 },
+];
 
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function About() {
+  const t = useTranslations('about');
+  const rawStats = t.raw('stats') as Array<{ suffix: string; label: string }>;
+  const stats = STAT_BASE.map((base, i) => ({
+    ...base,
+    suffix: rawStats[i].suffix,
+    label: rawStats[i].label,
+  }));
+
   const aboutRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: aboutRef });
   const hexagonY = useTransform(scrollYProgress, [0, 1], [0, -30]);
@@ -270,7 +279,7 @@ export default function About() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            About
+            {t('label')}
           </motion.p>
           <motion.h2
             className="font-display font-semibold text-white text-4xl md:text-5xl break-words"
@@ -279,7 +288,7 @@ export default function About() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
-            A developer who ships.
+            {t('heading')}
           </motion.h2>
         </motion.div>
 
@@ -352,10 +361,10 @@ export default function About() {
             {/* Name + title */}
             <div style={{ textAlign: 'center' }}>
               <p className="font-display" style={{ fontSize: '18px', fontWeight: 500, color: '#ffffff', marginBottom: '4px' }}>
-                Diego Correa
+                {t('founderName')}
               </p>
               <p className="font-sans" style={{ fontSize: '13px', color: '#4A6B58' }}>
-                Founder · Veridis Dev
+                {t('founderTitle')}
               </p>
             </div>
           </motion.div>
@@ -373,24 +382,18 @@ export default function About() {
               animate={bioControls}
               onTouchStart={handleBioTouch}
             >
-              I&apos;m Diego Correa, a full stack developer based in Medellín, Colombia.
-              I founded Veridis Dev to build software the right way — tested, documented
-              and production-ready from day one.
+              {t('bio1')}
             </motion.p>
             <p className="font-sans text-text-secondary text-base leading-relaxed">
-              I work across the entire stack — from React and Next.js frontends to FastAPI
-              and Node.js backends, PostgreSQL databases and cloud deployments on Vercel
-              and Railway. Every project I take on gets the same attention to quality,
-              regardless of size.
+              {t('bio2')}
             </p>
             <p className="font-sans text-text-secondary text-base leading-relaxed">
-              Currently studying Software Analysis and Development at SENA while building
-              real products for real businesses. I believe the best way to learn is to ship.
+              {t('bio3')}
             </p>
 
             {/* Stats */}
             <div className="flex flex-wrap gap-6 md:gap-10 mt-3">
-              {STATS.map(({ end, suffix, label, duration }, index) => (
+              {stats.map(({ end, suffix, label, duration }, index) => (
                 <motion.div
                   key={suffix}
                   initial={{ opacity: 0, y: 16 }}
@@ -415,7 +418,7 @@ export default function About() {
               onMouseEnter={() => setGithubHovered(true)}
               onMouseLeave={() => setGithubHovered(false)}
             >
-              See my GitHub{' '}
+              {t('githubCta')}{' '}
               <motion.span
                 animate={{ x: githubHovered ? 6 : 0, opacity: githubHovered ? 0.7 : 1 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 25 }}

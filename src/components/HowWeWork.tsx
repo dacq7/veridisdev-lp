@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, type Variants, useInView, useAnimation } from 'framer-motion';
 
 const useIsTouch = () => {
@@ -11,61 +12,35 @@ const useIsTouch = () => {
   return isTouch;
 };
 
-const steps = [
-  {
-    number: '01',
-    title: 'Tell us your idea',
-    description:
-      "Schedule a free call or send us a message. We listen, ask the right questions and tell you honestly if we're the right fit.",
-    tag: 'Free · No commitment',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A8A5A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-      </svg>
-    ),
-  },
-  {
-    number: '02',
-    title: 'We send a proposal',
-    description:
-      'Within 24 hours you get a clear proposal — scope, timeline, price. No vague estimates, no hidden fees.',
-    tag: 'Within 24 hours',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A8A5A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14,2 14,8 20,8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
-        <polyline points="10,9 9,9 8,9" />
-      </svg>
-    ),
-  },
-  {
-    number: '03',
-    title: 'We build and keep you posted',
-    description:
-      'We start with a deposit and split payments based on project milestones — so you only pay for what\'s delivered. You get weekly updates and a staging environment to review progress at any time.',
-    tag: 'Milestone-based payments',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A8A5A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="16,18 22,12 16,6" />
-        <polyline points="8,6 2,12 8,18" />
-      </svg>
-    ),
-  },
-  {
-    number: '04',
-    title: 'Delivery + support',
-    description:
-      'We deploy, hand over the code and stay available for 30 days post-launch at no extra cost. Your software, your ownership.',
-    tag: '30 days free support',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A8A5A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-        <polyline points="9,12 11,14 15,10" />
-      </svg>
-    ),
-  },
+type Step = { number: string; icon: React.ReactNode; title: string; description: string; tag: string };
+
+const STEP_ICONS: React.ReactNode[] = [
+  (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A8A5A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  ),
+  (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A8A5A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <polyline points="14,2 14,8 20,8" />
+      <line x1="16" y1="13" x2="8" y2="13" />
+      <line x1="16" y1="17" x2="8" y2="17" />
+      <polyline points="10,9 9,9 8,9" />
+    </svg>
+  ),
+  (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A8A5A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="16,18 22,12 16,6" />
+      <polyline points="8,6 2,12 8,18" />
+    </svg>
+  ),
+  (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1A8A5A" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      <polyline points="9,12 11,14 15,10" />
+    </svg>
+  ),
 ];
 
 const containerVariants: Variants = {
@@ -126,7 +101,7 @@ function CountUp({ target, duration, delay: startDelay }: {
 
 // ── StepItem ──────────────────────────────────────────────────────────────────
 
-function StepItem({ step, index, total }: { step: (typeof steps)[0]; index: number; total: number }) {
+function StepItem({ step, index, total }: { step: Step; index: number; total: number }) {
   const isTouch = useIsTouch();
   const counterControls = useAnimation();
   const iconControls = useAnimation();
@@ -369,6 +344,13 @@ function StepItem({ step, index, total }: { step: (typeof steps)[0]; index: numb
 // ── Section ───────────────────────────────────────────────────────────────────
 
 export default function HowWeWork() {
+  const t = useTranslations('howWeWork');
+  const steps: Step[] = [
+    { number: '01', icon: STEP_ICONS[0], title: t('steps.0.title'), description: t('steps.0.description'), tag: t('steps.0.tag') },
+    { number: '02', icon: STEP_ICONS[1], title: t('steps.1.title'), description: t('steps.1.description'), tag: t('steps.1.tag') },
+    { number: '03', icon: STEP_ICONS[2], title: t('steps.2.title'), description: t('steps.2.description'), tag: t('steps.2.tag') },
+    { number: '04', icon: STEP_ICONS[3], title: t('steps.3.title'), description: t('steps.3.description'), tag: t('steps.3.tag') },
+  ];
   return (
     <section
       className="relative py-24 overflow-hidden"
@@ -400,7 +382,7 @@ export default function HowWeWork() {
               color: '#1A8A5A',
             }}
           >
-            The Process
+            {t('label')}
           </p>
           <motion.h2
             className="text-4xl md:text-5xl font-semibold text-white mb-4 break-words"
@@ -410,7 +392,7 @@ export default function HowWeWork() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
-            Simple. Transparent. Fast.
+            {t('heading')}
           </motion.h2>
           <motion.p
             className="text-base max-w-xl"
@@ -420,7 +402,7 @@ export default function HowWeWork() {
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            No surprises, no endless back-and-forth. Here&apos;s exactly how we work.
+            {t('subtitle')}
           </motion.p>
         </motion.div>
 
