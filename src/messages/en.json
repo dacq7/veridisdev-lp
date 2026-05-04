@@ -364,6 +364,10 @@
       "responseTimeLabel": "Response time",
       "responseTime": "We respond within 24 hours",
       "location": "Medellín, Colombia",
+      "whatsapp": {
+        "label": "WHATSAPP",
+        "link": "Chat on WhatsApp"
+      },
       "copyEmail": "Copy email",
       "copied": "Copied!",
       "stripResponse": "We respond within 24 hours",
