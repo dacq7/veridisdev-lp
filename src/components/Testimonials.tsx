@@ -103,9 +103,6 @@ export default function Testimonials() {
     <section
       style={{
         backgroundColor: '#0F1A14',
-        backgroundImage:
-          'radial-gradient(circle, rgba(26,138,90,0.25) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
       }}
       className="relative py-24 px-6 overflow-hidden"
     >

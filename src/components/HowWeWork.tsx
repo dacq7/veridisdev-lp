@@ -228,9 +228,8 @@ function StepItem({ step, index, total }: { step: Step; index: number; total: nu
         {/* Step number — count-up on viewport enter */}
         <motion.span
           animate={counterControls}
-          className="absolute top-4 right-5 select-none"
+          className="absolute top-4 right-5 select-none font-display"
           style={{
-            fontFamily: 'Syne, sans-serif',
             fontSize: '48px',
             fontWeight: 700,
             color: 'rgba(26, 138, 90, 0.15)',
@@ -280,9 +279,8 @@ function StepItem({ step, index, total }: { step: Step; index: number; total: nu
 
         {/* Title */}
         <h3
-          className="mb-3"
+          className="mb-3 font-display"
           style={{
-            fontFamily: 'Syne, sans-serif',
             fontWeight: 600,
             fontSize: '18px',
             color: '#FFFFFF',
@@ -294,9 +292,8 @@ function StepItem({ step, index, total }: { step: Step; index: number; total: nu
 
         {/* Description */}
         <p
-          className="mb-5 flex-grow"
+          className="mb-5 flex-grow font-sans"
           style={{
-            fontFamily: 'DM Sans, sans-serif',
             fontSize: '14px',
             color: '#4A6B58',
             lineHeight: 1.6,
@@ -307,7 +304,7 @@ function StepItem({ step, index, total }: { step: Step; index: number; total: nu
 
         {/* Tag pill — delayed independent entrance */}
         <motion.span
-          className="self-start"
+          className="self-start font-sans"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
@@ -317,7 +314,6 @@ function StepItem({ step, index, total }: { step: Step; index: number; total: nu
             delay: index * 0.15 + 0.3,
           }}
           style={{
-            fontFamily: 'DM Sans, sans-serif',
             fontSize: '11px',
             color: '#1A8A5A',
             background: 'rgba(26, 138, 90, 0.1)',
@@ -369,17 +365,15 @@ export default function HowWeWork() {
           viewport={{ once: true, margin: '-80px' }}
         >
           <p
-            className="text-xs uppercase tracking-widest mb-3"
+            className="text-xs uppercase tracking-widest mb-3 font-sans"
             style={{
-              fontFamily: 'DM Sans, sans-serif',
               color: '#1A8A5A',
             }}
           >
             {t('label')}
           </p>
           <motion.h2
-            className="text-4xl md:text-5xl font-semibold text-white mb-4 break-words"
-            style={{ fontFamily: 'Syne, sans-serif' }}
+            className="text-4xl md:text-5xl font-semibold text-white mb-4 break-words font-display"
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-60px' }}
@@ -388,8 +382,8 @@ export default function HowWeWork() {
             {t('heading')}
           </motion.h2>
           <motion.p
-            className="text-base max-w-xl"
-            style={{ fontFamily: 'DM Sans, sans-serif', color: '#4A6B58', lineHeight: 1.6 }}
+            className="text-base max-w-xl font-sans"
+            style={{ color: '#4A6B58', lineHeight: 1.6 }}
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}

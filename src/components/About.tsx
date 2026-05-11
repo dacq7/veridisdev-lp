@@ -229,10 +229,6 @@ export default function About() {
       id="about"
       className="relative py-24 md:py-32 overflow-hidden"
       onTouchStart={handleSectionTouch}
-      style={{
-        backgroundImage: 'radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
-      }}
     >
       {/* Touch beam */}
       <motion.div

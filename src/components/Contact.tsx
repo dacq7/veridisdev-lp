@@ -10,10 +10,6 @@ export default async function Contact() {
     <section
       id="contact"
       className="relative py-24 md:py-32"
-      style={{
-        backgroundImage: 'radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
-      }}
     >
       <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-8 lg:px-16">
 
