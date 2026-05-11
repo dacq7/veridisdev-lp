@@ -4,10 +4,11 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useIsTouch } from '@/hooks/useIsTouch';
+import { PRICING, type ServiceId, type Currency as PricingCurrency } from '@/config/pricing';
 
 // ── Currency hook ─────────────────────────────────────────────────────────────
 
-type Currency = 'COP' | 'USD';
+type Currency = PricingCurrency;
 
 function useCurrency() {
   const [currency, setCurrency] = useState<Currency>('COP');
@@ -99,62 +100,17 @@ function IconGear() {
 
 type ServiceDef = {
   id: string;
+  pricingId: ServiceId;
   icon: React.ReactNode;
-  name: string;
-  copPrice: number;
-  usdPrice: number;
-  description: string;
 };
 
 const SERVICES: ServiceDef[] = [
-  {
-    id: 'landing',
-    icon: <IconBrowser />,
-    name: 'Professional Landing Page',
-    copPrice: 2500000,
-    usdPrice: 600,
-    description: 'Professional web presence that converts visitors into clients.',
-  },
-  {
-    id: 'booking',
-    icon: <IconCalendar />,
-    name: 'Booking System',
-    copPrice: 5000000,
-    usdPrice: 1200,
-    description: 'Online booking system for clinics, salons and service businesses.',
-  },
-  {
-    id: 'webapp',
-    icon: <IconCode />,
-    name: 'Custom Web App',
-    copPrice: 7000000,
-    usdPrice: 1700,
-    description: 'Custom web application built around your business logic.',
-  },
-  {
-    id: 'ecommerce',
-    icon: <IconBag />,
-    name: 'E-commerce Store',
-    copPrice: 8000000,
-    usdPrice: 1900,
-    description: 'Full ecommerce store with payments, inventory and order management.',
-  },
-  {
-    id: 'mobile',
-    icon: <IconPhone />,
-    name: 'Mobile App',
-    copPrice: 12000000,
-    usdPrice: 2900,
-    description: 'Native-quality mobile app for Android and iOS.',
-  },
-  {
-    id: 'maintenance',
-    icon: <IconGear />,
-    name: 'Monthly Maintenance',
-    copPrice: 800000,
-    usdPrice: 200,
-    description: 'Monthly support, updates and monitoring for your software.',
-  },
+  { id: 'landing',     pricingId: 'landing',      icon: <IconBrowser /> },
+  { id: 'booking',     pricingId: 'reservations',  icon: <IconCalendar /> },
+  { id: 'webapp',      pricingId: 'webapp',        icon: <IconCode /> },
+  { id: 'ecommerce',   pricingId: 'ecommerce',     icon: <IconBag /> },
+  { id: 'mobile',      pricingId: 'mobile',        icon: <IconPhone /> },
+  { id: 'maintenance', pricingId: 'maintenance',   icon: <IconGear /> },
 ];
 
 // ── Variants ─────────────────────────────────────────────────────────────────
@@ -242,7 +198,15 @@ function ServiceCard({
   description,
   currency,
   fromText,
-}: Omit<ServiceDef, 'id'> & { currency: Currency; fromText: string }) {
+}: {
+  icon: React.ReactNode;
+  name: string;
+  copPrice: number;
+  usdPrice: number;
+  description: string;
+  currency: Currency;
+  fromText: string;
+}) {
   const [hovered, setHovered] = useState(false);
   const [beaming, setBeaming] = useState(false);
   const isTouch = useIsTouch();
@@ -453,13 +417,13 @@ export default function Services() {
           viewport={{ once: true, margin: '-100px' }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         >
-          {SERVICES.map(({ id, icon, copPrice, usdPrice }, i) => (
+          {SERVICES.map(({ id, pricingId, icon }, i) => (
             <ServiceCard
               key={id}
               icon={icon}
               name={tItems[i].name}
-              copPrice={copPrice}
-              usdPrice={usdPrice}
+              copPrice={PRICING[pricingId].tiers.tier1.COP.min}
+              usdPrice={PRICING[pricingId].tiers.tier1.USD.min}
               description={tItems[i].description}
               currency={currency}
               fromText={t('priceFrom')}
