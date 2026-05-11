@@ -3,14 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useAnimation } from 'framer-motion';
-
-// ── Touch detection ───────────────────────────────────────────────────────────
-
-const useIsTouch = () => {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
-  return isTouch;
-};
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

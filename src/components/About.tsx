@@ -10,16 +10,7 @@ import {
   useScroll,
 } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-
-// ── useIsTouch ─────────────────────────────────────────────────────────────────
-
-function useIsTouch() {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => {
-    setIsTouch(navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
-  }, []);
-  return isTouch;
-}
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 // ── Variants ──────────────────────────────────────────────────────────────────
 

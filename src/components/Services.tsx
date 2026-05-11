@@ -1,16 +1,9 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-
-const useIsTouch = () => {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => {
-    setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
-  }, []);
-  return isTouch;
-};
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 // ── Currency hook ─────────────────────────────────────────────────────────────
 

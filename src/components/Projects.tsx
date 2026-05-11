@@ -1,15 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { DEMO_CREDENTIALS } from '@/config/demo-credentials';
-
-const useIsTouch = () => {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
-  return isTouch;
-};
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

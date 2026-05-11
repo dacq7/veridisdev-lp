@@ -3,16 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-
-// ── Hooks ─────────────────────────────────────────────────────────────────────
-
-function useIsTouch() {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => {
-    setIsTouch(navigator.maxTouchPoints > 0);
-  }, []);
-  return isTouch;
-}
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

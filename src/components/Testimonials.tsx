@@ -1,14 +1,8 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-
-const useIsTouch = () => {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
-  return isTouch;
-};
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

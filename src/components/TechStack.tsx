@@ -3,12 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion, useAnimation, useInView } from 'framer-motion';
-
-const useIsTouch = () => {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
-  return isTouch;
-};
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

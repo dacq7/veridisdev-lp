@@ -3,14 +3,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion, type Variants, useInView, useAnimation } from 'framer-motion';
-
-const useIsTouch = () => {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => {
-    setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0);
-  }, []);
-  return isTouch;
-};
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 type Step = { number: string; icon: React.ReactNode; title: string; description: string; tag: string };
 
