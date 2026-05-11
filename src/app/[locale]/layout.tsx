@@ -18,6 +18,10 @@ const syne = Syne({
   display: "swap",
 });
 
+export function generateStaticParams() {
+  return [{ locale: 'en' }, { locale: 'es' }];
+}
+
 export const metadata: Metadata = {
   title: "Veridis Dev — Software you can trust",
   description:
