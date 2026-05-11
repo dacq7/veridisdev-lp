@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useIsTouch } from '@/hooks/useIsTouch';
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -109,14 +110,7 @@ function IconChevron() {
 
 function ContactInfo() {
   const t = useTranslations('contact');
-  const [copied, setCopied] = useState(false);
-
-  function handleCopy() {
-    navigator.clipboard.writeText('team@veridisdev.com').then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  }
+  const { copied, copy } = useCopyToClipboard();
 
   return (
     <div className="relative flex flex-col gap-10 h-full">
@@ -158,7 +152,7 @@ function ContactInfo() {
               team@veridisdev.com
             </a>
             <button
-              onClick={handleCopy}
+              onClick={() => copy('team@veridisdev.com')}
               title={copied ? t('info.copied') : t('info.copyEmail')}
               className="flex items-center justify-center rounded transition-colors duration-200"
               style={{
@@ -397,14 +391,7 @@ function StepIndicator({ step }: { step: Step }) {
 
 function ContactInfoStrip() {
   const t = useTranslations('contact');
-  const [copied, setCopied] = useState(false);
-
-  function handleCopy() {
-    navigator.clipboard.writeText('team@veridisdev.com').then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  }
+  const { copied, copy } = useCopyToClipboard();
 
   return (
     <div
@@ -420,7 +407,7 @@ function ContactInfoStrip() {
           team@veridisdev.com
         </a>
         <button
-          onClick={handleCopy}
+          onClick={() => copy('team@veridisdev.com')}
           title={copied ? t('info.copied') : t('info.copyEmail')}
           className="flex items-center justify-center rounded transition-colors duration-200"
           style={{
