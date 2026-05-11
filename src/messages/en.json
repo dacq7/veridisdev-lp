@@ -399,5 +399,17 @@
       "professional": "Professional",
       "premium": "Premium"
     }
+  },
+  "calculator": {
+    "title": "Estimate your investment",
+    "subtitle": "Select a service and plan to see a reference price range.",
+    "labels": {
+      "service": "Service",
+      "tier": "Plan",
+      "estimatedRange": "Estimated investment",
+      "continueQuote": "Continue with this quote →",
+      "monthly": "/mo"
+    },
+    "prefilledMessage": "Hi, I'd like a quote for {service} ({tier} plan). Estimated range: {priceRange}."
   }
 }

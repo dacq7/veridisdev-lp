@@ -399,5 +399,17 @@
       "professional": "Profesional",
       "premium": "Premium"
     }
+  },
+  "calculator": {
+    "title": "Calcula tu inversión",
+    "subtitle": "Selecciona un servicio y plan para ver un rango de referencia.",
+    "labels": {
+      "service": "Servicio",
+      "tier": "Plan",
+      "estimatedRange": "Inversión estimada",
+      "continueQuote": "Continuar con esta cotización →",
+      "monthly": "/mes"
+    },
+    "prefilledMessage": "Hola, me interesa cotizar {service} (plan {tier}). Rango estimado: {priceRange}."
   }
 }

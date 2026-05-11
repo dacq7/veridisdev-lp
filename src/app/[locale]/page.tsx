@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import FloatingCTA from '@/components/FloatingCTA';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
+import QuoteCalculator from '@/components/QuoteCalculator';
 import Marquee from '@/components/Marquee';
 import Projects from '@/components/Projects';
 import Testimonials from '@/components/Testimonials';
@@ -29,6 +30,7 @@ export default async function Home({
         <Marquee />
         {/* Services */}
         <Services />
+        <QuoteCalculator />
         <Projects />
         <Testimonials />
         <HowWeWork />

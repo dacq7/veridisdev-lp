@@ -515,6 +515,16 @@ function ContactFormInner() {
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
   const [loading, setLoading] = useState(false);
+
+  // Listen for prefill events dispatched by QuoteCalculator
+  useEffect(() => {
+    function handlePrefill(e: Event) {
+      const { message } = (e as CustomEvent<{ message: string }>).detail;
+      setForm((prev) => ({ ...prev, description: message }));
+    }
+    window.addEventListener('veridis:prefill-contact', handlePrefill);
+    return () => window.removeEventListener('veridis:prefill-contact', handlePrefill);
+  }, []);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [stepError, setStepError] = useState('');
