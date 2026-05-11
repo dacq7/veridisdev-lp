@@ -1372,6 +1372,7 @@ Work that does not fit the 10-day sprint. Prioritized by business impact:
 | WhatsApp click tracking | Low | One Plausible custom event on the WhatsApp button |
 | Projects page (`/projects/[slug]`) | Low | Only when portfolio outgrows the homepage grid |
 | 3 npm postcss vulnerabilities | Low | Monitor for next-intl update — do not force-override |
+| `contact.options.projectTypes` driven by `pricing.ts` | Low | Currently the form's project-type dropdown reads from i18n strings; adding/removing a service requires updating both `pricing.ts` and the JSON arrays in sync. Should be refactored so the dropdown options are derived directly from `SERVICE_IDS` in `pricing.ts`, with labels read via `t(PRICING[id].nameKey)`. Eliminates the `SERVICE_TO_PROJECT_TYPE` mapping in `ContactForm.tsx` and makes service list changes a single-file edit. |
 
 ---
 

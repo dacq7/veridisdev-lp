@@ -302,13 +302,15 @@
     },
     "options": {
       "projectTypes": [
-        { "value": "",                    "label": "Select a project type" },
-        { "value": "Web Application",     "label": "Web Application" },
-        { "value": "Mobile App",          "label": "Mobile App" },
-        { "value": "Landing Page",        "label": "Landing Page" },
-        { "value": "E-commerce Store",    "label": "E-commerce Store" },
-        { "value": "CRM / Internal Tool", "label": "CRM / Internal Tool" },
-        { "value": "Not sure yet",        "label": "Not sure yet" }
+        { "value": "",                     "label": "Select a project type" },
+        { "value": "Landing Page",         "label": "Landing Page" },
+        { "value": "Reservation System",   "label": "Reservation System" },
+        { "value": "Web Application",      "label": "Web Application" },
+        { "value": "E-commerce Store",     "label": "E-commerce Store" },
+        { "value": "Mobile App",           "label": "Mobile App" },
+        { "value": "Monthly Maintenance",  "label": "Monthly Maintenance" },
+        { "value": "CRM / Internal Tool",  "label": "CRM / Internal Tool" },
+        { "value": "Not sure yet",         "label": "Not sure yet" }
       ],
       "contactTimes": [
         { "value": "Morning (9am — 12pm)",   "label": "Morning (9am — 12pm)" },

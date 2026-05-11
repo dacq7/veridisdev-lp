@@ -518,9 +518,21 @@ function ContactFormInner() {
 
   // Listen for prefill events dispatched by QuoteCalculator
   useEffect(() => {
+    const SERVICE_TO_PROJECT_TYPE: Record<string, string> = {
+      landing:      'Landing Page',
+      reservations: 'Reservation System',
+      webapp:       'Web Application',
+      ecommerce:    'E-commerce Store',
+      mobile:       'Mobile App',
+      maintenance:  'Monthly Maintenance',
+    };
     function handlePrefill(e: Event) {
-      const { message } = (e as CustomEvent<{ message: string }>).detail;
-      setForm((prev) => ({ ...prev, description: message }));
+      const { message, service } = (e as CustomEvent<{ message: string; service: string }>).detail;
+      setForm((prev) => ({
+        ...prev,
+        description: message,
+        projectType: SERVICE_TO_PROJECT_TYPE[service] ?? prev.projectType,
+      }));
     }
     window.addEventListener('veridis:prefill-contact', handlePrefill);
     return () => window.removeEventListener('veridis:prefill-contact', handlePrefill);

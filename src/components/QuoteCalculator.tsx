@@ -115,7 +115,7 @@ export default function QuoteCalculator() {
     });
 
     window.dispatchEvent(
-      new CustomEvent('veridis:prefill-contact', { detail: { message } })
+      new CustomEvent('veridis:prefill-contact', { detail: { message, service } })
     );
 
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
