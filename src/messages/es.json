@@ -384,5 +384,20 @@
     "contactLabel": "Contacto",
     "logoLabel": "Veridis Dev — inicio",
     "location": "Medellín, Colombia"
+  },
+  "pricing": {
+    "services": {
+      "landing": "Landing Page Profesional",
+      "reservations": "Sistema de Reservas",
+      "webapp": "App Web Personalizada",
+      "ecommerce": "Tienda en Línea",
+      "mobile": "App Móvil",
+      "maintenance": "Mantenimiento Mensual"
+    },
+    "tiers": {
+      "essential": "Esencial",
+      "professional": "Profesional",
+      "premium": "Premium"
+    }
   }
 }
