@@ -625,8 +625,8 @@ function ContactForm() {
       });
 
       if (!res.ok) {
-        const data = (await res.json()) as { error?: string };
-        throw new Error(data.error ?? t('errors.generic'));
+        if (res.status === 429) throw new Error(t('errors.rateLimited'));
+        throw new Error(t('errors.generic'));
       }
 
       setSuccess(true);

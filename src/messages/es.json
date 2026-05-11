@@ -352,7 +352,8 @@
       "countryRequired": "Por favor ingrese su país o ciudad.",
       "projectTypeRequired": "Por favor seleccione un tipo de proyecto.",
       "descriptionRequired": "Por favor describa su proyecto.",
-      "generic": "Algo salió mal"
+      "generic": "Algo salió mal",
+      "rateLimited": "Demasiados intentos. Por favor espera un momento antes de intentar nuevamente."
     },
     "success": {
       "title": "¡Mensaje enviado!",

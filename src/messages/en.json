@@ -352,7 +352,8 @@
       "countryRequired": "Please enter your country or city.",
       "projectTypeRequired": "Please select a project type.",
       "descriptionRequired": "Please describe your project.",
-      "generic": "Something went wrong"
+      "generic": "Something went wrong",
+      "rateLimited": "Too many requests. Please wait a moment before trying again."
     },
     "success": {
       "title": "Message sent!",

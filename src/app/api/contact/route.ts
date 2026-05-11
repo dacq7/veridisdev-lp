@@ -1,19 +1,60 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { resend } from '@/lib/resend';
+import { getContactRatelimit } from '@/lib/upstash';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ── Schema ────────────────────────────────────────────────────────────────────
 
-type ContactBody = {
-  name: string;
-  email: string;
-  country: string;
-  projectType: string;
-  description: string;
-  contactTime?: string;
-  timeline?: string;
-  budget?: string;
-  source?: string;
-};
+const ContactSchema = z.object({
+  name:        z.string().trim().min(2).max(100),
+  email:       z.string().trim().email().max(254),
+  country:     z.string().trim().min(1).max(100),
+  projectType: z.string().trim().min(1).max(100),
+  description: z.string().trim().min(10).max(2000),
+  contactTime: z.string().trim().max(100).optional(),
+  timeline:    z.string().trim().max(100).optional(),
+  budget:      z.string().trim().max(100).optional(),
+  source:      z.string().trim().max(100).optional(),
+}).strict();
+
+type ContactBody = z.infer<typeof ContactSchema>;
+
+// ── CSRF helper ───────────────────────────────────────────────────────────────
+
+function getIncomingOrigin(req: NextRequest): string | null {
+  const origin = req.headers.get('origin');
+  if (origin) return origin;
+
+  const referer = req.headers.get('referer');
+  if (referer) {
+    try {
+      return new URL(referer).origin;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+}
+
+function isAllowedOrigin(req: NextRequest): boolean {
+  const incoming = getIncomingOrigin(req);
+  if (!incoming) return false;
+
+  // Same-host check — handles production, Vercel preview URLs, and localhost
+  const host = req.headers.get('host');
+  if (host) {
+    const scheme = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+    if (incoming === `${scheme}://${host}`) return true;
+  }
+
+  // Explicit production URL as fallback
+  if (process.env.NEXT_PUBLIC_SITE_URL && incoming === process.env.NEXT_PUBLIC_SITE_URL) {
+    return true;
+  }
+
+  return false;
+}
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -88,16 +129,56 @@ function buildHtml(body: ContactBody): string {
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  let body: ContactBody;
+  // 1. CSRF — reject requests from foreign origins
+  if (!isAllowedOrigin(req)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  }
 
+  // 2. Rate limit — 10 requests per IP per hour (sliding window)
+  const ip =
+    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
+    req.headers.get('x-real-ip') ??
+    'unknown';
+
+  const { success, reset, limit, remaining } = await getContactRatelimit().limit(ip);
+
+  if (!success) {
+    const retryAfter = Math.ceil((reset - Date.now()) / 1000);
+    return NextResponse.json(
+      { error: 'Too many requests', retryAfter },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(retryAfter),
+          'X-RateLimit-Limit': String(limit),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': String(reset),
+        },
+      }
+    );
+  }
+
+  // 3. Parse body
+  let raw: unknown;
   try {
-    body = (await req.json()) as ContactBody;
+    raw = await req.json();
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
+  // 4. Zod validation — strict schema rejects undeclared fields
+  const parsed = ContactSchema.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'Validation failed', issues: parsed.error.issues },
+      { status: 400 }
+    );
+  }
+
+  const body = parsed.data;
   const { name, email, country, projectType, description } = body;
 
+  // 5. esc() runs inside buildHtml — existing sanitization preserved
   if (
     !name?.trim() ||
     !email?.trim() ||
@@ -108,6 +189,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
+  // 6. Resend send — existing implementation, unchanged
   const { error } = await resend.emails.send({
     from: 'Veridis Dev <team@veridisdev.com>',
     to: 'team@veridisdev.com',
