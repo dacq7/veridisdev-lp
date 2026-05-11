@@ -282,15 +282,19 @@ The homepage (`src/app/[locale]/page.tsx`) renders sections in this order:
 
 ### Client Islands — Definitive List
 
-Exactly 5 components keep `'use client'`. Every other component becomes RSC.
+Exactly 7 components keep `'use client'`. Every other component becomes RSC.
 
 | Component | Why Client |
 |-----------|-----------|
-| `QuoteCalculator.tsx` | `useState` for selections, `localStorage` for currency |
-| `ContactForm.tsx` | Form state, submit handler, success/error states |
-| `MagneticButton.tsx` | `useRef` + mouse event listeners |
-| `CustomCursor.tsx` | `useEffect` + `mousemove` tracking |
-| `AnimatedCounters.tsx` | `useInView` + animated number state |
+| `QuoteCalculator.tsx` | `useState` for selections, `localStorage` for currency *(a crear en Sprint 3)* |
+| `ContactForm.tsx` | form state + submit handler *(split de Contact, Sprint 2)* |
+| `MagneticButton.tsx` | mouse event listeners *(existente, keeper)* |
+| `CustomCursor.tsx` | `useEffect` + `mousemove` tracking *(existente, keeper)* |
+| `AnimatedCounters.tsx` | `useInView` + animated number state *(existente, keeper)* |
+| `FloatingCTA.tsx` | `window.scrollY` scroll listener + `useState` visibility *(existente, keeper — added Rev.1)* |
+| `TouchRipple.tsx` | `touchstart` global listener + `useState` ripple array *(existente, keeper — added Rev.1)* |
+
+> **Rev.1 additions:** `FloatingCTA` and `TouchRipple` were not in the original blueprint but exist in the codebase. Both require `'use client'` for legitimate technical reasons: `FloatingCTA` reads `window.scrollY` via a scroll event listener and calls `document.getElementById()` for CTA navigation; `TouchRipple` mirrors `CustomCursor`'s architecture exactly — a global `touchstart` listener with reactive ripple state. Verified by pre-Sprint 2 audit.
 
 > **Framer Motion in RSC:** `<motion.div>` with module-level variant constants works in Server Components — it serializes animation props to the client. But `useAnimation`, `useMotionValue`, `useSpring` hooks require `'use client'`. Audit each component individually before stripping the directive.
 
@@ -1210,12 +1214,14 @@ Stack: Next.js 14 App Router · TypeScript · Tailwind CSS v4 · Framer Motion �
 
 ### Rendering Model
 
-Server Components by default. Exactly 5 client islands — no more:
+Server Components by default. Exactly 7 client islands — no more:
 - `QuoteCalculator.tsx` — service/tier/currency state + localStorage
 - `ContactForm.tsx` — form state + submit handler
 - `MagneticButton.tsx` — mouse event listeners
 - `CustomCursor.tsx` — mousemove tracking
 - `AnimatedCounters.tsx` — useInView + animated numbers
+- `FloatingCTA.tsx` — `window.scrollY` scroll listener + visibility state
+- `TouchRipple.tsx` — global `touchstart` listener + ripple array state
 
 Before adding `'use client'` to anything, ask: does it actually need browser APIs or interactive state? If not — it's RSC.
 
@@ -1290,7 +1296,7 @@ Do not commit secrets. Do not add sensitive content to `.claude/`.
 
 ## Reglas No Negociables
 
-1. **RSC by default.** `'use client'` requires justification. Only the 5 named islands are client components.
+1. **RSC by default.** `'use client'` requires justification. Only the 7 named islands are client components.
 2. **`src/config/pricing.ts` is the price source of truth.** Never hardcode prices in components or messages.
 3. **TypeScript strict, no `any`.** `typecheck` must pass before every commit.
 4. **Both locales before done.** Every UI change verified in `/en` and `/es`.
@@ -1305,7 +1311,7 @@ Do not commit secrets. Do not add sensitive content to `.claude/`.
 
 ## 16. Reglas No Negociables for the Builder
 
-1. **RSC by default.** Adding `'use client'` to any component beyond the 5 named islands requires written justification in the PR description.
+1. **RSC by default.** Adding `'use client'` to any component beyond the 7 named islands requires written justification in the PR description.
 2. **`src/config/pricing.ts` is the single source of truth for all prices.** `Services.tsx`, `QuoteCalculator.tsx`, and any future pricing display must import from it.
 3. **TypeScript strict mode, no `any`.** `npm run typecheck` must pass on every commit pushed to v2.
 4. **Both locales verified before a task is complete.** `/en` and `/es` must both render correctly for every UI change.
@@ -1334,3 +1340,13 @@ Work that does not fit the 10-day sprint. Prioritized by business impact:
 | WhatsApp click tracking | Low | One Plausible custom event on the WhatsApp button |
 | Projects page (`/projects/[slug]`) | Low | Only when portfolio outgrows the homepage grid |
 | 3 npm postcss vulnerabilities | Low | Monitor for next-intl update — do not force-override |
+
+---
+
+## Revisions
+
+- **2026-05-11:** Expanded client islands from 5 to 7 (added `FloatingCTA`, `TouchRipple`).
+  Rationale: Original blueprint missed these two components. Pre-Sprint 2 analysis by
+  engineering-codebase-onboarding-engineer confirmed both require `'use client'` for
+  legitimate technical reasons (DOM/window APIs, state, event listeners). Decision aligns
+  blueprint with code reality.
