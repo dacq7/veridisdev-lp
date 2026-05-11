@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { DEMO_CREDENTIALS } from '@/config/demo-credentials';
 
 const useIsTouch = () => {
   const [isTouch, setIsTouch] = useState(false);
@@ -54,8 +55,8 @@ const PROJECTS: Project[] = [
     imgSrc: '/images/budokan-screenshot.png',
     terminalPath: 'root@veridis:~/budokan-app',
     credentials: [
-      { role: 'Sensei', user: '11111111', pass: 'demo2025' },
-      { role: 'Karateca', user: '22222222', pass: 'demo2025' },
+      { role: 'Sensei',   user: DEMO_CREDENTIALS.budokan.sensei.user,   pass: DEMO_CREDENTIALS.budokan.sensei.pass },
+      { role: 'Karateca', user: DEMO_CREDENTIALS.budokan.karateca.user, pass: DEMO_CREDENTIALS.budokan.karateca.pass },
     ],
     features: [
       'Belt progression & exam auth',
@@ -80,8 +81,8 @@ const PROJECTS: Project[] = [
     imgSrc: '/images/barberos-screenshot.png',
     terminalPath: 'root@veridis:~/barberos-os',
     credentials: [
-      { role: 'Admin', user: 'admin@barberos.com', pass: 'demo1234' },
-      { role: 'Barber', user: 'carlos@barberos.com', pass: 'demo1234' },
+      { role: 'Admin',  user: DEMO_CREDENTIALS.barberos.admin.user, pass: DEMO_CREDENTIALS.barberos.admin.pass },
+      { role: 'Barber', user: DEMO_CREDENTIALS.barberos.staff.user, pass: DEMO_CREDENTIALS.barberos.staff.pass },
     ],
     features: [
       '3-step public booking',
@@ -106,8 +107,8 @@ const PROJECTS: Project[] = [
     imgSrc: '/images/trucking-screenshot.png',
     terminalPath: 'root@veridis:~/trucking-crm',
     credentials: [
-      { role: 'Admin', user: 'admin@premiertruckins.com', pass: 'Admin1234!' },
-      { role: 'Vendor', user: 'maria.gonzalez@premiertruckins.com', pass: 'Vendor1234!' },
+      { role: 'Admin',  user: DEMO_CREDENTIALS.trucking.admin.user,  pass: DEMO_CREDENTIALS.trucking.admin.pass },
+      { role: 'Vendor', user: DEMO_CREDENTIALS.trucking.vendor.user, pass: DEMO_CREDENTIALS.trucking.vendor.pass },
     ],
     features: [
       '8-stage insurance pipeline',
