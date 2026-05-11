@@ -282,21 +282,36 @@ The homepage (`src/app/[locale]/page.tsx`) renders sections in this order:
 
 ### Client Islands — Definitive List
 
-Exactly 7 components keep `'use client'`. Every other component becomes RSC.
+**Group A — Architectural islands (intentional 'use client' by design):**
 
 | Component | Why Client |
 |-----------|-----------|
-| `QuoteCalculator.tsx` | `useState` for selections, `localStorage` for currency *(a crear en Sprint 3)* |
-| `ContactForm.tsx` | form state + submit handler *(split de Contact, Sprint 2)* |
-| `MagneticButton.tsx` | mouse event listeners *(existente, keeper)* |
-| `CustomCursor.tsx` | `useEffect` + `mousemove` tracking *(existente, keeper)* |
-| `AnimatedCounters.tsx` | `useInView` + animated number state *(existente, keeper)* |
-| `FloatingCTA.tsx` | `window.scrollY` scroll listener + `useState` visibility *(existente, keeper — added Rev.1)* |
-| `TouchRipple.tsx` | `touchstart` global listener + `useState` ripple array *(existente, keeper — added Rev.1)* |
+| `ContactForm.tsx` | Form state, submit handler, success/error states |
+| `MagneticButton.tsx` | Mouse event listeners |
+| `CustomCursor.tsx` | `useEffect` + `mousemove` tracking |
+| `FloatingCTA.tsx` | `window.scrollY` scroll listener + `useState` visibility |
+| `TouchRipple.tsx` | `touchstart` global listener + `useState` ripple array |
+| `AnimatedCounters.tsx` *(TBD Sprint 3)* | `useInView` + animated number state |
+| `QuoteCalculator.tsx` *(TBD Sprint 3)* | `useState` for selections, `localStorage` for currency |
 
-> **Rev.1 additions:** `FloatingCTA` and `TouchRipple` were not in the original blueprint but exist in the codebase. Both require `'use client'` for legitimate technical reasons: `FloatingCTA` reads `window.scrollY` via a scroll event listener and calls `document.getElementById()` for CTA navigation; `TouchRipple` mirrors `CustomCursor`'s architecture exactly — a global `touchstart` listener with reactive ripple state. Verified by pre-Sprint 2 audit.
+**Group B — Technical constraint (Framer Motion + Next.js 16 incompatibility):**
 
-> **Framer Motion in RSC:** `<motion.div>` with module-level variant constants works in Server Components — it serializes animation props to the client. But `useAnimation`, `useMotionValue`, `useSpring` hooks require `'use client'`. Audit each component individually before stripping the directive.
+| Component | Framer Motion dependency |
+|-----------|------------------------|
+| `Hero.tsx` | `useScroll`, `useTransform` on root layout elements |
+| `About.tsx` | `useScroll`, `useTransform`, `useAnimation` × 5 |
+| `Services.tsx` | `useSpring` in `ServiceCard` |
+| `Projects.tsx` | `useInView`, hover state tied to Framer Motion |
+| `TechStack.tsx` | `useAnimation`, `useEffect` in `Pill` and `TechGroup` |
+| `WhyVeridis.tsx` | `useMotionValue`, `useSpring` for 3D tilt on `DiffCard` |
+| `Testimonials.tsx` | `useMotionValue`, `useSpring` for 3D tilt |
+| `HowWeWork.tsx` | `useAnimation` × 6 in `StepItem`, `useInView` in `CountUp` |
+| `Footer.tsx` | `useAnimation`, `useIsTouch` distributed across sub-components |
+| `Navbar.tsx` | `IntersectionObserver`, `window.scrollY`, mobile menu state |
+
+Group B components are client by technical necessity, not by design choice. They will become RSC candidates once Framer Motion is replaced or upgraded (see v2.1 backlog).
+
+> **Framer Motion in RSC:** The pattern of declaring variants as module-level constants (STRENGTHS audit item) remains valid and correct — it is NOT the source of the incompatibility. The incompatibility is in `createMotionComponent()` being called server-side when Next.js 16 + Turbopack processes the import. This was discovered during Sprint 2 execution (commit 0c157a7).
 
 ### State Management
 
@@ -604,7 +619,19 @@ Then audit each of the 16 existing components. For each one, ask: does it use `u
 | MagneticButton.tsx | Client | Mouse event listeners |
 | AnimatedCounters.tsx | Client | useInView + animated state |
 
-> **Critical:** `<motion.div>` with module-level variant objects works fine in RSC — it passes animation config as serializable props. But if any component uses `useAnimation()`, `useMotionValue()`, `useSpring()`, or `animate()` imperatively, that component must remain client. Read each carefully.
+> **Architectural reality discovered during execution (2026-05-11, commit 0c157a7):**
+> `<motion.div>` from Framer Motion does **not** work in Server Components under
+> Next.js 16 + Turbopack. Any component importing Framer Motion must remain client,
+> regardless of whether variants are declared as module-level constants.
+>
+> The RSC migration scope is therefore:
+> - Components with **no Framer Motion** → can be RSC (e.g., `Marquee` migrated successfully)
+> - Components with Framer Motion but **separable** into static wrapper + animated island → SPLIT
+>   (e.g., `Contact` split into RSC wrapper + `ContactForm` client island)
+> - Components where Framer Motion hooks (`useScroll`, `useSpring`, etc.) are woven into
+>   the root layout → **must remain client** (documented in commit 0c157a7)
+>
+> Full RSC migration would require replacing Framer Motion across the codebase — deferred to v2.1.
 
 After migration: `npm run build` must pass. `npm run typecheck` must pass. Test both `/en` and `/es` on dev server — every section must render.
 
@@ -1311,7 +1338,11 @@ Do not commit secrets. Do not add sensitive content to `.claude/`.
 
 ## 16. Reglas No Negociables for the Builder
 
-1. **RSC by default.** Adding `'use client'` to any component beyond the 7 named islands requires written justification in the PR description.
+1. **`'use client'` requires justification in one of two cases:**
+   - **(a) Architectural island:** Component is one of the 7 Group A islands listed in Section 6.
+   - **(b) Framer Motion constraint:** Component imports Framer Motion (technical constraint, Next.js 16 + Turbopack — see Section 6 Group B).
+   Any new component that does not fall into (a) or (b) must include explicit reasoning in the commit message for adding `'use client'`. RSC is still the default for new components that have no Framer Motion and no interactive state.
+   *(Updated 2026-05-11 — Sprint 2 execution, commit 0c157a7)*
 2. **`src/config/pricing.ts` is the single source of truth for all prices.** `Services.tsx`, `QuoteCalculator.tsx`, and any future pricing display must import from it.
 3. **TypeScript strict mode, no `any`.** `npm run typecheck` must pass on every commit pushed to v2.
 4. **Both locales verified before a task is complete.** `/en` and `/es` must both render correctly for every UI change.
@@ -1330,6 +1361,7 @@ Work that does not fit the 10-day sprint. Prioritized by business impact:
 
 | Item | Priority | Notes |
 |------|----------|-------|
+| Investigate Framer Motion RSC replacement | High | Framer Motion incompatibility with Next.js 16 + Turbopack blocks RSC migration of 10 components. Candidates: `motion/react` (official rebrand), CSS `@keyframes`, or Radix UI primitives. Goal: enable Group B components to become RSC, significantly reducing bundle size. |
 | Additional case studies (Budokan, Trucking CRM, Itza) | High | Content-only — write in Sanity Studio, no code changes |
 | Playwright E2E test suite | High | Automate the Step 23 smoke test checklist |
 | Testimonials section | High | 3–5 client quotes with photos; add after Projects |
@@ -1350,3 +1382,9 @@ Work that does not fit the 10-day sprint. Prioritized by business impact:
   engineering-codebase-onboarding-engineer confirmed both require `'use client'` for
   legitimate technical reasons (DOM/window APIs, state, event listeners). Decision aligns
   blueprint with code reality.
+- **2026-05-11:** Sprint 2 Block 3 execution revealed Framer Motion + RSC incompatibility
+  in Next.js 16 + Turbopack. RSC migration scope reduced: `Marquee` fully migrated to RSC;
+  `Contact` split into RSC wrapper + `ContactForm` client island; 10 components remain client
+  by technical constraint (Framer Motion). Section 6 client islands list updated to distinguish
+  architectural islands (Group A, 7) from Framer Motion constrained (Group B, 10). Rule #1
+  updated accordingly. Full RSC migration deferred to v2.1 pending Framer Motion replacement.
