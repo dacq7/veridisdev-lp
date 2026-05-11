@@ -353,6 +353,8 @@
       "projectTypeRequired": "Por favor seleccione un tipo de proyecto.",
       "descriptionRequired": "Por favor describa su proyecto.",
       "generic": "Algo salió mal",
+      "forbidden": "Solicitud no permitida.",
+      "validationFailed": "Por favor revisa los datos e intenta nuevamente.",
       "rateLimited": "Demasiados intentos. Por favor espera un momento antes de intentar nuevamente."
     },
     "success": {

@@ -1,9 +1,7 @@
-'use client';
+import { getTranslations } from 'next-intl/server';
 
-import { useTranslations } from 'next-intl';
-
-export default function Marquee() {
-  const t = useTranslations('marquee');
+export default async function Marquee() {
+  const t = await getTranslations('marquee');
   const track = t('track');
 
   return (
