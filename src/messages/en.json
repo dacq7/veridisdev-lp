@@ -413,5 +413,32 @@
       "monthly": "/mo"
     },
     "prefilledMessage": "Hi, I'd like a quote for {service} ({tier} plan). Estimated range: {priceRange}."
+  },
+  "blog": {
+    "title": "Blog & Case Studies",
+    "subtitle": "Insights, process notes, and real project breakdowns from the Veridis Dev team.",
+    "comingSoon": {
+      "title": "Coming soon",
+      "description": "We're working on the first posts. In the meantime, reach out if you'd like to talk about your project.",
+      "cta": "Get in touch"
+    },
+    "post": {
+      "publishedOn": "Published on",
+      "by": "By",
+      "readingTime": "{minutes} min read",
+      "caseStudy": "Case Study"
+    },
+    "caseStudyMeta": {
+      "client": "Client",
+      "industry": "Industry",
+      "duration": "Duration",
+      "stack": "Tech stack",
+      "results": "Results",
+      "liveUrl": "View live"
+    },
+    "footer": {
+      "ctaTitle": "Want something like this?",
+      "ctaButton": "Let's talk →"
+    }
   }
 }

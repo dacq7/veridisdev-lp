@@ -413,5 +413,32 @@
       "monthly": "/mes"
     },
     "prefilledMessage": "Hola, me interesa cotizar {service} (plan {tier}). Rango estimado: {priceRange}."
+  },
+  "blog": {
+    "title": "Blog y Casos de Estudio",
+    "subtitle": "Perspectivas, notas de proceso y análisis reales de proyectos del equipo Veridis Dev.",
+    "comingSoon": {
+      "title": "Próximamente",
+      "description": "Estamos trabajando en los primeros artículos. Mientras tanto, escríbenos si quieres hablar de tu proyecto.",
+      "cta": "Contáctanos"
+    },
+    "post": {
+      "publishedOn": "Publicado el",
+      "by": "Por",
+      "readingTime": "{minutes} min de lectura",
+      "caseStudy": "Caso de Estudio"
+    },
+    "caseStudyMeta": {
+      "client": "Cliente",
+      "industry": "Industria",
+      "duration": "Duración",
+      "stack": "Stack tecnológico",
+      "results": "Resultados",
+      "liveUrl": "Ver en producción"
+    },
+    "footer": {
+      "ctaTitle": "¿Quieres algo así?",
+      "ctaButton": "Hablemos →"
+    }
   }
 }
