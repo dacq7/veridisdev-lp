@@ -13,6 +13,7 @@ import TechStack from '@/components/TechStack';
 import About from '@/components/About';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
+import BlogPreview from '@/components/BlogPreview';
 
 export default async function Home({
   params,
@@ -32,6 +33,7 @@ export default async function Home({
         <Services />
         <QuoteCalculator />
         <Projects />
+        <BlogPreview locale={locale as 'es' | 'en'} />
         <Testimonials />
         <HowWeWork />
         <WhyVeridis />

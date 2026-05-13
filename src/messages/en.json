@@ -439,6 +439,12 @@
     "footer": {
       "ctaTitle": "Want something like this?",
       "ctaButton": "Let's talk →"
+    },
+    "preview": {
+      "eyebrow": "Latest posts",
+      "title": "Technical insights",
+      "subtitle": "What we're building, learning, and publishing.",
+      "viewAll": "View all posts →"
     }
   }
 }

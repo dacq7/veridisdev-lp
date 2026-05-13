@@ -439,6 +439,12 @@
     "footer": {
       "ctaTitle": "¿Quieres algo así?",
       "ctaButton": "Hablemos →"
+    },
+    "preview": {
+      "eyebrow": "Últimos posts",
+      "title": "Reflexiones técnicas",
+      "subtitle": "Lo que estamos construyendo, aprendiendo y publicando.",
+      "viewAll": "Ver todo el blog →"
     }
   }
 }
