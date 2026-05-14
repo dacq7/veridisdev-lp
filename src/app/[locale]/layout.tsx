@@ -6,6 +6,7 @@ import TouchRipple from "@/components/TouchRipple";
 import PlausibleScript from "@/components/PlausibleScript";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale, getMessages } from "next-intl/server";
+import { SITE_URL, SITE_NAME } from "@/lib/site-config";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -24,21 +25,24 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-  title: "Veridis Dev — Software you can trust",
+  title: {
+    template: `%s | ${SITE_NAME}`,
+    default: `${SITE_NAME} — Software you can trust`,
+  },
   description:
     "Desarrollamos software a medida con IA: landing pages, apps web, ecommerce y apps móviles. Proyectos en producción con usuarios reales. Medellín, Colombia.",
-  metadataBase: new URL("https://veridisdev.com"),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
-    title: "Veridis Dev — Software you can trust",
+    title: `${SITE_NAME} — Software you can trust`,
     description:
       "Desarrollamos software a medida con IA: landing pages, apps web, ecommerce y apps móviles. Proyectos en producción con usuarios reales.",
     type: "website",
     locale: "es_CO",
-    siteName: "Veridis Dev",
+    siteName: SITE_NAME,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Veridis Dev — Software you can trust",
+    title: `${SITE_NAME} — Software you can trust`,
     description:
       "Desarrollamos software a medida con IA: landing pages, apps web, ecommerce y apps móviles.",
   },
@@ -51,6 +55,31 @@ export const metadata: Metadata = {
     shortcut: '/logo/veridis-icon.svg',
     apple: '/logo/veridis-icon.svg',
   },
+};
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: `${SITE_URL}/logo/veridis-icon.svg`,
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'sales',
+    email: 'team@veridisdev.com',
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Medellín',
+    addressCountry: 'CO',
+  },
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE_NAME,
+  url: SITE_URL,
 };
 
 export default async function RootLayout({
@@ -71,6 +100,14 @@ export default async function RootLayout({
     >
       <head>
         <PlausibleScript />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
       </head>
       <body className="bg-background text-white antialiased">
         <CustomCursor />

@@ -6,6 +6,7 @@ import { getAllPosts }      from '@/lib/sanity-queries';
 import { isSanityConfigured } from '@/lib/sanity';
 import PostCard              from '@/components/blog/PostCard';
 import type { Metadata }     from 'next';
+import { SITE_URL, SITE_NAME } from '@/lib/site-config';
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -14,10 +15,36 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'blog' });
+  const canonicalUrl = `${SITE_URL}/${locale}/blog`;
+  const ogParams = new URLSearchParams({ title: t('title'), subtitle: t('subtitle') });
+  const ogImageUrl = `${SITE_URL}/api/og?${ogParams.toString()}`;
+
   return {
     title: t('title'),
     description: t('subtitle'),
-    openGraph: { title: t('title'), description: t('subtitle'), type: 'website' },
+    alternates: {
+      canonical: canonicalUrl,
+      languages: {
+        es: `${SITE_URL}/es/blog`,
+        en: `${SITE_URL}/en/blog`,
+      },
+    },
+    openGraph: {
+      title: t('title'),
+      description: t('subtitle'),
+      url: canonicalUrl,
+      siteName: SITE_NAME,
+      locale: locale === 'es' ? 'es_CO' : 'en_US',
+      alternateLocale: locale === 'es' ? 'en_US' : 'es_CO',
+      type: 'website',
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: t('title') }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('title'),
+      description: t('subtitle'),
+      images: [ogImageUrl],
+    },
   };
 }
 

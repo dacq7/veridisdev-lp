@@ -9,6 +9,7 @@ import { urlForImage }        from '@/lib/sanity';
 import { portableTextComponents } from '@/components/blog/PortableTextComponents';
 import type { Metadata }     from 'next';
 import type { CaseStudyMeta } from '@/types/blog';
+import { SITE_URL, SITE_NAME } from '@/lib/site-config';
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
@@ -18,20 +19,48 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const post = await getPostBySlug(slug, locale as 'es' | 'en');
   if (!post) return {};
+
   const title       = post.title?.[locale as 'es' | 'en'] ?? '';
   const description = post.excerpt?.[locale as 'es' | 'en'] ?? '';
-  const ogImage     = post.coverImage ? urlForImage(post.coverImage) : undefined;
+  const canonicalUrl = `${SITE_URL}/${locale}/blog/${slug}`;
+  const ogImageUrl   = `${SITE_URL}/api/og/post/${slug}?locale=${locale}`;
+
+  // Build alternates only when both slugs are available
+  const esSlug = post.slug?.es as string | undefined;
+  const enSlug = post.slug?.en as string | undefined;
+  const hasAlternates = Boolean(esSlug && enSlug);
+
   return {
     title,
     description,
+    alternates: {
+      canonical: canonicalUrl,
+      ...(hasAlternates
+        ? {
+            languages: {
+              es: `${SITE_URL}/es/blog/${esSlug}`,
+              en: `${SITE_URL}/en/blog/${enSlug}`,
+            },
+          }
+        : {}),
+    },
     openGraph: {
       title,
       description,
+      url: canonicalUrl,
+      siteName: SITE_NAME,
+      locale: locale === 'es' ? 'es_CO' : 'en_US',
+      alternateLocale: locale === 'es' ? 'en_US' : 'es_CO',
       type: 'article',
       publishedTime: post.publishedAt,
-      ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630 }] } : {}),
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
     },
-    twitter: { card: 'summary_large_image', title, description },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [ogImageUrl],
+    },
   };
 }
 
@@ -120,8 +149,35 @@ export default async function PostPage({ params }: Props) {
   const body        = post.body?.[locale as 'es' | 'en']    ?? [];
   const coverImgUrl = post.coverImage ? urlForImage(post.coverImage) : null;
 
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': post.isCaseStudy ? 'TechArticle' : 'BlogPosting',
+    headline: title,
+    ...(excerpt ? { description: excerpt } : {}),
+    ...(coverImgUrl ? { image: coverImgUrl } : {}),
+    datePublished: post.publishedAt,
+    author: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/logo/veridis-icon.svg`,
+      },
+    },
+  };
+
   return (
     <main className="min-h-screen" style={{ background: '#0A0A0A' }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       {/* Cover */}
       {coverImgUrl && (
         <div className="relative w-full" style={{ height: '40vh', maxHeight: '480px', background: '#1A1A1A' }}>
