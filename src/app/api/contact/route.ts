@@ -1,7 +1,19 @@
+// PROVISIONING: requires RESEND_API_KEY to send emails. Without it,
+// the endpoint returns 503 instead of crashing at module load.
 import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
 import { z } from 'zod';
-import { resend } from '@/lib/resend';
 import { getContactRatelimit } from '@/lib/upstash';
+
+let _resend: Resend | null = null;
+
+function getResend(): Resend | null {
+  if (_resend) return _resend;
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  _resend = new Resend(key);
+  return _resend;
+}
 
 // ── Schema ────────────────────────────────────────────────────────────────────
 
@@ -189,7 +201,15 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
 
-  // 6. Resend send — existing implementation, unchanged
+  // 6. Resend send — lazy init; returns 503 if key is absent
+  const resend = getResend();
+  if (!resend) {
+    return NextResponse.json(
+      { error: 'email_service_unavailable' },
+      { status: 503 },
+    );
+  }
+
   const { error } = await resend.emails.send({
     from: 'Veridis Dev <team@veridisdev.com>',
     to: 'team@veridisdev.com',
