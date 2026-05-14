@@ -3,6 +3,7 @@ import { Syne, DM_Sans } from "next/font/google";
 import "../globals.css";
 import CustomCursor from "@/components/CustomCursor";
 import TouchRipple from "@/components/TouchRipple";
+import PlausibleScript from "@/components/PlausibleScript";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale, getMessages } from "next-intl/server";
 
@@ -68,6 +69,9 @@ export default async function RootLayout({
       lang={locale}
       className={`${dmSans.variable} ${syne.variable}`}
     >
+      <head>
+        <PlausibleScript />
+      </head>
       <body className="bg-background text-white antialiased">
         <CustomCursor />
         <TouchRipple />

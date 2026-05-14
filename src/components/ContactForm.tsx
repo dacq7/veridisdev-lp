@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useIsTouch } from '@/hooks/useIsTouch';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
+import { trackEvent } from '@/lib/plausible';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -623,6 +624,7 @@ function ContactFormInner() {
       }
 
       setSuccess(true);
+      trackEvent('Contact Form Submitted', { projectType: form.projectType || 'unspecified' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {

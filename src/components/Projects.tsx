@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { DEMO_CREDENTIALS } from '@/config/demo-credentials';
+import { trackEvent } from '@/lib/plausible';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -581,6 +582,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             href={project.liveUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent('Demo Opened', { project: project.id })}
             className="inline-flex items-center border border-accent text-accent font-sans font-medium text-sm rounded-[6px] px-5 py-2.5 transition-all duration-200 hover:bg-accent hover:text-white"
             animate={
               inView

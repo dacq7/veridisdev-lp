@@ -8,6 +8,7 @@ import {
   TIER_LABEL_KEYS,
   type ServiceId, type ServiceTier, type Currency,
 } from '@/config/pricing';
+import { trackEvent } from '@/lib/plausible';
 
 // ── Price formatting ───────────────────────────────────────────────────────────
 
@@ -113,6 +114,8 @@ export default function QuoteCalculator() {
       tier: tierLabel,
       priceRange: priceStr,
     });
+
+    trackEvent('Quote Calculator CTA', { service, tier, currency });
 
     window.dispatchEvent(
       new CustomEvent('veridis:prefill-contact', { detail: { message, service } })
