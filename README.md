@@ -2,6 +2,7 @@
 
 > Software you can trust. Built in public.
 
+[![CI](https://github.com/dacq7/veridisdev-lp/actions/workflows/ci.yml/badge.svg?branch=v2)](https://github.com/dacq7/veridisdev-lp/actions/workflows/ci.yml)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
