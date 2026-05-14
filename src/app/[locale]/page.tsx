@@ -16,6 +16,7 @@ import About from '@/components/About';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import BlogPreview from '@/components/BlogPreview';
+import AgentProcess from '@/components/AgentProcess';
 
 export const revalidate = 86400;
 
@@ -92,6 +93,7 @@ export default async function Home({
         <WhyVeridis />
         <TechStack />
         <About />
+        <AgentProcess locale={locale as 'es' | 'en'} />
         <Contact />
       </main>
       <Footer />

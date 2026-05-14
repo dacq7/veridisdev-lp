@@ -414,6 +414,15 @@
     },
     "prefilledMessage": "Hola, me interesa cotizar {service} (plan {tier}). Rango estimado: {priceRange}."
   },
+  "agentProcess": {
+    "eyebrow": "Construido en público",
+    "title": "Nuestro proceso, auditable end-to-end",
+    "description": "Cada decisión arquitectónica del Veridis Landing v2 fue tomada y documentada por agentes especializados de IA, supervisados por nuestro equipo. Todo el proceso está disponible públicamente en nuestro repositorio de GitHub.",
+    "cta": {
+      "primary": "Explora nuestro proceso",
+      "secondary": "Ver código completo en GitHub"
+    }
+  },
   "blog": {
     "title": "Blog y Casos de Estudio",
     "subtitle": "Perspectivas, notas de proceso y análisis reales de proyectos del equipo Veridis Dev.",

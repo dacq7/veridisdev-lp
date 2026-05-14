@@ -414,6 +414,15 @@
     },
     "prefilledMessage": "Hi, I'd like a quote for {service} ({tier} plan). Estimated range: {priceRange}."
   },
+  "agentProcess": {
+    "eyebrow": "Built in public",
+    "title": "Our process, end-to-end auditable",
+    "description": "Every architectural decision in Veridis Landing v2 was made and documented by specialized AI agents, supervised by our team. The entire process is publicly available in our GitHub repository.",
+    "cta": {
+      "primary": "Explore our process",
+      "secondary": "View full code on GitHub"
+    }
+  },
   "blog": {
     "title": "Blog & Case Studies",
     "subtitle": "Insights, process notes, and real project breakdowns from the Veridis Dev team.",
