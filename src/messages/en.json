@@ -52,7 +52,7 @@
     "heading": "Services",
     "subtitle": "From landing pages to full SaaS platforms — we build what your business needs.",
     "currencyToggleLabel": "Select currency",
-    "priceFrom": "From",
+    "starting_from": "From {price}",
     "cta": {
       "question": "Ready to build something?",
       "button": "Let's talk →"
@@ -390,7 +390,7 @@
   "pricing": {
     "services": {
       "landing": "Professional Landing Page",
-      "reservations": "Reservation System",
+      "reservation": "Reservation System",
       "webapp": "Custom Web Application",
       "ecommerce": "Online Store",
       "mobile": "Mobile App",
@@ -404,15 +404,14 @@
   },
   "calculator": {
     "title": "Estimate your investment",
-    "subtitle": "Select a service and plan to see a reference price range.",
+    "subtitle": "Select a service and tier to see the reference price.",
     "labels": {
       "service": "Service",
-      "tier": "Plan",
-      "estimatedRange": "Estimated investment",
-      "continueQuote": "Continue with this quote →",
-      "monthly": "/mo"
+      "tier": "Tier",
+      "estimatedRange": "Reference price",
+      "continueQuote": "Continue with this quote →"
     },
-    "prefilledMessage": "Hi, I'd like a quote for {service} ({tier} plan). Estimated range: {priceRange}."
+    "prefilledMessage": "Hi, I'd like a quote for {service} ({tier} tier). Reference price: {price}."
   },
   "agentProcess": {
     "eyebrow": "Built in public",
