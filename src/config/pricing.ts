@@ -2,119 +2,107 @@
  * SINGLE SOURCE OF TRUTH for all service pricing.
  *
  * Consumed by:
- * - Services.tsx  (landing service cards — Sprint 3 Block 2)
- * - QuoteCalculator.tsx  (interactive estimator — Sprint 3 Block 3)
+ * - Services.tsx  (landing service cards)
+ * - QuoteCalculator.tsx  (interactive estimator)
  *
- * DRAFT pricing v1 — values pending final review before v2 launch.
+ * COP values in millions (2.8 = $2,800,000 COP)
+ * USD values in thousands (0.8 = $800 USD)
+ * Maintenance values are per month.
+ * USD prices are NOT literal conversions — localized to market floor.
+ * TRM reference: $3,793.64 COP/USD
+ *
  * To update prices: edit values here, run npm run build, deploy.
  * Never hardcode prices in component files or translation messages.
  */
 
 export type Currency = 'COP' | 'USD';
-export type ServiceTier = 'tier1' | 'tier2' | 'tier3';
+export type Tier = 1 | 2 | 3;
 export type ServiceId =
   | 'landing'
-  | 'reservations'
+  | 'reservation'
   | 'webapp'
   | 'ecommerce'
   | 'mobile'
   | 'maintenance';
 
-export interface PriceRange {
-  min: number;
-  max: number;
+export interface ServiceTierPricing {
+  COP: number; // in millions
+  USD: number; // in thousands
 }
 
-export interface TierPricing {
-  COP: PriceRange;
-  USD: PriceRange;
-}
-
-export interface ServicePricing {
-  id: ServiceId;
-  /** i18n key for the service name — actual label lives in messages/[locale].json */
-  nameKey: string;
-  /** true = monthly recurring; false = one-time project fee */
-  recurring: boolean;
-  tiers: Record<ServiceTier, TierPricing>;
-}
-
-export const PRICING: Record<ServiceId, ServicePricing> = {
+export const PRICING: Record<ServiceId, Record<Tier, ServiceTierPricing>> = {
   landing: {
-    id: 'landing',
-    nameKey: 'pricing.services.landing',
-    recurring: false,
-    tiers: {
-      tier1: { COP: { min: 2_500_000, max: 4_000_000 }, USD: { min: 1200, max: 1800 } }, // DRAFT v1 — pending Diego review
-      tier2: { COP: { min: 4_000_000, max: 7_000_000 }, USD: { min: 1800, max: 3500 } }, // DRAFT v1 — pending Diego review
-      tier3: { COP: { min: 7_000_000, max: 12_000_000 }, USD: { min: 3500, max: 6000 } }, // DRAFT v1 — pending Diego review
-    },
+    1: { COP: 2.8,  USD: 0.8  },
+    2: { COP: 5.2,  USD: 1.5  },
+    3: { COP: 12.0, USD: 3.5  },
   },
-  reservations: {
-    id: 'reservations',
-    nameKey: 'pricing.services.reservations',
-    recurring: false,
-    tiers: {
-      tier1: { COP: { min: 5_000_000, max: 8_000_000 }, USD: { min: 2500, max: 4000 } }, // DRAFT v1 — pending Diego review
-      tier2: { COP: { min: 8_000_000, max: 14_000_000 }, USD: { min: 4000, max: 7000 } }, // DRAFT v1 — pending Diego review
-      tier3: { COP: { min: 14_000_000, max: 25_000_000 }, USD: { min: 7000, max: 13000 } }, // DRAFT v1 — pending Diego review
-    },
+  reservation: {
+    1: { COP: 4.2,  USD: 1.2  },
+    2: { COP: 8.8,  USD: 2.5  },
+    3: { COP: 16.0, USD: 4.5  },
   },
   webapp: {
-    id: 'webapp',
-    nameKey: 'pricing.services.webapp',
-    recurring: false,
-    tiers: {
-      tier1: { COP: { min: 7_000_000, max: 12_000_000 }, USD: { min: 3500, max: 6000 } }, // DRAFT v1 — pending Diego review
-      tier2: { COP: { min: 12_000_000, max: 22_000_000 }, USD: { min: 6000, max: 11000 } }, // DRAFT v1 — pending Diego review
-      tier3: { COP: { min: 22_000_000, max: 45_000_000 }, USD: { min: 11000, max: 25000 } }, // DRAFT v1 — pending Diego review
-    },
+    1: { COP: 6.2,  USD: 1.8  },
+    2: { COP: 13.2, USD: 3.8  },
+    3: { COP: 28.0, USD: 8.0  },
   },
   ecommerce: {
-    id: 'ecommerce',
-    nameKey: 'pricing.services.ecommerce',
-    recurring: false,
-    tiers: {
-      tier1: { COP: { min: 8_000_000, max: 13_000_000 }, USD: { min: 4000, max: 6500 } }, // DRAFT v1 — pending Diego review
-      tier2: { COP: { min: 13_000_000, max: 22_000_000 }, USD: { min: 6500, max: 11000 } }, // DRAFT v1 — pending Diego review
-      tier3: { COP: { min: 22_000_000, max: 40_000_000 }, USD: { min: 11000, max: 22000 } }, // DRAFT v1 — pending Diego review
-    },
+    1: { COP: 7.0,  USD: 2.0  },
+    2: { COP: 14.8, USD: 4.2  },
+    3: { COP: 35.0, USD: 10.0 },
   },
   mobile: {
-    id: 'mobile',
-    nameKey: 'pricing.services.mobile',
-    recurring: false,
-    tiers: {
-      tier1: { COP: { min: 12_000_000, max: 20_000_000 }, USD: { min: 6000, max: 10000 } }, // DRAFT v1 — pending Diego review
-      tier2: { COP: { min: 20_000_000, max: 35_000_000 }, USD: { min: 10000, max: 18000 } }, // DRAFT v1 — pending Diego review
-      tier3: { COP: { min: 35_000_000, max: 70_000_000 }, USD: { min: 18000, max: 40000 } }, // DRAFT v1 — pending Diego review
-    },
+    1: { COP: 9.8,  USD: 2.8  },
+    2: { COP: 19.2, USD: 5.5  },
+    3: { COP: 33.0, USD: 9.5  },
   },
   maintenance: {
-    id: 'maintenance',
-    nameKey: 'pricing.services.maintenance',
-    recurring: true,
-    tiers: {
-      tier1: { COP: { min: 800_000, max: 1_500_000 }, USD: { min: 400, max: 750 } }, // DRAFT v1 — pending Diego review
-      tier2: { COP: { min: 1_500_000, max: 3_000_000 }, USD: { min: 750, max: 1500 } }, // DRAFT v1 — pending Diego review
-      tier3: { COP: { min: 3_000_000, max: 7_000_000 }, USD: { min: 1500, max: 3500 } }, // DRAFT v1 — pending Diego review
-    },
+    1: { COP: 0.28, USD: 0.08 },
+    2: { COP: 0.70, USD: 0.20 },
+    3: { COP: 1.70, USD: 0.50 },
   },
 };
 
 export const SERVICE_IDS: ServiceId[] = [
   'landing',
-  'reservations',
+  'reservation',
   'webapp',
   'ecommerce',
   'mobile',
   'maintenance',
 ];
 
-export const TIER_IDS: ServiceTier[] = ['tier1', 'tier2', 'tier3'];
+export const TIER_IDS: Tier[] = [1, 2, 3];
 
-export const TIER_LABEL_KEYS: Record<ServiceTier, string> = {
-  tier1: 'pricing.tiers.essential',
-  tier2: 'pricing.tiers.professional',
-  tier3: 'pricing.tiers.premium',
+export const TIER_LABEL_KEYS: Record<Tier, string> = {
+  1: 'pricing.tiers.essential',
+  2: 'pricing.tiers.professional',
+  3: 'pricing.tiers.premium',
 };
+
+export function formatPrice(
+  amount: number,
+  currency: 'COP' | 'USD',
+  isMonthly: boolean = false
+): string {
+  if (currency === 'COP') {
+    const cop = amount * 1_000_000;
+    const formatter = new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      maximumFractionDigits: 0,
+    });
+    return formatter.format(cop) + (isMonthly ? '/mes' : '');
+  }
+  const usd = amount * 1_000;
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  });
+  return formatter.format(usd) + (isMonthly ? '/mo' : '');
+}
+
+export function isMonthlyService(service: ServiceId): boolean {
+  return service === 'maintenance';
+}
