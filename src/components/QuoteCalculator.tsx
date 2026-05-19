@@ -4,17 +4,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import {
-  PRICING, SERVICE_IDS, TIER_IDS,
-  TIER_LABEL_KEYS,
-  type ServiceId, type ServiceTier, type Currency,
+  PRICING, SERVICE_IDS, TIER_IDS, TIER_LABEL_KEYS,
+  formatPrice, isMonthlyService,
+  type ServiceId, type Tier, type Currency,
 } from '@/config/pricing';
 import { trackEvent } from '@/lib/plausible';
-
-// ── Price formatting ───────────────────────────────────────────────────────────
-
-function formatCOPNumber(n: number): string {
-  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
 
 // ── Animation variants (outside component — PLAN-MAESTRO rule) ────────────────
 
@@ -86,33 +80,23 @@ export default function QuoteCalculator() {
   const tPricing = useTranslations();
 
   const [service, setService] = useState<ServiceId>('landing');
-  const [tier, setTier] = useState<ServiceTier>('tier1');
+  const [tier, setTier] = useState<Tier>(1);
   const [currency, setCurrency] = useState<Currency>('COP');
 
   // Derived price
-  const selected = PRICING[service].tiers[tier];
-  const range = selected[currency];
-
-  const formattedPrice =
-    currency === 'COP'
-      ? `$${formatCOPNumber(range.min)} - $${formatCOPNumber(range.max)} COP`
-      : `$${range.min.toLocaleString('en-US')} - $${range.max.toLocaleString('en-US')} USD`;
+  const selected = PRICING[service][tier];
+  const formattedPrice = formatPrice(selected[currency], currency, isMonthlyService(service));
 
   const priceKey = `${service}-${tier}-${currency}`;
 
   function handleContinueQuote() {
-    const pricingData = PRICING[service];
     const tierLabel = tPricing(TIER_LABEL_KEYS[tier]);
-    const serviceName = tPricing(pricingData.nameKey);
-    const priceStr =
-      currency === 'COP'
-        ? `$${formatCOPNumber(range.min)} - $${formatCOPNumber(range.max)} COP`
-        : `$${range.min.toLocaleString('en-US')} - $${range.max.toLocaleString('en-US')} USD`;
+    const serviceName = tPricing(`pricing.services.${service}`);
 
     const message = t('prefilledMessage', {
       service: serviceName,
       tier: tierLabel,
-      priceRange: priceStr,
+      price: formattedPrice,
     });
 
     trackEvent('Quote Calculator CTA', { service, tier, currency });
@@ -217,7 +201,7 @@ export default function QuoteCalculator() {
                 role="group"
                 aria-label={t('labels.tier')}
               >
-                {TIER_IDS.map((id) => {
+                {TIER_IDS.map((id: Tier) => {
                   const isActive = tier === id;
                   return (
                     <button
@@ -260,14 +244,6 @@ export default function QuoteCalculator() {
                     className="font-display font-bold text-white text-3xl md:text-4xl leading-none"
                   >
                     {formattedPrice}
-                    {PRICING[service].recurring && (
-                      <span
-                        className="font-sans font-normal text-base ml-1.5"
-                        style={{ color: '#6B7280' }}
-                      >
-                        {t('labels.monthly')}
-                      </span>
-                    )}
                   </motion.p>
                 </AnimatePresence>
               </div>

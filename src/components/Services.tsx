@@ -4,7 +4,10 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useIsTouch } from '@/hooks/useIsTouch';
-import { PRICING, type ServiceId, type Currency as PricingCurrency } from '@/config/pricing';
+import {
+  PRICING, formatPrice, isMonthlyService,
+  type ServiceId, type Currency as PricingCurrency,
+} from '@/config/pricing';
 
 // ── Currency hook ─────────────────────────────────────────────────────────────
 
@@ -14,17 +17,6 @@ function useCurrency() {
   const [currency, setCurrency] = useState<Currency>('COP');
   const selectCurrency = useCallback((next: Currency) => setCurrency(next), []);
   return { currency, selectCurrency };
-}
-
-// ── Price formatting ──────────────────────────────────────────────────────────
-
-function formatCOPNumber(n: number): string {
-  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-}
-
-function formatPrice(copPrice: number, usdPrice: number, currency: Currency, fromText: string): string {
-  if (currency === 'USD') return `${fromText} $${usdPrice.toLocaleString('en-US')} USD`;
-  return `${fromText} $${formatCOPNumber(copPrice)} COP`;
 }
 
 // ── Icons — stroke-only SVG, 24×24 viewBox, hand-drawn style ────────────────
@@ -106,7 +98,7 @@ type ServiceDef = {
 
 const SERVICES: ServiceDef[] = [
   { id: 'landing',     pricingId: 'landing',      icon: <IconBrowser /> },
-  { id: 'booking',     pricingId: 'reservations',  icon: <IconCalendar /> },
+  { id: 'booking',     pricingId: 'reservation',   icon: <IconCalendar /> },
   { id: 'webapp',      pricingId: 'webapp',        icon: <IconCode /> },
   { id: 'ecommerce',   pricingId: 'ecommerce',     icon: <IconBag /> },
   { id: 'mobile',      pricingId: 'mobile',        icon: <IconPhone /> },
@@ -193,19 +185,15 @@ function CurrencyToggle({
 function ServiceCard({
   icon,
   name,
-  copPrice,
-  usdPrice,
+  priceText,
   description,
   currency,
-  fromText,
 }: {
   icon: React.ReactNode;
   name: string;
-  copPrice: number;
-  usdPrice: number;
+  priceText: string;
   description: string;
   currency: Currency;
-  fromText: string;
 }) {
   const [hovered, setHovered] = useState(false);
   const [beaming, setBeaming] = useState(false);
@@ -309,14 +297,14 @@ function ServiceCard({
       <div className="mb-3 h-4 flex items-center">
         <AnimatePresence mode="wait">
           <motion.p
-            key={`${currency}-${usdPrice}`}
+            key={currency}
             initial={{ scale: 0.85, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.85, opacity: 0 }}
             transition={{ type: 'spring', stiffness: 500, damping: 20 }}
             className="font-sans text-accent text-xs font-medium tracking-wide"
           >
-            {formatPrice(copPrice, usdPrice, currency, fromText)}
+            {priceText}
           </motion.p>
         </AnimatePresence>
       </div>
@@ -417,18 +405,26 @@ export default function Services() {
           viewport={{ once: true, margin: '-100px' }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         >
-          {SERVICES.map(({ id, pricingId, icon }, i) => (
-            <ServiceCard
-              key={id}
-              icon={icon}
-              name={tItems[i].name}
-              copPrice={PRICING[pricingId].tiers.tier1.COP.min}
-              usdPrice={PRICING[pricingId].tiers.tier1.USD.min}
-              description={tItems[i].description}
-              currency={currency}
-              fromText={t('priceFrom')}
-            />
-          ))}
+          {SERVICES.map(({ id, pricingId, icon }, i) => {
+            const tier1 = PRICING[pricingId][1];
+            const isMonthly = isMonthlyService(pricingId);
+            const rawPrice = formatPrice(
+              currency === 'COP' ? tier1.COP : tier1.USD,
+              currency,
+              isMonthly,
+            );
+            const priceText = t('starting_from', { price: rawPrice });
+            return (
+              <ServiceCard
+                key={id}
+                icon={icon}
+                name={tItems[i].name}
+                priceText={priceText}
+                description={tItems[i].description}
+                currency={currency}
+              />
+            );
+          })}
         </motion.div>
 
         {/* CTA */}
