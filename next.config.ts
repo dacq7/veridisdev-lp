@@ -20,8 +20,8 @@ export default sentryEnabled
       project: process.env.SENTRY_PROJECT,
       // Upload wider set of source maps for better stack traces
       widenClientFileUpload: true,
-      // Tunnel Sentry requests to circumvent ad-blockers (disabled — causes 404s in Next.js 16)
-      // tunnelRoute: '/monitoring',
+      // Tunnel Sentry requests to circumvent ad-blockers
+      tunnelRoute: '/monitoring',
       // Remove Sentry logger statements from bundle
       disableLogger: true,
       // Source maps are deleted after upload
