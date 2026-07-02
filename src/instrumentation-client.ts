@@ -1,7 +1,17 @@
-// Sentry client-side instrumentation for Next.js 16+
-// This file is auto-loaded by Next.js on the client and re-exports the Sentry config
-import '../sentry.client.config';
+// Sentry v10+ requires init directly in instrumentation-client
+// Reference: https://docs.sentry.io/platforms/javascript/guides/nextjs/
+import * as Sentry from '@sentry/nextjs';
 
-export const onRouterTransitionStart = (): void => {
-  // Placeholder - Sentry hook for router navigation tracking
-};
+const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
+
+if (dsn) {
+  Sentry.init({
+    dsn,
+    tracesSampleRate: 0.1,
+    replaysSessionSampleRate: 0.0,
+    replaysOnErrorSampleRate: 0.1,
+    debug: false,
+  });
+}
+
+export const onRouterTransitionStart = Sentry.captureRouterTransitionStart;
