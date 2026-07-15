@@ -416,6 +416,457 @@
       }
     }
   },
+  "pricingDetails": {
+    "modal": {
+      "title": "{service} details",
+      "close": "Close",
+      "recommended": "Recommended",
+      "seeAll": "See full details for {service} →",
+      "targetClient": "Target client",
+      "included": "Included",
+      "notIncluded": "Not included",
+      "timeline": "Estimated timeline",
+      "support": "Post-launch support"
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "items": [
+        {
+          "q": "Can I change tiers during the project?",
+          "a": "Yes. If we find at the start of the project that you need features from a higher tier, we adjust the scope and price transparently before moving forward."
+        },
+        {
+          "q": "What if my project doesn't fit exactly into any tier?",
+          "a": "The tiers are references. Many projects are hybrids (e.g. Landing Essential + a booking module). We quote a specific scope based on your real needs."
+        },
+        {
+          "q": "What does the price NOT include?",
+          "a": "The price does not include: your own domain, Apple/Google developer accounts for mobile apps ($25 Google one-time, $99/year Apple), professional copywriting, professional photography, or premium software licenses (Sanity Pro, Vercel Pro where applicable)."
+        },
+        {
+          "q": "How does post-launch support work?",
+          "a": "During the support period listed for each tier, we fix any development-related bug at no charge. New changes or features are quoted separately or covered under the monthly maintenance plan."
+        },
+        {
+          "q": "Can I upgrade to a higher tier later?",
+          "a": "Yes. Every project is built on scalable architecture. You can start with Express and grow to Essential or beyond later, paying only the difference plus the cost of the new features."
+        }
+      ]
+    },
+    "services": {
+      "landing": {
+        "tiers": {
+          "0": {
+            "targetClient": "Founder validating an idea, or a local business that needs a basic digital presence",
+            "timeline": "3-5 days",
+            "support": "15 days",
+            "included": [
+              "Visual identity adapted to your brand (not a generic template)",
+              "5-7 essential sections (Hero, Services, About, Testimonials, Contact, Footer)",
+              "Responsive design tested on real devices",
+              "Working contact form with email notification",
+              "On-page SEO (meta tags, title, description, Open Graph)",
+              "Analytics integrated",
+              "Floating WhatsApp button",
+              "Deploy on Vercel with domain configured",
+              "1 year of hosting included"
+            ],
+            "notIncluded": [
+              "Multi-language",
+              "CMS for self-editing",
+              "Blog",
+              "Professional copywriting",
+              "Professional photography"
+            ]
+          },
+          "1": {
+            "targetClient": "Established SMB, professional with a defined brand, business present across several channels",
+            "timeline": "1-2 weeks",
+            "support": "30 days",
+            "included": [
+              "Everything in Express, plus:",
+              "8-12 expanded sections (Portfolio, FAQ, Blog preview, Case studies)",
+              "100% custom design (built from scratch, not adapted)",
+              "Polished scroll-based animations",
+              "Form with validation, anti-spam and rate limiting",
+              "Technical SEO (schema.org, XML sitemap, OG images)",
+              "Integration with 1 external tool (CRM, email marketing, Calendly)",
+              "Core Web Vitals optimization (Lighthouse 85+)"
+            ],
+            "notIncluded": [
+              "Full multi-language",
+              "CMS for self-editing",
+              "Functional blog"
+            ]
+          },
+          "2": {
+            "targetClient": "Consolidated company, funded startup, brand with an international presence",
+            "timeline": "2-3 weeks",
+            "support": "60 days",
+            "included": [
+              "Everything in Essential, plus:",
+              "Integrated CMS (Sanity) to edit content without code",
+              "Functional blog with editable posts, categories and authors",
+              "Multi-language (Spanish + English)",
+              "Dynamic case-study system",
+              "Dynamic OG images per page",
+              "Complete technical SEO (structured data, hreflang, canonical)",
+              "Aggressive Core Web Vitals optimization (Lighthouse 90+)",
+              "Integration with up to 3 external tools"
+            ],
+            "notIncluded": [
+              "Payment gateway",
+              "Private user area"
+            ]
+          },
+          "3": {
+            "targetClient": "Premium brand, agency or studio that needs a landing as good as its service",
+            "timeline": "3-4 weeks",
+            "support": "90 days",
+            "included": [
+              "Everything in Professional, plus:",
+              "Micro-interactions and distinctive animations tailored to your brand",
+              "Design with visual narrative (storytelling)",
+              "Lighthouse 95+ guaranteed",
+              "CI/CD with GitHub Actions",
+              "A/B testing setup",
+              "Advanced integration with your marketing stack",
+              "Complete technical documentation",
+              "Documented design system"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "reservation": {
+        "tiers": {
+          "1": {
+            "targetClient": "Independent professional, 1-2 person business, small practice",
+            "timeline": "2-3 weeks",
+            "support": "60 days",
+            "included": [
+              "Unlimited online bookings with no mandatory sign-up",
+              "Unlimited configurable services (name, duration, price)",
+              "Up to 2 professionals/resources",
+              "Visual calendar (day, week, month)",
+              "JWT auth with 2 roles (Admin + Client)",
+              "Schedule blocking (vacations, non-working days)",
+              "Confirmation emails + 24h reminder",
+              "Admin panel (view/cancel/reschedule appointments)",
+              "Full deploy (frontend + backend + DB)"
+            ],
+            "notIncluded": [
+              "Online payments",
+              "WhatsApp/SMS reminders",
+              "Multi-location",
+              "Electronic invoicing"
+            ]
+          },
+          "2": {
+            "targetClient": "Salon, spa, medical practice, dojo, or workshop that needs serious management",
+            "timeline": "4-6 weeks",
+            "support": "90 days",
+            "included": [
+              "Everything in Essential, plus:",
+              "Unlimited professionals/resources",
+              "Online payments (Wompi for COL with PSE+Nequi+card, or Stripe for USD)",
+              "Configurable deposits or full payment",
+              "Reminders via WhatsApp Business API",
+              "Services with variable duration",
+              "Business rules (lead time, cancellation, penalties)",
+              "Dashboard with metrics (revenue, occupancy, returning clients)",
+              "Basic loyalty system"
+            ],
+            "notIncluded": [
+              "Native mobile app",
+              "Multi-location with permissions",
+              "DIAN electronic invoicing"
+            ]
+          },
+          "3": {
+            "targetClient": "Chain/franchise, business with multiple locations, SaaS ready to sell",
+            "timeline": "8-12 weeks",
+            "support": "120 days",
+            "included": [
+              "Everything in Professional, plus:",
+              "Multi-location / multi-tenant architecture (SaaS-ready)",
+              "Granular roles (super-admin, location admin, professional, front desk)",
+              "Unique subdomain or slug per location",
+              "Consolidated financial reports (Excel/PDF)",
+              "Per-professional commissions with automatic settlement",
+              "Basic inventory linked to services",
+              "DIAN electronic invoicing (Alegra/Siigo)",
+              "Two-way Google Calendar / Outlook integration"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "webapp": {
+        "tiers": {
+          "1": {
+            "targetClient": "Founder validating an idea, company digitizing a manual process, MVP for fundraising",
+            "timeline": "3-5 weeks",
+            "support": "60 days",
+            "included": [
+              "Functional MVP with the core of the business",
+              "Complete authentication (email + Google + Apple)",
+              "2-3 user roles with basic permissions",
+              "Full CRUD of the main entities",
+              "Dashboard with key metrics",
+              "PostgreSQL database with Prisma",
+              "Modern stack (Next.js + FastAPI/Django + PostgreSQL)",
+              "Generated technical documentation",
+              "CI/CD with GitHub Actions",
+              "Full deploy with domain"
+            ],
+            "notIncluded": [
+              "Payments/subscriptions",
+              "Multi-tenant",
+              "Complex external integrations",
+              "Advanced reporting"
+            ]
+          },
+          "2": {
+            "targetClient": "Startup with early traction, mid-sized company, product ready to scale",
+            "timeline": "6-10 weeks",
+            "support": "90 days",
+            "included": [
+              "Everything in Essential, plus:",
+              "Granular roles and permissions (full RBAC)",
+              "Unlimited entities with complex relationships",
+              "Up to 3 external integrations (payments, email, WhatsApp, Slack)",
+              "Reporting and exports (Excel, PDF, CSV)",
+              "Multichannel notifications (in-app + email + push)",
+              "Scheduled tasks (Celery/Cron)",
+              "File storage with CDN",
+              "Audit logs",
+              "Advanced search with filters"
+            ],
+            "notIncluded": [
+              "Full multi-tenant SaaS",
+              "LLM/AI integrations",
+              "Mobile app"
+            ]
+          },
+          "3": {
+            "targetClient": "SaaS ready to sell to multiple clients, company with compliance needs, AI-powered product",
+            "timeline": "12-20 weeks",
+            "support": "120 days",
+            "included": [
+              "Everything in Professional, plus:",
+              "True multi-tenant architecture (workspaces, data isolation)",
+              "Subscription system (Stripe Billing or Wompi)",
+              "Automated onboarding for new customers",
+              "Trials, downgrades, upgrades, automatic dunning",
+              "Feature flags per plan",
+              "LLM integration (Claude/GPT) for AI features",
+              "Vector database (Pinecone/pgvector) if RAG applies",
+              "Full observability (Sentry + analytics)",
+              "Public API documentation (Swagger)"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "ecommerce": {
+        "tiers": {
+          "1": {
+            "targetClient": "Brand launching direct sales, small store, business with a defined catalog",
+            "timeline": "3-5 weeks",
+            "support": "60 days",
+            "included": [
+              "Catalog with unlimited products",
+              "Categories and filters",
+              "Simple variants (size, color, dimension)",
+              "Cart persistent across sessions",
+              "Optimized 1-step checkout",
+              "Payments with Wompi (card + Nequi + PSE + Daviplata) or Stripe",
+              "User account with order history",
+              "Admin panel (products, orders, customers, basic inventory)",
+              "Transactional emails",
+              "On-page SEO per product",
+              "1 shipping carrier (Coordinadora COL / Shippo USA)"
+            ],
+            "notIncluded": [
+              "DIAN electronic invoicing",
+              "Points program",
+              "Wishlist",
+              "Blog",
+              "Multi-currency"
+            ]
+          },
+          "2": {
+            "targetClient": "E-commerce with steady sales, brand complying with Colombian regulation",
+            "timeline": "6-10 weeks",
+            "support": "90 days",
+            "included": [
+              "Everything in Essential, plus:",
+              "Complex variants (color × size × material)",
+              "Advanced inventory with low-stock alerts",
+              "DIAN electronic invoicing (Alegra or Siigo)",
+              "Ley 1480 compliance (withdrawal/returns)",
+              "Coupons, discounts and bundles",
+              "Wishlist + reviews with verified photos",
+              "Integrated blog with SEO",
+              "Abandoned cart (email automation)",
+              "WhatsApp Business API",
+              "Google Merchant Center (Shopping feed)",
+              "Sales dashboard with reports"
+            ],
+            "notIncluded": [
+              "Multi-store",
+              "Mobile app",
+              "AI recommendations",
+              "Recurring subscriptions"
+            ]
+          },
+          "3": {
+            "targetClient": "Large e-commerce scaling internationally, brand with multiple product lines",
+            "timeline": "12-18 weeks",
+            "support": "120 days",
+            "included": [
+              "Everything in Professional, plus:",
+              "Multi-currency with geolocation detection",
+              "Full multi-language",
+              "Loyalty program with tiers (bronze/silver/gold)",
+              "Recurring subscriptions",
+              "AI recommendations",
+              "Dynamic bundles configurable per customer",
+              "ERP/POS integration (Siigo, World Office)",
+              "Multi-warehouse with smart allocation",
+              "Pre-orders and backorders",
+              "Basic affiliate system",
+              "Lighthouse 90+ performance"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "mobile": {
+        "tiers": {
+          "1": {
+            "targetClient": "Business needing a mobile presence, service with camera/GPS/push features",
+            "timeline": "5-7 weeks",
+            "support": "90 days",
+            "included": [
+              "React Native (iOS + Android from a single codebase)",
+              "Up to 8-10 main screens",
+              "Complete auth (email + Google + Apple, biometrics)",
+              "Professional navigation (stack + tabs)",
+              "Push notifications (Firebase Cloud Messaging)",
+              "Native UI design (Material 3 / iOS HIG)",
+              "Testing on physical devices (at least 3)",
+              "Publishing to Google Play + App Store"
+            ],
+            "notIncluded": [
+              "Complex custom backend",
+              "In-app payments",
+              "AR/ML/video features",
+              "Synced web version"
+            ]
+          },
+          "2": {
+            "targetClient": "App with business logic, marketplace, service with transactions",
+            "timeline": "8-12 weeks",
+            "support": "120 days",
+            "included": [
+              "Everything in Essential, plus:",
+              "Up to 15-20 screens",
+              "Custom backend included (FastAPI/Django + PostgreSQL)",
+              "In-app payments (Stripe/Wompi)",
+              "Geolocation + maps (Mapbox or Google Maps)",
+              "Camera + gallery with permissions",
+              "Offline mode (local cache + automatic sync)",
+              "Deep linking + universal links",
+              "Analytics + crash reporting",
+              "CI/CD for automatic builds (EAS Build)",
+              "Over-the-air updates (OTA)"
+            ],
+            "notIncluded": [
+              "On-device AI",
+              "ARKit/ARCore",
+              "Separate native Swift/Kotlin apps"
+            ]
+          },
+          "3": {
+            "targetClient": "AI-powered app, mobile+web+wearable ecosystem, advanced requirements",
+            "timeline": "14-20 weeks",
+            "support": "6 months",
+            "included": [
+              "Everything in Professional, plus:",
+              "Unlimited screens",
+              "LLM / AI integration (chatbot, recommendations)",
+              "Advanced features: AR, voice, video calls",
+              "Wearable companion (watchOS/Wear OS) if applicable",
+              "White-label ready (multi-brand from a single build)",
+              "Optimized performance (60fps, lazy loading)",
+              "Automated E2E tests (Detox/Maestro)",
+              "Complete API documentation"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "maintenance": {
+        "tiers": {
+          "1": {
+            "targetClient": "Production sites that need to stay up and secure without frequent changes",
+            "timeline": "Monthly service",
+            "support": "Ongoing",
+            "included": [
+              "24/7 uptime monitoring",
+              "Verified automatic weekly backups",
+              "Security updates for dependencies",
+              "Automatic SSL certificate renewal",
+              "Up to 2 hours/month of bugfixes or minor tweaks",
+              "Quarterly system health report",
+              "Response within 72 business hours",
+              "Email support"
+            ],
+            "notIncluded": [
+              "New features",
+              "Migrations",
+              "24/7 support",
+              "Hosting (paid separately by the client)"
+            ]
+          },
+          "2": {
+            "targetClient": "Active business with regular changes, e-commerce with dynamic inventory",
+            "timeline": "Monthly service",
+            "support": "Ongoing",
+            "included": [
+              "Everything in Essential, plus:",
+              "Up to 5 hours/month of development",
+              "Bimonthly review meetings (30 min)",
+              "Response within 24 business hours",
+              "Direct WhatsApp channel during business hours",
+              "Extra hours at $30 USD/hour"
+            ],
+            "notIncluded": [
+              "Large features (>5h quoted separately)",
+              "24/7 support"
+            ]
+          },
+          "3": {
+            "targetClient": "Critical product, SaaS with its own customers, company needing a fractional CTO",
+            "timeline": "Monthly service",
+            "support": "Ongoing",
+            "included": [
+              "Everything in Professional, plus:",
+              "Up to 12 hours per month of development",
+              "Monthly strategy session (1 hour)",
+              "Quarterly architecture and security review",
+              "Priority response: 8 business hours",
+              "Shared technical roadmap",
+              "Direct access to the founder"
+            ],
+            "notIncluded": []
+          }
+        }
+      }
+    }
+  },
   "calculator": {
     "title": "Estimate your investment",
     "subtitle": "Select a service and tier to see the reference price.",
