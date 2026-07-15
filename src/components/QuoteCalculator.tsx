@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import {
-  PRICING, SERVICE_IDS, TIER_IDS, TIER_LABEL_KEYS,
+  PRICING, SERVICE_IDS, TIER_LABEL_KEYS, getAvailableTiers,
   formatPrice, isMonthlyService,
   type ServiceId, type Tier, type Currency,
 } from '@/config/pricing';
@@ -83,14 +83,30 @@ export default function QuoteCalculator() {
   const [tier, setTier] = useState<Tier>(1);
   const [currency, setCurrency] = useState<Currency>('COP');
 
+  // Tiers available for the current service (Landing adds an Express tier 0).
+  const availableTiers = getAvailableTiers(service);
+  // Guard against a stale tier that isn't valid for the selected service.
+  const activeTier: Tier = availableTiers.includes(tier) ? tier : 1;
+
   // Derived price
-  const selected = PRICING[service][tier];
+  const selected = PRICING[service][activeTier] ?? PRICING[service][1]!;
   const formattedPrice = formatPrice(selected[currency], currency, isMonthlyService(service));
 
-  const priceKey = `${service}-${tier}-${currency}`;
+  // Express descriptor — only for Landing + Express (tier 0).
+  const showExpressDescriptor = service === 'landing' && activeTier === 0;
+
+  const priceKey = `${service}-${activeTier}-${currency}`;
+
+  // Switching service must not leave an Express-only tier selected.
+  function handleSelectService(id: ServiceId) {
+    setService(id);
+    if (!getAvailableTiers(id).includes(tier)) {
+      setTier(1);
+    }
+  }
 
   function handleContinueQuote() {
-    const tierLabel = tPricing(TIER_LABEL_KEYS[tier]);
+    const tierLabel = tPricing(TIER_LABEL_KEYS[activeTier]);
     const serviceName = tPricing(`pricing.services.${service}`);
 
     const message = t('prefilledMessage', {
@@ -99,7 +115,7 @@ export default function QuoteCalculator() {
       price: formattedPrice,
     });
 
-    trackEvent('Quote Calculator CTA', { service, tier, currency });
+    trackEvent('Quote Calculator CTA', { service, tier: activeTier, currency });
 
     window.dispatchEvent(
       new CustomEvent('veridis:prefill-contact', { detail: { message, service } })
@@ -167,7 +183,7 @@ export default function QuoteCalculator() {
                     return (
                       <button
                         key={id}
-                        onClick={() => setService(id)}
+                        onClick={() => handleSelectService(id)}
                         aria-pressed={isActive}
                         className="px-3 py-2.5 rounded-[6px] text-sm font-sans font-medium transition-all duration-200 text-left cursor-pointer"
                         style={{
@@ -201,8 +217,8 @@ export default function QuoteCalculator() {
                 role="group"
                 aria-label={t('labels.tier')}
               >
-                {TIER_IDS.map((id: Tier) => {
-                  const isActive = tier === id;
+                {availableTiers.map((id: Tier) => {
+                  const isActive = activeTier === id;
                   return (
                     <button
                       key={id}
@@ -232,7 +248,7 @@ export default function QuoteCalculator() {
               style={{ borderTop: '1px solid rgba(26, 138, 90, 0.1)' }}
             >
               {/* Price */}
-              <div>
+              <div className="max-w-md">
                 <SectionLabel>{t('labels.estimatedRange')}</SectionLabel>
                 <AnimatePresence mode="wait">
                   <motion.p
@@ -245,6 +261,23 @@ export default function QuoteCalculator() {
                   >
                     {formattedPrice}
                   </motion.p>
+                </AnimatePresence>
+
+                {/* Express descriptor — only for Landing + Express tier */}
+                <AnimatePresence mode="wait">
+                  {showExpressDescriptor && (
+                    <motion.p
+                      key="express-descriptor"
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={PRICE_TRANSITION}
+                      className="font-sans text-sm leading-relaxed mt-3"
+                      style={{ color: '#6B7280' }}
+                    >
+                      {tPricing('pricing.descriptors.landing.express')}
+                    </motion.p>
+                  )}
                 </AnimatePresence>
               </div>
 

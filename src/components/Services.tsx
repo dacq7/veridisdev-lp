@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useSpring } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useIsTouch } from '@/hooks/useIsTouch';
 import {
-  PRICING, formatPrice, isMonthlyService,
+  PRICING, formatPrice, isMonthlyService, getAvailableTiers,
   type ServiceId, type Currency as PricingCurrency,
 } from '@/config/pricing';
 
@@ -406,10 +406,12 @@ export default function Services() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5"
         >
           {SERVICES.map(({ id, pricingId, icon }, i) => {
-            const tier1 = PRICING[pricingId][1];
+            // "From" price uses the lowest available tier (Landing → Express T0).
+            const fromTier = getAvailableTiers(pricingId)[0];
+            const fromPricing = PRICING[pricingId][fromTier] ?? PRICING[pricingId][1]!;
             const isMonthly = isMonthlyService(pricingId);
             const rawPrice = formatPrice(
-              currency === 'COP' ? tier1.COP : tier1.USD,
+              currency === 'COP' ? fromPricing.COP : fromPricing.USD,
               currency,
               isMonthly,
             );
