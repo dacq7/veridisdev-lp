@@ -9,6 +9,7 @@ import {
   type ServiceId, type Tier, type Currency,
 } from '@/config/pricing';
 import { trackEvent } from '@/lib/plausible';
+import PricingDetailsModal from './PricingDetailsModal';
 
 // ── Animation variants (outside component — PLAN-MAESTRO rule) ────────────────
 
@@ -82,6 +83,7 @@ export default function QuoteCalculator() {
   const [service, setService] = useState<ServiceId>('landing');
   const [tier, setTier] = useState<Tier>(1);
   const [currency, setCurrency] = useState<Currency>('COP');
+  const [showModal, setShowModal] = useState(false);
 
   // Tiers available for the current service (Landing adds an Express tier 0).
   const availableTiers = getAvailableTiers(service);
@@ -92,8 +94,14 @@ export default function QuoteCalculator() {
   const selected = PRICING[service][activeTier] ?? PRICING[service][1]!;
   const formattedPrice = formatPrice(selected[currency], currency, isMonthlyService(service));
 
+  const serviceName = tPricing(`pricing.services.${service}`);
+
   // Express descriptor — only for Landing + Express (tier 0).
   const showExpressDescriptor = service === 'landing' && activeTier === 0;
+  const expressDescriptor = tPricing.raw('pricing.descriptors.landing.express') as {
+    intro: string;
+    bullets: string[];
+  };
 
   const priceKey = `${service}-${activeTier}-${currency}`;
 
@@ -122,6 +130,11 @@ export default function QuoteCalculator() {
     );
 
     document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function handleOpenModal() {
+    trackEvent('pricing_details_opened', { service });
+    setShowModal(true);
   }
 
   return (
@@ -266,19 +279,54 @@ export default function QuoteCalculator() {
                 {/* Express descriptor — only for Landing + Express tier */}
                 <AnimatePresence mode="wait">
                   {showExpressDescriptor && (
-                    <motion.p
+                    <motion.div
                       key="express-descriptor"
                       initial={{ opacity: 0, y: 4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
                       transition={PRICE_TRANSITION}
-                      className="font-sans text-sm leading-relaxed mt-3"
-                      style={{ color: '#6B7280' }}
+                      className="mt-3"
                     >
-                      {tPricing('pricing.descriptors.landing.express')}
-                    </motion.p>
+                      <p className="font-sans text-sm font-medium mb-2" style={{ color: '#9CA3AF' }}>
+                        {expressDescriptor.intro}
+                      </p>
+                      <ul className="flex flex-col gap-1.5">
+                        {expressDescriptor.bullets.map((bullet, i) => (
+                          <li
+                            key={i}
+                            className="flex gap-2 items-start font-sans text-sm leading-relaxed"
+                            style={{ color: '#6B7280' }}
+                          >
+                            <span aria-hidden="true" className="mt-0.5 shrink-0" style={{ color: '#1A8A5A' }}>
+                              ✓
+                            </span>
+                            <span>{bullet}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* Secondary trigger — open full tier comparison modal */}
+                <button
+                  type="button"
+                  onClick={handleOpenModal}
+                  className="mt-4 font-sans text-sm font-medium rounded-[6px] px-4 py-2.5 transition-colors duration-200 cursor-pointer text-left"
+                  style={{
+                    background: 'transparent',
+                    color: '#1A8A5A',
+                    border: '1px solid rgba(26, 138, 90, 0.3)',
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.background = 'rgba(26, 138, 90, 0.08)';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
+                  }}
+                >
+                  {tPricing('pricingDetails.modal.seeAll', { service: serviceName })}
+                </button>
               </div>
 
               {/* CTA button */}
@@ -308,6 +356,13 @@ export default function QuoteCalculator() {
         </motion.div>
 
       </div>
+
+      <PricingDetailsModal
+        service={service}
+        currency={currency}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+      />
     </section>
   );
 }
