@@ -404,7 +404,15 @@
     },
     "descriptors": {
       "landing": {
-        "express": "Refined professional template, 4 essential sections, delivered in 3 days, 1 revision round. Ideal for launching fast and validating."
+        "express": {
+          "intro": "Ideal for fast validation:",
+          "bullets": [
+            "Visual identity adapted to your brand",
+            "5-7 essential sections (Hero, Services, About, Contact)",
+            "3-5 day delivery · 1 revision round",
+            "1 language · 1 year hosting included"
+          ]
+        }
       }
     }
   },

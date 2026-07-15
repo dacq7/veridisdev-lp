@@ -404,7 +404,15 @@
     },
     "descriptors": {
       "landing": {
-        "express": "Template refinado profesional, 4 secciones esenciales, entrega en 3 días, 1 ronda de ajustes. Ideal para lanzar rápido y validar."
+        "express": {
+          "intro": "Ideal para validar rápido:",
+          "bullets": [
+            "Identidad visual adaptada a tu marca",
+            "5-7 secciones esenciales (Hero, Servicios, Sobre nosotros, Contacto)",
+            "Entrega en 3-5 días · 1 ronda de ajustes",
+            "1 idioma · Hosting incluido 1 año"
+          ]
+        }
       }
     }
   },
