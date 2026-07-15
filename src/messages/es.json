@@ -397,9 +397,15 @@
       "maintenance": "Mantenimiento Mensual"
     },
     "tiers": {
+      "express": "Express",
       "essential": "Esencial",
       "professional": "Profesional",
       "premium": "Premium"
+    },
+    "descriptors": {
+      "landing": {
+        "express": "Template refinado profesional, 4 secciones esenciales, entrega en 3 días, 1 ronda de ajustes. Ideal para lanzar rápido y validar."
+      }
     }
   },
   "calculator": {

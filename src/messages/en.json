@@ -397,9 +397,15 @@
       "maintenance": "Monthly Maintenance"
     },
     "tiers": {
+      "express": "Express",
       "essential": "Essential",
       "professional": "Professional",
       "premium": "Premium"
+    },
+    "descriptors": {
+      "landing": {
+        "express": "Refined professional template, 4 essential sections, delivered in 3 days, 1 revision round. Ideal for launching fast and validating."
+      }
     }
   },
   "calculator": {
