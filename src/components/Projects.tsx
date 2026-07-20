@@ -39,16 +39,16 @@ type Project = {
 
 const PROJECTS: Project[] = [
   {
-    id: 'budokan',
-    category: 'Karate Dojo Management',
-    title: 'Budokan SKIF',
+    id: 'kensho',
+    category: 'Martial Arts Management',
+    title: 'Kensho',
     description:
-      'Full-featured management platform for a real karate dojo. Student registration, attendance tracking, belt progression, payments and inventory.',
+      'Full-featured management platform for a karate dojo built with real operational requirements. Student registration, attendance tracking, belt progression, payments and inventory.',
     stack: ['React', 'Node.js', 'PostgreSQL', 'Prisma', 'Jest'],
-    liveUrl: 'https://budokan-app.vercel.app',
-    repoUrl: 'https://github.com/dacq7/budokan-app',
-    imgSrc: '/images/budokan-screenshot.png',
-    terminalPath: 'root@veridis:~/budokan-app',
+    liveUrl: 'https://kensho.veridisdev.com',
+    repoUrl: 'https://github.com/dacq7/kensho',
+    imgSrc: '/images/kensho-screenshot.png',
+    terminalPath: 'root@veridis:~/kensho',
     credentials: [
       { role: 'Sensei',   user: DEMO_CREDENTIALS.budokan.sensei.user,   pass: DEMO_CREDENTIALS.budokan.sensei.pass },
       { role: 'Karateca', user: DEMO_CREDENTIALS.budokan.karateca.user, pass: DEMO_CREDENTIALS.budokan.karateca.pass },

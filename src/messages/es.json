@@ -103,10 +103,10 @@
     },
     "items": [
       {
-        "id": "budokan",
-        "category": "Gestión de Dojo de Karate",
-        "title": "Budokan SKIF",
-        "description": "Plataforma de gestión completa para un dojo real de karate. Registro de estudiantes, control de asistencia, progresión de cinturones, pagos e inventario.",
+        "id": "kensho",
+        "category": "Gestión de Artes Marciales",
+        "title": "Kensho",
+        "description": "Plataforma de gestión completa para un dojo de karate construida con requisitos operativos reales. Registro de estudiantes, control de asistencia, progresión de cinturones, pagos e inventario.",
         "credentials": [
           { "role": "Sensei" },
           { "role": "Karateca" }
