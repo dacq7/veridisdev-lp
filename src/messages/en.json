@@ -12,7 +12,7 @@
     "logoLabel": "Veridis Dev — home"
   },
   "hero": {
-    "badge": "3 projects in production",
+    "badge": "10+ apps in production",
     "headline": {
       "line1": "Software",
       "line2": "you can",
@@ -23,7 +23,7 @@
     "getInTouch": "Get in touch",
     "scroll": "scroll",
     "stats": [
-      { "value": "3",               "label": "Apps in production" },
+      { "value": "10+",             "label": "Apps in production" },
       { "value": "110+",            "label": "Tests passing" },
       { "value": "React · FastAPI", "label": "Core stack" },
       { "value": "Vercel · Railway","label": "Deployed on" }
@@ -276,7 +276,7 @@
     "githubCta": "See my GitHub",
     "stats": [
       { "suffix": " year",  "label": "building production software" },
-      { "suffix": " apps",  "label": "currently in production" }
+      { "suffix": "+ apps", "label": "currently in production" }
     ]
   },
   "contact": {

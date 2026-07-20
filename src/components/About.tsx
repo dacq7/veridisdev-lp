@@ -131,7 +131,7 @@ function StatItem({ end, suffix, label, duration }: StatItemProps) {
 
 const STAT_BASE = [
   { end: 1, duration: 1.2 },
-  { end: 3, duration: 1.5 },
+  { end: 10, duration: 1.5 },
 ];
 
 // ── Section ───────────────────────────────────────────────────────────────────
