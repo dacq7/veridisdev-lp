@@ -3,12 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { motion, useAnimation, useInView } from 'framer-motion';
-
-const useIsTouch = () => {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
-  return isTouch;
-};
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -409,10 +404,6 @@ export default function TechStack() {
     <section
       id="stack"
       className="relative py-24 md:py-32"
-      style={{
-        backgroundImage: 'radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
-      }}
     >
       {/* Ambient glow — top-left */}
       <div

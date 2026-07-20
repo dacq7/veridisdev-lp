@@ -173,7 +173,7 @@ function TerminalWindow() {
     { segments: [t('terminal.line1pre'), { glitch: '797', glitchDelay: 1200 }, t('terminal.line1post')], delay: 0.9 },
     { segments: [t('terminal.line2')],                                                                    delay: 1.4 },
     { segments: [t('terminal.line3pre'), { glitch: '110', glitchDelay: 1800 }, t('terminal.line3post')], delay: 1.9 },
-    { segments: [t('terminal.line4pre'), { glitch: '3',   glitchDelay: 2100 }, t('terminal.line4post')], delay: 2.4 },
+    { segments: [t('terminal.line4pre'), { glitch: '10+', glitchDelay: 2100 }, t('terminal.line4post')], delay: 2.4 },
     { segments: [t('terminal.line5')],                                                                    delay: 2.9 },
   ];
 

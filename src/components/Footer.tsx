@@ -1,8 +1,9 @@
 'use client';
 
 import { motion, useAnimation } from 'framer-motion';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useTranslations } from 'next-intl';
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -41,16 +42,6 @@ const colVariants = {
     transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const },
   },
 };
-
-// ── Hooks ─────────────────────────────────────────────────────────────────────
-
-function useIsTouch() {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => {
-    setIsTouch(navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
-  }, []);
-  return isTouch;
-}
 
 // ── Column label ──────────────────────────────────────────────────────────────
 

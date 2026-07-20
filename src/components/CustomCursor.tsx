@@ -64,7 +64,7 @@ export default function CustomCursor() {
       return;
     }
 
-    setActive(true);
+    setActive(true); // eslint-disable-line react-hooks/set-state-in-effect
     document.body.style.cursor = 'none';
     document.body.classList.add('custom-cursor-active');
 

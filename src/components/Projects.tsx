@@ -1,14 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-
-const useIsTouch = () => {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
-  return isTouch;
-};
+import { DEMO_CREDENTIALS } from '@/config/demo-credentials';
+import { trackEvent } from '@/lib/plausible';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -43,19 +39,19 @@ type Project = {
 
 const PROJECTS: Project[] = [
   {
-    id: 'budokan',
-    category: 'Karate Dojo Management',
-    title: 'Budokan SKIF',
+    id: 'kensho',
+    category: 'Martial Arts Management',
+    title: 'Kensho',
     description:
-      'Full-featured management platform for a real karate dojo. Student registration, attendance tracking, belt progression, payments and inventory.',
+      'Full-featured management platform for a karate dojo built with real operational requirements. Student registration, attendance tracking, belt progression, payments and inventory.',
     stack: ['React', 'Node.js', 'PostgreSQL', 'Prisma', 'Jest'],
-    liveUrl: 'https://budokan-app.vercel.app',
-    repoUrl: 'https://github.com/dacq7/budokan-app',
-    imgSrc: '/images/budokan-screenshot.png',
-    terminalPath: 'root@veridis:~/budokan-app',
+    liveUrl: 'https://kensho.veridisdev.com',
+    repoUrl: 'https://github.com/dacq7/kensho',
+    imgSrc: '/images/kensho-screenshot.png',
+    terminalPath: 'root@veridis:~/kensho',
     credentials: [
-      { role: 'Sensei', user: '11111111', pass: 'demo2025' },
-      { role: 'Karateca', user: '22222222', pass: 'demo2025' },
+      { role: 'Sensei',   user: DEMO_CREDENTIALS.budokan.sensei.user,   pass: DEMO_CREDENTIALS.budokan.sensei.pass },
+      { role: 'Karateca', user: DEMO_CREDENTIALS.budokan.karateca.user, pass: DEMO_CREDENTIALS.budokan.karateca.pass },
     ],
     features: [
       'Belt progression & exam auth',
@@ -80,8 +76,8 @@ const PROJECTS: Project[] = [
     imgSrc: '/images/barberos-screenshot.png',
     terminalPath: 'root@veridis:~/barberos-os',
     credentials: [
-      { role: 'Admin', user: 'admin@barberos.com', pass: 'demo1234' },
-      { role: 'Barber', user: 'carlos@barberos.com', pass: 'demo1234' },
+      { role: 'Admin',  user: DEMO_CREDENTIALS.barberos.admin.user, pass: DEMO_CREDENTIALS.barberos.admin.pass },
+      { role: 'Barber', user: DEMO_CREDENTIALS.barberos.staff.user, pass: DEMO_CREDENTIALS.barberos.staff.pass },
     ],
     features: [
       '3-step public booking',
@@ -106,8 +102,8 @@ const PROJECTS: Project[] = [
     imgSrc: '/images/trucking-screenshot.png',
     terminalPath: 'root@veridis:~/trucking-crm',
     credentials: [
-      { role: 'Admin', user: 'admin@premiertruckins.com', pass: 'Admin1234!' },
-      { role: 'Vendor', user: 'maria.gonzalez@premiertruckins.com', pass: 'Vendor1234!' },
+      { role: 'Admin',  user: DEMO_CREDENTIALS.trucking.admin.user,  pass: DEMO_CREDENTIALS.trucking.admin.pass },
+      { role: 'Vendor', user: DEMO_CREDENTIALS.trucking.vendor.user, pass: DEMO_CREDENTIALS.trucking.vendor.pass },
     ],
     features: [
       '8-stage insurance pipeline',
@@ -586,6 +582,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             href={project.liveUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => trackEvent('Demo Opened', { project: project.id })}
             className="inline-flex items-center border border-accent text-accent font-sans font-medium text-sm rounded-[6px] px-5 py-2.5 transition-all duration-200 hover:bg-accent hover:text-white"
             animate={
               inView
@@ -639,10 +636,6 @@ export default function Projects() {
     <section
       id="projects"
       className="relative py-24 md:py-32"
-      style={{
-        backgroundImage: 'radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
-      }}
     >
       {/* Ambient glow — bottom-left */}
       <div

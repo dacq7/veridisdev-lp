@@ -1,53 +1,67 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-const useIsTouch = () => {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => { setIsTouch('ontouchstart' in window || navigator.maxTouchPoints > 0); }, []);
-  return isTouch;
-};
-
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type Testimonial = {
-  quote: string;
-  name: string;
-  role: string;
-  badge: string;
-  initials: string;
+type IconName = 'clock' | 'users' | 'link';
+
+type Metric = {
+  value: string;
+  label: string;
+  description: string;
+  icon: IconName;
 };
 
 // ── Data ──────────────────────────────────────────────────────────────────────
+// Verifiable track-record metrics — no invented testimonials. Copy lives in
+// i18n (es/en.json → testimonials.metrics); the decorative icon is matched by
+// index here since it is not translatable content.
 
-const TESTIMONIALS: Testimonial[] = [
-  {
-    quote:
-      'The system Diego built transformed how we manage our dojo. Attendance, payments and student records — everything in one place. It just works.',
-    name: 'Andrés M.',
-    role: 'Student, Budokan SKIF',
-    badge: 'Budokan SKIF',
-    initials: 'AM',
-  },
-  {
-    quote:
-      'We went from managing bookings on paper to a fully automated system in under two weeks. Our barbers love it and clients book online without calling us.',
-    name: 'Miguel T.',
-    role: 'Owner, The Barber\'s Post',
-    badge: 'BarberOS',
-    initials: 'MT',
-  },
-  {
-    quote:
-      'Finally a CRM that understands trucking insurance. Pipeline tracking, client records, policy management — built exactly for how we operate.',
-    name: 'Sarah K.',
-    role: 'Operations Manager, Premier Trucking Ins.',
-    badge: 'Trucking CRM',
-    initials: 'SK',
-  },
-];
+const METRIC_ICONS: IconName[] = ['clock', 'users', 'link'];
+
+// ── Decorative metric icon ────────────────────────────────────────────────────
+
+function MetricIcon({ name }: { name: IconName }) {
+  const common = {
+    width: 20,
+    height: 20,
+    viewBox: '0 0 24 24',
+    fill: 'none',
+    stroke: '#1A8A5A',
+    strokeWidth: 1.7,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    'aria-hidden': true,
+  };
+  if (name === 'clock') {
+    return (
+      <svg {...common}>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 2" />
+      </svg>
+    );
+  }
+  if (name === 'users') {
+    return (
+      <svg {...common}>
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </svg>
+    );
+  }
+  // link
+  return (
+    <svg {...common}>
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  );
+}
 
 // ── Animation variants ────────────────────────────────────────────────────────
 
@@ -68,30 +82,15 @@ const cardVariants = {
   hover: { scale: 1.02 },
 };
 
-const quoteVariants = {
-  visible: { scale: 1, x: 0, y: 0 },
+const valueVariants = {
+  visible: { scale: 1 },
   hover: {
-    scale: 1.3,
-    opacity: 0.4,
-    x: -4,
-    y: -4,
+    scale: 1.06,
     transition: { type: 'spring' as const, stiffness: 300, damping: 20 },
   },
 };
 
-const badgeVariants = {
-  visible: {
-    backgroundColor: 'rgba(26,138,90,0.1)',
-    borderColor: 'rgba(26,138,90,0.25)',
-  },
-  hover: {
-    backgroundColor: 'rgba(26,138,90,0.2)',
-    borderColor: 'rgba(26,138,90,0.5)',
-    transition: { duration: 0.3 },
-  },
-};
-
-const avatarVariants = {
+const iconVariants = {
   visible: { boxShadow: '0 0 0 0px rgba(26,138,90,0)' },
   hover: {
     boxShadow: '0 0 0 2px rgba(26,138,90,0.6)',
@@ -101,17 +100,15 @@ const avatarVariants = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function Testimonials() {
+export default function TrackRecord() {
   const t = useTranslations('testimonials');
   const headingWords = t.raw('headingWords') as string[];
-  const tItems = t.raw('items') as Array<{ quote: string; name: string; role: string; badge: string }>;
+  const tMetrics = t.raw('metrics') as Array<{ value: string; label: string; description: string }>;
+  const metrics: Metric[] = tMetrics.map((m, i) => ({ ...m, icon: METRIC_ICONS[i] }));
   return (
     <section
       style={{
         backgroundColor: '#0F1A14',
-        backgroundImage:
-          'radial-gradient(circle, rgba(26,138,90,0.25) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
       }}
       className="relative py-24 px-6 overflow-hidden"
     >
@@ -157,17 +154,8 @@ export default function Testimonials() {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          {TESTIMONIALS.map((item, i) => (
-            <TestimonialCard
-              key={item.name}
-              testimonial={{
-                ...item,
-                quote: tItems[i].quote,
-                name: tItems[i].name,
-                role: tItems[i].role,
-                badge: tItems[i].badge,
-              }}
-            />
+          {metrics.map((metric) => (
+            <MetricCard key={metric.label} metric={metric} />
           ))}
         </motion.div>
 
@@ -194,9 +182,8 @@ export default function Testimonials() {
 
 // ── Card ──────────────────────────────────────────────────────────────────────
 
-function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
-  const { quote, name, role, badge, initials } = testimonial;
-  const [tapped, setTapped] = useState(false);
+function MetricCard({ metric }: { metric: Metric }) {
+  const { value, label, description, icon } = metric;
   const [beaming, setBeaming] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
@@ -257,43 +244,19 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         )}
       </AnimatePresence>
 
-      {/* Decorative opening quote mark */}
-      <motion.span
-        aria-hidden="true"
-        variants={quoteVariants}
-        animate={tapped ? { scale: [1, 1.4, 1] } : undefined}
-        transition={{ duration: 0.3, ease: 'easeOut' }}
-        onTouchStart={() => { setTapped(true); setTimeout(() => setTapped(false), 400); }}
+      {/* Big number */}
+      <motion.p
+        variants={valueVariants}
         style={{
           fontFamily: 'Syne, sans-serif',
-          fontSize: '64px',
-          color: 'rgba(26, 138, 90, 0.2)',
-          lineHeight: 1,
-          position: 'absolute',
-          top: '16px',
-          left: '24px',
-          userSelect: 'none',
+          fontSize: '44px',
+          lineHeight: 1.05,
+          fontWeight: 700,
+          color: '#FFFFFF',
+          transformOrigin: 'left center',
         }}
       >
-        &ldquo;
-      </motion.span>
-
-      {/* Quote */}
-      <motion.p
-        initial={{ opacity: 0.7 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-40px' }}
-        transition={{ duration: 0.4 }}
-        style={{
-          fontFamily: 'DM Sans, sans-serif',
-          fontSize: '15px',
-          color: '#CBD5C0',
-          lineHeight: 1.7,
-          fontStyle: 'italic',
-          marginTop: '28px',
-        }}
-      >
-        {quote}
+        {value}
       </motion.p>
 
       {/* Divider */}
@@ -305,11 +268,11 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
         }}
       />
 
-      {/* Footer row: avatar + name/role + badge */}
+      {/* Footer row: icon + label/description */}
       <div className="flex items-center gap-3">
-        {/* Avatar */}
+        {/* Icon badge — occupies the slot where testimonial initials used to be */}
         <motion.div
-          variants={avatarVariants}
+          variants={iconVariants}
           whileTap={{ boxShadow: '0 0 0 3px rgba(26,138,90,0.8)' }}
           transition={{ duration: 0.2 }}
           style={{
@@ -323,32 +286,23 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
             flexShrink: 0,
           }}
         >
-          <span
-            style={{
-              fontFamily: 'Syne, sans-serif',
-              fontSize: '14px',
-              color: '#1A8A5A',
-              fontWeight: 600,
-            }}
-          >
-            {initials}
-          </span>
+          <MetricIcon name={icon} />
         </motion.div>
 
-        {/* Name + role */}
+        {/* Label + description */}
         <div className="flex-1 min-w-0">
           <motion.p
             whileTap={{ color: '#1A8A5A' }}
             transition={{ duration: 0.2 }}
             style={{
               fontFamily: 'DM Sans, sans-serif',
-              fontSize: '14px',
+              fontSize: '15px',
               color: '#FFFFFF',
               fontWeight: 600,
               lineHeight: 1.3,
             }}
           >
-            {name}
+            {label}
           </motion.p>
           <motion.p
             initial={{ opacity: 0.6 }}
@@ -359,32 +313,12 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
               fontFamily: 'DM Sans, sans-serif',
               fontSize: '12px',
               color: '#4A6B58',
-              lineHeight: 1.3,
+              lineHeight: 1.4,
             }}
           >
-            {role}
+            {description}
           </motion.p>
         </div>
-
-        {/* Project badge */}
-        <motion.span
-          variants={badgeVariants}
-          whileTap={{ scale: 0.9, backgroundColor: 'rgba(26,138,90,0.25)' }}
-          transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-          style={{
-            fontFamily: 'DM Sans, sans-serif',
-            fontSize: '11px',
-            color: '#1A8A5A',
-            borderRadius: '999px',
-            padding: '3px 10px',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-            borderWidth: '1px',
-            borderStyle: 'solid',
-          }}
-        >
-          {badge}
-        </motion.span>
       </div>
     </motion.div>
   );

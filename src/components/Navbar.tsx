@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useTranslations, useLocale } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/navigation';
 import MagneticButton from '@/components/MagneticButton';
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 function useScrolled(threshold = 50): boolean {
   const [scrolled, setScrolled] = useState(false);
@@ -18,14 +19,6 @@ function useScrolled(threshold = 50): boolean {
   }, [threshold]);
 
   return scrolled;
-}
-
-function useIsTouch(): boolean {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => {
-    setIsTouch(navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
-  }, []);
-  return isTouch;
 }
 
 const NAV_LINKS = [

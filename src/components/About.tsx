@@ -10,16 +10,7 @@ import {
   useScroll,
 } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-
-// ── useIsTouch ─────────────────────────────────────────────────────────────────
-
-function useIsTouch() {
-  const [isTouch, setIsTouch] = useState(false);
-  useEffect(() => {
-    setIsTouch(navigator.maxTouchPoints > 0 || 'ontouchstart' in window);
-  }, []);
-  return isTouch;
-}
+import { useIsTouch } from '@/hooks/useIsTouch';
 
 // ── Variants ──────────────────────────────────────────────────────────────────
 
@@ -140,7 +131,7 @@ function StatItem({ end, suffix, label, duration }: StatItemProps) {
 
 const STAT_BASE = [
   { end: 1, duration: 1.2 },
-  { end: 3, duration: 1.5 },
+  { end: 10, duration: 1.5 },
 ];
 
 // ── Section ───────────────────────────────────────────────────────────────────
@@ -238,10 +229,6 @@ export default function About() {
       id="about"
       className="relative py-24 md:py-32 overflow-hidden"
       onTouchStart={handleSectionTouch}
-      style={{
-        backgroundImage: 'radial-gradient(circle, rgba(26, 138, 90, 0.25) 1px, transparent 1px)',
-        backgroundSize: '24px 24px',
-      }}
     >
       {/* Touch beam */}
       <motion.div

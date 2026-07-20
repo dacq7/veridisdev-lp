@@ -12,7 +12,7 @@
     "logoLabel": "Veridis Dev — inicio"
   },
   "hero": {
-    "badge": "3 proyectos en producción",
+    "badge": "10+ apps en producción",
     "headline": {
       "line1": "Software",
       "line2": "en que",
@@ -23,7 +23,7 @@
     "getInTouch": "Contáctenos",
     "scroll": "bajar",
     "stats": [
-      { "value": "3",               "label": "Apps en producción" },
+      { "value": "10+",             "label": "Apps en producción" },
       { "value": "110+",            "label": "Tests pasando" },
       { "value": "React · FastAPI", "label": "Stack principal" },
       { "value": "Vercel · Railway","label": "Desplegado en" }
@@ -52,7 +52,7 @@
     "heading": "Servicios",
     "subtitle": "Desde landing pages hasta plataformas SaaS completas — construimos lo que su negocio necesita.",
     "currencyToggleLabel": "Seleccionar moneda",
-    "priceFrom": "Desde",
+    "starting_from": "Desde {price}",
     "cta": {
       "question": "¿Listo para construir algo?",
       "button": "Hablemos →"
@@ -103,10 +103,10 @@
     },
     "items": [
       {
-        "id": "budokan",
-        "category": "Gestión de Dojo de Karate",
-        "title": "Budokan SKIF",
-        "description": "Plataforma de gestión completa para un dojo real de karate. Registro de estudiantes, control de asistencia, progresión de cinturones, pagos e inventario.",
+        "id": "kensho",
+        "category": "Gestión de Artes Marciales",
+        "title": "Kensho",
+        "description": "Plataforma de gestión completa para un dojo de karate construida con requisitos operativos reales. Registro de estudiantes, control de asistencia, progresión de cinturones, pagos e inventario.",
         "credentials": [
           { "role": "Sensei" },
           { "role": "Karateca" }
@@ -165,32 +165,29 @@
     ]
   },
   "testimonials": {
-    "label": "LO QUE DICEN LOS CLIENTES",
-    "headingWords": ["Empresas", "que", "confían", "en nosotros."],
+    "label": "En cifras",
+    "headingWords": ["Nuestro", "trabajo,", "en", "números."],
+    "metrics": [
+      {
+        "value": "4 años",
+        "label": "de experiencia",
+        "description": "construyendo software profesional"
+      },
+      {
+        "value": "4",
+        "label": "clientes",
+        "description": "con productos en producción activa"
+      },
+      {
+        "value": "6+",
+        "label": "integraciones",
+        "description": "fiscales y de pago colombianas (Wompi, PSE, Nequi, DIAN, Alegra, Coordinadora)"
+      }
+    ],
     "cta": {
       "question": "Únase a las empresas que confían en Veridis",
       "button": "Trabajemos juntos →"
-    },
-    "items": [
-      {
-        "quote": "El sistema que construyó Diego transformó la forma en que gestionamos nuestro dojo. Asistencia, pagos y registros de estudiantes — todo en un solo lugar. Simplemente funciona.",
-        "name": "Andrés M.",
-        "role": "Estudiante, Budokan SKIF",
-        "badge": "Budokan SKIF"
-      },
-      {
-        "quote": "Pasamos de gestionar reservas en papel a un sistema completamente automatizado en menos de dos semanas. Nuestros barberos lo adoran y los clientes reservan en línea sin llamarnos.",
-        "name": "Miguel T.",
-        "role": "Propietario, The Barber's Post",
-        "badge": "BarberOS"
-      },
-      {
-        "quote": "Por fin un CRM que entiende el seguro de transporte. Seguimiento de pipeline, registros de clientes, gestión de pólizas — construido exactamente para la forma en que operamos.",
-        "name": "Sarah K.",
-        "role": "Gerente de Operaciones, Premier Trucking Ins.",
-        "badge": "Trucking CRM"
-      }
-    ]
+    }
   },
   "howWeWork": {
     "label": "El Proceso",
@@ -275,8 +272,8 @@
     "founderTitle": "Fundador · Veridis Dev",
     "githubCta": "Ver mi GitHub",
     "stats": [
-      { "suffix": " año",  "label": "construyendo software en producción" },
-      { "suffix": " apps", "label": "actualmente en producción" }
+      { "suffix": " año",   "label": "construyendo software en producción" },
+      { "suffix": "+ apps", "label": "actualmente en producción" }
     ]
   },
   "contact": {
@@ -302,13 +299,15 @@
     },
     "options": {
       "projectTypes": [
-        { "value": "",                    "label": "Seleccione un tipo de proyecto" },
-        { "value": "Web Application",     "label": "Aplicación Web" },
-        { "value": "Mobile App",          "label": "App Móvil" },
-        { "value": "Landing Page",        "label": "Landing Page" },
-        { "value": "E-commerce Store",    "label": "Tienda en Línea" },
-        { "value": "CRM / Internal Tool", "label": "CRM / Herramienta Interna" },
-        { "value": "Not sure yet",        "label": "Aún no lo sé" }
+        { "value": "",                     "label": "Seleccione un tipo de proyecto" },
+        { "value": "Landing Page",         "label": "Landing Page" },
+        { "value": "Reservation System",   "label": "Sistema de Reservas" },
+        { "value": "Web Application",      "label": "Aplicación Web" },
+        { "value": "E-commerce Store",     "label": "Tienda en Línea" },
+        { "value": "Mobile App",           "label": "App Móvil" },
+        { "value": "Monthly Maintenance",  "label": "Mantenimiento Mensual" },
+        { "value": "CRM / Internal Tool",  "label": "CRM / Herramienta Interna" },
+        { "value": "Not sure yet",         "label": "Aún no lo sé" }
       ],
       "contactTimes": [
         { "value": "Morning (9am — 12pm)",   "label": "Mañana (9am — 12pm)" },
@@ -352,7 +351,10 @@
       "countryRequired": "Por favor ingrese su país o ciudad.",
       "projectTypeRequired": "Por favor seleccione un tipo de proyecto.",
       "descriptionRequired": "Por favor describa su proyecto.",
-      "generic": "Algo salió mal"
+      "generic": "Algo salió mal",
+      "forbidden": "Solicitud no permitida.",
+      "validationFailed": "Por favor revisa los datos e intenta nuevamente.",
+      "rateLimited": "Demasiados intentos. Por favor espera un momento antes de intentar nuevamente."
     },
     "success": {
       "title": "¡Mensaje enviado!",
@@ -381,5 +383,538 @@
     "contactLabel": "Contacto",
     "logoLabel": "Veridis Dev — inicio",
     "location": "Medellín, Colombia"
+  },
+  "pricing": {
+    "services": {
+      "landing": "Landing Page Profesional",
+      "reservation": "Sistema de Reservas",
+      "webapp": "App Web Personalizada",
+      "ecommerce": "Tienda en Línea",
+      "mobile": "App Móvil",
+      "maintenance": "Mantenimiento Mensual"
+    },
+    "tiers": {
+      "express": "Express",
+      "essential": "Esencial",
+      "professional": "Profesional",
+      "premium": "Premium"
+    },
+    "descriptors": {
+      "landing": {
+        "express": {
+          "intro": "Ideal para validar rápido:",
+          "bullets": [
+            "Identidad visual adaptada a tu marca",
+            "5-7 secciones esenciales (Hero, Servicios, Sobre nosotros, Contacto)",
+            "Entrega en 3-5 días · 1 ronda de ajustes",
+            "1 idioma · Hosting incluido 1 año"
+          ]
+        }
+      }
+    }
+  },
+  "pricingDetails": {
+    "modal": {
+      "title": "Detalles de {service}",
+      "close": "Cerrar",
+      "recommended": "Recomendado",
+      "seeAll": "Ver detalles completos de {service} →",
+      "targetClient": "Cliente objetivo",
+      "included": "Incluido",
+      "notIncluded": "No incluye",
+      "timeline": "Tiempo estimado",
+      "support": "Soporte post-launch"
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "items": [
+        {
+          "q": "¿Puedo cambiar de tier durante el proyecto?",
+          "a": "Sí. Si al comenzar el proyecto identificamos que necesitas features de un tier superior, ajustamos el scope y el precio de manera transparente antes de continuar."
+        },
+        {
+          "q": "¿Qué pasa si mi proyecto no cabe exactamente en ningún tier?",
+          "a": "Los tiers son referenciales. Muchos proyectos son híbridos (ej: Landing Essential + módulo de reservas). Cotizamos scope específico basado en tus necesidades reales."
+        },
+        {
+          "q": "¿Qué NO incluye el precio?",
+          "a": "El precio no incluye: dominio del cliente, cuentas de developer de Apple/Google para apps móviles ($25 Google único, $99/año Apple), copywriting profesional, fotografía profesional, licencias de software premium (Sanity Pro, Vercel Pro si aplica)."
+        },
+        {
+          "q": "¿Cómo funciona el soporte post-launch?",
+          "a": "Durante el período de soporte indicado en cada tier, cubrimos gratuitamente cualquier bug relacionado con el desarrollo. Cambios o features nuevas se cotizan aparte o se incluyen en el plan de mantenimiento mensual."
+        },
+        {
+          "q": "¿Puedo migrar a un tier superior después?",
+          "a": "Sí. Todos nuestros proyectos se construyen con arquitectura escalable. Puedes empezar con Express y evolucionar a Essential o superior después, pagando solo la diferencia + costo de los nuevos features."
+        }
+      ]
+    },
+    "services": {
+      "landing": {
+        "tiers": {
+          "0": {
+            "targetClient": "Emprendedor validando idea, negocio local necesitando presencia digital básica",
+            "timeline": "3-5 días",
+            "support": "15 días",
+            "included": [
+              "Identidad visual adaptada a tu marca (no template genérico)",
+              "5-7 secciones esenciales (Hero, Servicios, Sobre nosotros, Testimonios, Contacto, Footer)",
+              "Diseño responsive probado en dispositivos reales",
+              "Formulario de contacto funcional con notificación por email",
+              "SEO on-page (meta tags, título, descripción, Open Graph)",
+              "Analytics integrado",
+              "Botón de WhatsApp flotante",
+              "Deploy en Vercel con dominio configurado",
+              "1 año de hosting incluido"
+            ],
+            "notIncluded": [
+              "Multi-idioma",
+              "CMS para autoeditar",
+              "Blog",
+              "Copywriting profesional",
+              "Fotografía profesional"
+            ]
+          },
+          "1": {
+            "targetClient": "PYME establecida, profesional con marca definida, negocio con presencia en varios canales",
+            "timeline": "1-2 semanas",
+            "support": "30 días",
+            "included": [
+              "Todo lo de Express, más:",
+              "8-12 secciones ampliadas (Portfolio, FAQ, Blog preview, Casos)",
+              "Diseño 100% personalizado (creado desde cero, no adaptado)",
+              "Animaciones scroll-based cuidadas",
+              "Formulario con validación, anti-spam, rate limiting",
+              "SEO técnico (schema.org, sitemap XML, OG images)",
+              "Integración con 1 herramienta externa (CRM, email marketing, Calendly)",
+              "Optimización Core Web Vitals (Lighthouse 85+)"
+            ],
+            "notIncluded": [
+              "Multi-idioma completo",
+              "CMS para autoeditar",
+              "Blog funcional"
+            ]
+          },
+          "2": {
+            "targetClient": "Empresa consolidada, startup con inversión, marca con presencia internacional",
+            "timeline": "2-3 semanas",
+            "support": "60 días",
+            "included": [
+              "Todo lo de Essential, más:",
+              "CMS integrado (Sanity) para editar contenido sin código",
+              "Blog funcional con posts editables, categorías, autores",
+              "Multi-idioma (español + inglés)",
+              "Sistema de casos de estudio dinámicos",
+              "OG images dinámicas por página",
+              "SEO técnico completo (structured data, hreflang, canonical)",
+              "Optimización agresiva Core Web Vitals (Lighthouse 90+)",
+              "Integración con hasta 3 herramientas externas"
+            ],
+            "notIncluded": [
+              "Pasarela de pago",
+              "Área privada de usuarios"
+            ]
+          },
+          "3": {
+            "targetClient": "Marca premium, agencia o estudio necesitando landing tan buena como su servicio",
+            "timeline": "3-4 semanas",
+            "support": "90 días",
+            "included": [
+              "Todo lo de Professional, más:",
+              "Micro-interacciones y animaciones distintivas adaptadas a tu marca",
+              "Diseño con narrativa visual (storytelling)",
+              "Lighthouse 95+ garantizado",
+              "CI/CD con GitHub Actions",
+              "A/B testing setup",
+              "Integración avanzada con marketing stack",
+              "Documentación técnica completa",
+              "Sistema de diseño documentado"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "reservation": {
+        "tiers": {
+          "1": {
+            "targetClient": "Profesional independiente, negocio 1-2 profesionales, consultorio pequeño",
+            "timeline": "2-3 semanas",
+            "support": "60 días",
+            "included": [
+              "Reservas ilimitadas online sin registro obligatorio",
+              "Servicios ilimitados configurables (nombre, duración, precio)",
+              "Hasta 2 profesionales/recursos",
+              "Calendario visual (día, semana, mes)",
+              "Auth JWT con 2 roles (Admin + Cliente)",
+              "Bloqueo de horarios (vacaciones, días no laborables)",
+              "Emails de confirmación + recordatorio 24h antes",
+              "Panel admin (ver/cancelar/reagendar citas)",
+              "Deploy completo (frontend + backend + DB)"
+            ],
+            "notIncluded": [
+              "Pagos online",
+              "Recordatorios WhatsApp/SMS",
+              "Multi-sucursal",
+              "Facturación electrónica"
+            ]
+          },
+          "2": {
+            "targetClient": "Peluquería, spa, consultorio médico, dojo, taller con gestión seria",
+            "timeline": "4-6 semanas",
+            "support": "90 días",
+            "included": [
+              "Todo lo de Essential, más:",
+              "Profesionales/recursos ilimitados",
+              "Pagos online (Wompi para COL con PSE+Nequi+tarjeta, o Stripe para USD)",
+              "Anticipos configurables o pago completo",
+              "Recordatorios por WhatsApp Business API",
+              "Servicios con duración variable",
+              "Reglas de negocio (anticipación, cancelación, penalizaciones)",
+              "Dashboard con métricas (ingresos, ocupación, clientes recurrentes)",
+              "Sistema de fidelización básico"
+            ],
+            "notIncluded": [
+              "App móvil nativa",
+              "Multi-sucursal con permisos",
+              "Facturación electrónica DIAN"
+            ]
+          },
+          "3": {
+            "targetClient": "Cadena/franquicia, negocio con múltiples sedes, SaaS listo para vender",
+            "timeline": "8-12 semanas",
+            "support": "120 días",
+            "included": [
+              "Todo lo de Professional, más:",
+              "Arquitectura multi-sucursal / multi-tenant (SaaS-ready)",
+              "Roles granulares (super-admin, admin sucursal, profesional, recepción)",
+              "Subdomain o slug único por sucursal",
+              "Reportes financieros consolidados (Excel/PDF)",
+              "Comisiones por profesional con liquidación automática",
+              "Inventario básico vinculado a servicios",
+              "Facturación electrónica DIAN (Alegra/Siigo)",
+              "Integración Google Calendar / Outlook bidireccional"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "webapp": {
+        "tiers": {
+          "1": {
+            "targetClient": "Founder validando idea, empresa digitalizando proceso manual, MVP para inversión",
+            "timeline": "3-5 semanas",
+            "support": "60 días",
+            "included": [
+              "MVP funcional con el core del negocio",
+              "Autenticación completa (email + Google + Apple)",
+              "2-3 roles de usuario con permisos básicos",
+              "CRUD completo de entidades principales",
+              "Dashboard con métricas clave",
+              "Base de datos PostgreSQL con Prisma",
+              "Stack moderno (Next.js + FastAPI/Django + PostgreSQL)",
+              "Documentación técnica generada",
+              "CI/CD con GitHub Actions",
+              "Deploy completo con dominio"
+            ],
+            "notIncluded": [
+              "Pagos/suscripciones",
+              "Multi-tenant",
+              "Integraciones externas complejas",
+              "Reportes avanzados"
+            ]
+          },
+          "2": {
+            "targetClient": "Startup con tracción inicial, empresa mediana, producto listo para escalar",
+            "timeline": "6-10 semanas",
+            "support": "90 días",
+            "included": [
+              "Todo lo de Essential, más:",
+              "Roles y permisos granulares (RBAC completo)",
+              "Entidades ilimitadas con relaciones complejas",
+              "Hasta 3 integraciones externas (pagos, email, WhatsApp, Slack)",
+              "Sistema de reportes y exportaciones (Excel, PDF, CSV)",
+              "Notificaciones multicanal (in-app + email + push)",
+              "Tareas programadas (Celery/Cron)",
+              "Storage de archivos con CDN",
+              "Logs de auditoría",
+              "Búsqueda avanzada con filtros"
+            ],
+            "notIncluded": [
+              "Multi-tenant SaaS completo",
+              "Integraciones con LLMs/IA",
+              "App móvil"
+            ]
+          },
+          "3": {
+            "targetClient": "SaaS listo para vender a múltiples clientes, empresa con compliance, producto con IA",
+            "timeline": "12-20 semanas",
+            "support": "120 días",
+            "included": [
+              "Todo lo de Professional, más:",
+              "Arquitectura multi-tenant real (workspaces, aislamiento de datos)",
+              "Sistema de suscripciones (Stripe Billing o Wompi)",
+              "Onboarding automático para nuevos clientes",
+              "Trials, downgrades, upgrades, dunning automático",
+              "Feature flags por plan",
+              "Integración con LLMs (Claude/GPT) para features de IA",
+              "Vector database (Pinecone/pgvector) si aplica RAG",
+              "Observabilidad completa (Sentry + analytics)",
+              "Documentación API pública (Swagger)"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "ecommerce": {
+        "tiers": {
+          "1": {
+            "targetClient": "Marca lanzando venta directa, tienda pequeña, negocio con catálogo definido",
+            "timeline": "3-5 semanas",
+            "support": "60 días",
+            "included": [
+              "Catálogo con productos ilimitados",
+              "Categorías y filtros",
+              "Variantes simples (talla, color, tamaño)",
+              "Carrito persistente entre sesiones",
+              "Checkout en 1 paso optimizado",
+              "Pagos con Wompi (tarjeta + Nequi + PSE + Daviplata) o Stripe",
+              "Cuenta de usuario con historial de pedidos",
+              "Panel admin (productos, pedidos, clientes, inventario básico)",
+              "Emails transaccionales",
+              "SEO on-page por producto",
+              "1 carrier de envío (Coordinadora COL / Shippo USA)"
+            ],
+            "notIncluded": [
+              "Facturación electrónica DIAN",
+              "Programa de puntos",
+              "Wishlist",
+              "Blog",
+              "Multi-moneda"
+            ]
+          },
+          "2": {
+            "targetClient": "E-commerce con ventas regulares, marca cumpliendo regulación colombiana",
+            "timeline": "6-10 semanas",
+            "support": "90 días",
+            "included": [
+              "Todo lo de Essential, más:",
+              "Variantes complejas (color × talla × material)",
+              "Inventario avanzado con alertas de stock bajo",
+              "Facturación electrónica DIAN (Alegra o Siigo)",
+              "Cumplimiento Ley 1480 (retracto/devoluciones)",
+              "Sistema de cupones, descuentos, bundles",
+              "Wishlist + reseñas con fotos verificadas",
+              "Blog integrado con SEO",
+              "Carrito abandonado (email automation)",
+              "WhatsApp Business API",
+              "Google Merchant Center (Shopping feed)",
+              "Dashboard de ventas con reportes"
+            ],
+            "notIncluded": [
+              "Multi-tienda",
+              "App móvil",
+              "Recomendaciones con IA",
+              "Suscripciones recurrentes"
+            ]
+          },
+          "3": {
+            "targetClient": "E-commerce grande escalando internacionalmente, marca con múltiples líneas",
+            "timeline": "12-18 semanas",
+            "support": "120 días",
+            "included": [
+              "Todo lo de Professional, más:",
+              "Multi-moneda con detección por geolocalización",
+              "Multi-idioma completo",
+              "Programa de fidelización con niveles (bronze/silver/gold)",
+              "Suscripciones recurrentes",
+              "Recomendaciones con IA",
+              "Bundles dinámicos configurables por cliente",
+              "Integración con ERP/POS (Siigo, World Office)",
+              "Multi-bodega con asignación inteligente",
+              "Pre-orders y backorders",
+              "Sistema de afiliados básico",
+              "Performance Lighthouse 90+"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "mobile": {
+        "tiers": {
+          "1": {
+            "targetClient": "Negocio necesitando presencia mobile, servicio con features de cámara/GPS/push",
+            "timeline": "5-7 semanas",
+            "support": "90 días",
+            "included": [
+              "React Native (iOS + Android desde un solo código)",
+              "Hasta 8-10 pantallas principales",
+              "Auth completo (email + Google + Apple, biometría)",
+              "Navegación profesional (stack + tabs)",
+              "Push notifications (Firebase Cloud Messaging)",
+              "Diseño UI nativo (Material 3 / iOS HIG)",
+              "Testing en dispositivos físicos (mínimo 3)",
+              "Publicación en Google Play + App Store"
+            ],
+            "notIncluded": [
+              "Backend custom complejo",
+              "Pagos in-app",
+              "Features AR/ML/video",
+              "Versión web sincronizada"
+            ]
+          },
+          "2": {
+            "targetClient": "App con lógica de negocio, marketplace, servicio con transacciones",
+            "timeline": "8-12 semanas",
+            "support": "120 días",
+            "included": [
+              "Todo lo de Essential, más:",
+              "Hasta 15-20 pantallas",
+              "Backend custom incluido (FastAPI/Django + PostgreSQL)",
+              "Pagos in-app (Stripe/Wompi)",
+              "Geolocalización + mapas (Mapbox o Google Maps)",
+              "Cámara + galería con permisos",
+              "Modo offline (cache local + sync automático)",
+              "Deep linking + universal links",
+              "Analytics + crash reporting",
+              "CI/CD para builds automáticos (EAS Build)",
+              "Updates over-the-air (OTA)"
+            ],
+            "notIncluded": [
+              "IA on-device",
+              "ARKit/ARCore",
+              "Apps nativas Swift/Kotlin separadas"
+            ]
+          },
+          "3": {
+            "targetClient": "App con IA, ecosistema mobile+web+wearable, requerimientos avanzados",
+            "timeline": "14-20 semanas",
+            "support": "6 meses",
+            "included": [
+              "Todo lo de Professional, más:",
+              "Pantallas ilimitadas",
+              "Integración con LLMs / IA (chatbot, recomendaciones)",
+              "Features avanzados: AR, voice, video calls",
+              "Wearable companion (watchOS/Wear OS) si aplica",
+              "White-label ready (multi-marca desde un solo build)",
+              "Performance optimizado (60fps, lazy loading)",
+              "Tests E2E automatizados (Detox/Maestro)",
+              "Documentación API completa"
+            ],
+            "notIncluded": []
+          }
+        }
+      },
+      "maintenance": {
+        "tiers": {
+          "1": {
+            "targetClient": "Sitios en producción que necesitan estar arriba y seguros sin cambios frecuentes",
+            "timeline": "Servicio mensual",
+            "support": "Continuo",
+            "included": [
+              "Monitoreo de uptime 24/7",
+              "Backups automáticos semanales verificados",
+              "Actualizaciones de seguridad de dependencias",
+              "Renovación automática de certificados SSL",
+              "Hasta 2 horas/mes de bugfixes o ajustes menores",
+              "Reporte trimestral de salud del sistema",
+              "Respuesta en 72h hábiles",
+              "Soporte por email"
+            ],
+            "notIncluded": [
+              "Features nuevas",
+              "Migraciones",
+              "Soporte 24/7",
+              "Hosting (cliente lo paga aparte)"
+            ]
+          },
+          "2": {
+            "targetClient": "Negocio activo con cambios regulares, ecommerce con inventario dinámico",
+            "timeline": "Servicio mensual",
+            "support": "Continuo",
+            "included": [
+              "Todo lo de Essential, más:",
+              "Hasta 5 horas/mes de desarrollo",
+              "Reuniones bimestrales de revisión (30 min)",
+              "Respuesta en 24h hábiles",
+              "Canal directo por WhatsApp en horario laboral",
+              "Horas adicionales a $30 USD/hora"
+            ],
+            "notIncluded": [
+              "Features grandes (>5h se cotizan aparte)",
+              "Soporte 24/7"
+            ]
+          },
+          "3": {
+            "targetClient": "Producto crítico, SaaS con clientes propios, empresa necesitando CTO fraccional",
+            "timeline": "Servicio mensual",
+            "support": "Continuo",
+            "included": [
+              "Todo lo de Professional, más:",
+              "Hasta 12 horas mensuales de desarrollo",
+              "Sesión estratégica mensual (1 hora)",
+              "Revisión trimestral de arquitectura y seguridad",
+              "Prioridad de respuesta: 8h hábiles",
+              "Roadmap técnico compartido",
+              "Acceso directo al founder"
+            ],
+            "notIncluded": []
+          }
+        }
+      }
+    }
+  },
+  "calculator": {
+    "title": "Calcula tu inversión",
+    "subtitle": "Selecciona un servicio y nivel para ver el precio referencial.",
+    "labels": {
+      "service": "Servicio",
+      "tier": "Nivel",
+      "estimatedRange": "Precio referencial",
+      "continueQuote": "Continuar con esta cotización →"
+    },
+    "prefilledMessage": "Hola, me interesa cotizar {service} (nivel {tier}). Precio referencial: {price}."
+  },
+  "agentProcess": {
+    "eyebrow": "Construido en público",
+    "title": "Nuestro proceso, auditable end-to-end",
+    "description": "Cada decisión arquitectónica del Veridis Landing v2 fue tomada y documentada por agentes especializados de IA, supervisados por nuestro equipo. Todo el proceso está disponible públicamente en nuestro repositorio de GitHub.",
+    "cta": {
+      "primary": "Explora nuestro proceso",
+      "secondary": "Ver código completo en GitHub"
+    }
+  },
+  "blog": {
+    "title": "Blog y Casos de Estudio",
+    "subtitle": "Perspectivas, notas de proceso y análisis reales de proyectos del equipo Veridis Dev.",
+    "comingSoon": {
+      "title": "Próximamente",
+      "description": "Estamos trabajando en los primeros artículos. Mientras tanto, escríbenos si quieres hablar de tu proyecto.",
+      "cta": "Contáctanos"
+    },
+    "post": {
+      "publishedOn": "Publicado el",
+      "by": "Por",
+      "readingTime": "{minutes} min de lectura",
+      "caseStudy": "Caso de Estudio"
+    },
+    "caseStudyMeta": {
+      "client": "Cliente",
+      "industry": "Industria",
+      "duration": "Duración",
+      "stack": "Stack tecnológico",
+      "results": "Resultados",
+      "liveUrl": "Ver en producción"
+    },
+    "footer": {
+      "ctaTitle": "¿Quieres algo así?",
+      "ctaButton": "Hablemos →"
+    },
+    "preview": {
+      "eyebrow": "Últimos posts",
+      "title": "Reflexiones técnicas",
+      "subtitle": "Lo que estamos construyendo, aprendiendo y publicando.",
+      "viewAll": "Ver todo el blog →"
+    }
   }
 }
