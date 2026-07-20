@@ -8,7 +8,7 @@ import Services from '@/components/Services';
 import QuoteCalculator from '@/components/QuoteCalculator';
 import Marquee from '@/components/Marquee';
 import Projects from '@/components/Projects';
-import Testimonials from '@/components/Testimonials';
+import TrackRecord from '@/components/TrackRecord';
 import HowWeWork from '@/components/HowWeWork';
 import WhyVeridis from '@/components/WhyVeridis';
 import TechStack from '@/components/TechStack';
@@ -88,7 +88,7 @@ export default async function Home({
         <QuoteCalculator />
         <Projects />
         <BlogPreview locale={locale as 'es' | 'en'} />
-        <Testimonials />
+        <TrackRecord />
         <HowWeWork />
         <WhyVeridis />
         <TechStack />

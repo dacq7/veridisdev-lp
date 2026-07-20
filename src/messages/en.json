@@ -165,32 +165,29 @@
     ]
   },
   "testimonials": {
-    "label": "WHAT CLIENTS SAY",
-    "headingWords": ["Trusted", "by", "real", "businesses."],
+    "label": "By the numbers",
+    "headingWords": ["Our", "work,", "in", "numbers."],
+    "metrics": [
+      {
+        "value": "4 years",
+        "label": "of experience",
+        "description": "building professional software"
+      },
+      {
+        "value": "4",
+        "label": "clients",
+        "description": "with products in active production"
+      },
+      {
+        "value": "6+",
+        "label": "integrations",
+        "description": "Colombian tax & payment (Wompi, PSE, Nequi, DIAN, Alegra, Coordinadora)"
+      }
+    ],
     "cta": {
       "question": "Join the companies that trust Veridis",
       "button": "Work with us →"
-    },
-    "items": [
-      {
-        "quote": "The system Diego built transformed how we manage our dojo. Attendance, payments and student records — everything in one place. It just works.",
-        "name": "Andrés M.",
-        "role": "Student, Budokan SKIF",
-        "badge": "Budokan SKIF"
-      },
-      {
-        "quote": "We went from managing bookings on paper to a fully automated system in under two weeks. Our barbers love it and clients book online without calling us.",
-        "name": "Miguel T.",
-        "role": "Owner, The Barber's Post",
-        "badge": "BarberOS"
-      },
-      {
-        "quote": "Finally a CRM that understands trucking insurance. Pipeline tracking, client records, policy management — built exactly for how we operate.",
-        "name": "Sarah K.",
-        "role": "Operations Manager, Premier Trucking Ins.",
-        "badge": "Trucking CRM"
-      }
-    ]
+    }
   },
   "howWeWork": {
     "label": "The Process",
