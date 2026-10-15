@@ -100,7 +100,7 @@ const CARD_ITEM = {
 
 const HIGHLIGHT_TERMS: Record<string, string[]> = {
   ai: ['weeks', 'days'],
-  tested: ['110+'],
+  tested: ['890+'],
 };
 
 // ── Description with highlighted numbers ──────────────────────────────────────

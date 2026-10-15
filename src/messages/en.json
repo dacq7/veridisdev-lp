@@ -24,7 +24,7 @@
     "scroll": "scroll",
     "stats": [
       { "value": "6",               "label": "Apps in production" },
-      { "value": "110+",            "label": "Tests passing" },
+      { "value": "890+",            "label": "Tests passing" },
       { "value": "React · FastAPI", "label": "Core stack" },
       { "value": "Vercel · Railway","label": "Deployed on" }
     ],
@@ -226,7 +226,7 @@
       {
         "id": "tested",
         "title": "Tested and documented",
-        "description": "110+ tests across our production projects. Every codebase ships with a test suite and documentation — not just working code, but maintainable code."
+        "description": "890+ tests across our production projects. Every codebase ships with a test suite and documentation — not just working code, but maintainable code."
       }
     ]
   },

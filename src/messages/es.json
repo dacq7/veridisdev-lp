@@ -24,7 +24,7 @@
     "scroll": "bajar",
     "stats": [
       { "value": "6",               "label": "Apps en producción" },
-      { "value": "110+",            "label": "Tests pasando" },
+      { "value": "890+",            "label": "Tests pasando" },
       { "value": "React · FastAPI", "label": "Stack principal" },
       { "value": "Vercel · Railway","label": "Desplegado en" }
     ],
@@ -226,7 +226,7 @@
       {
         "id": "tested",
         "title": "Probado y documentado",
-        "description": "Más de 110 tests en nuestros proyectos de producción. Cada base de código se entrega con una suite de tests y documentación — no solo código funcional, sino código mantenible."
+        "description": "Más de 890 tests en nuestros proyectos de producción. Cada base de código se entrega con una suite de tests y documentación — no solo código funcional, sino código mantenible."
       }
     ]
   },
