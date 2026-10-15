@@ -12,7 +12,7 @@
     "logoLabel": "Veridis Dev — inicio"
   },
   "hero": {
-    "badge": "10+ apps en producción",
+    "badge": "6 apps en producción",
     "headline": {
       "line1": "Software",
       "line2": "en que",
@@ -23,7 +23,7 @@
     "getInTouch": "Contáctenos",
     "scroll": "bajar",
     "stats": [
-      { "value": "10+",             "label": "Apps en producción" },
+      { "value": "6",               "label": "Apps en producción" },
       { "value": "110+",            "label": "Tests pasando" },
       { "value": "React · FastAPI", "label": "Stack principal" },
       { "value": "Vercel · Railway","label": "Desplegado en" }
@@ -106,7 +106,7 @@
         "id": "kensho",
         "category": "Gestión de Artes Marciales",
         "title": "Kensho",
-        "description": "Plataforma de gestión completa para un dojo de karate construida con requisitos operativos reales. Registro de estudiantes, control de asistencia, progresión de cinturones, pagos e inventario.",
+        "description": "Plataforma de gestión que el dojo usa a diario para administrar estudiantes, asistencia, progresión de cinturones, inventario y registro de pagos.",
         "credentials": [
           { "role": "Sensei" },
           { "role": "Karateca" }
@@ -117,29 +117,8 @@
           "Detección automatizada de cuotas y mora"
         ],
         "metrics": [
-          { "label": "estudiantes activos" },
           { "label": "roles de usuario" },
-          { "label": "pagos automatizados" }
-        ]
-      },
-      {
-        "id": "barberos",
-        "category": "SaaS para Barberías",
-        "title": "BarberOS",
-        "description": "Plataforma SaaS completa para propietarios de barberías. Reservas en línea, horarios de barberos, seguimiento de comisiones e inventario. Acceso basado en roles para propietarios y barberos.",
-        "credentials": [
-          { "role": "Admin" },
-          { "role": "Barbero" }
-        ],
-        "features": [
-          "Reservas públicas en 3 pasos",
-          "División de comisión 40/60",
-          "Inventario con alertas de stock"
-        ],
-        "metrics": [
-          { "label": "barberos" },
-          { "label": "citas diarias" },
-          { "label": "división de comisión" }
+          { "label": "Usado a diario por el dojo" }
         ]
       },
       {
@@ -169,19 +148,19 @@
     "headingWords": ["Nuestro", "trabajo,", "en", "números."],
     "metrics": [
       {
-        "value": "4 años",
+        "value": "4+ años",
         "label": "de experiencia",
         "description": "construyendo software profesional"
       },
       {
         "value": "4",
         "label": "clientes",
-        "description": "con productos en producción activa"
+        "description": "negocios para los que construimos software"
       },
       {
-        "value": "6+",
+        "value": "3",
         "label": "integraciones",
-        "description": "fiscales y de pago colombianas (Wompi, PSE, Nequi, DIAN, Alegra, Coordinadora)"
+        "description": "en Itza Beauty Shop: Wompi (tarjetas, PSE, Nequi), Alegra (facturación electrónica DIAN) y Coordinadora (envíos)"
       }
     ],
     "cta": {
@@ -237,7 +216,7 @@
       {
         "id": "production",
         "title": "Listo para producción desde el primer día",
-        "description": "Cada proyecto está desplegado, monitoreado y funcionando con usuarios reales. Sin demos, sin prototipos — software funcional en el que los negocios confían a diario."
+        "description": "6 apps funcionando en producción con usuarios reales. Sin demos, sin prototipos — software funcional en el que los negocios confían a diario."
       },
       {
         "id": "fullstack",
@@ -272,8 +251,8 @@
     "founderTitle": "Fundador · Veridis Dev",
     "githubCta": "Ver mi GitHub",
     "stats": [
-      { "suffix": " año",   "label": "construyendo software en producción" },
-      { "suffix": "+ apps", "label": "actualmente en producción" }
+      { "suffix": "+ años", "label": "de experiencia construyendo software" },
+      { "suffix": " apps", "label": "actualmente en producción" }
     ]
   },
   "contact": {

@@ -12,7 +12,7 @@
     "logoLabel": "Veridis Dev — home"
   },
   "hero": {
-    "badge": "10+ apps in production",
+    "badge": "6 apps in production",
     "headline": {
       "line1": "Software",
       "line2": "you can",
@@ -23,7 +23,7 @@
     "getInTouch": "Get in touch",
     "scroll": "scroll",
     "stats": [
-      { "value": "10+",             "label": "Apps in production" },
+      { "value": "6",               "label": "Apps in production" },
       { "value": "110+",            "label": "Tests passing" },
       { "value": "React · FastAPI", "label": "Core stack" },
       { "value": "Vercel · Railway","label": "Deployed on" }
@@ -106,7 +106,7 @@
         "id": "kensho",
         "category": "Martial Arts Management",
         "title": "Kensho",
-        "description": "Full-featured management platform for a karate dojo built with real operational requirements. Student registration, attendance tracking, belt progression, payments and inventory.",
+        "description": "Management platform used daily by the dojo to manage students, attendance, belt progression, inventory and payment records.",
         "credentials": [
           { "role": "Sensei" },
           { "role": "Karateca" }
@@ -117,29 +117,8 @@
           "Automated fee & mora detection"
         ],
         "metrics": [
-          { "label": "active students" },
           { "label": "user roles" },
-          { "label": "automated payments" }
-        ]
-      },
-      {
-        "id": "barberos",
-        "category": "Barbershop SaaS",
-        "title": "BarberOS",
-        "description": "Complete SaaS platform for barbershop owners. Online booking, barber schedules, commission tracking and inventory. Role-based access for owners and barbers.",
-        "credentials": [
-          { "role": "Admin" },
-          { "role": "Barber" }
-        ],
-        "features": [
-          "3-step public booking",
-          "40/60 commission split",
-          "Inventory with stock alerts"
-        ],
-        "metrics": [
-          { "label": "barbers" },
-          { "label": "daily appointments" },
-          { "label": "commission split" }
+          { "label": "Used daily by the dojo" }
         ]
       },
       {
@@ -169,19 +148,19 @@
     "headingWords": ["Our", "work,", "in", "numbers."],
     "metrics": [
       {
-        "value": "4 years",
+        "value": "4+ years",
         "label": "of experience",
         "description": "building professional software"
       },
       {
         "value": "4",
         "label": "clients",
-        "description": "with products in active production"
+        "description": "businesses we build software for"
       },
       {
-        "value": "6+",
+        "value": "3",
         "label": "integrations",
-        "description": "Colombian tax & payment (Wompi, PSE, Nequi, DIAN, Alegra, Coordinadora)"
+        "description": "in Itza Beauty Shop: Wompi (cards, PSE, Nequi), Alegra (DIAN e-invoicing) and Coordinadora (shipping)"
       }
     ],
     "cta": {
@@ -237,7 +216,7 @@
       {
         "id": "production",
         "title": "Production-ready from day one",
-        "description": "Every project is deployed, monitored and running with real users. No demos, no prototypes — working software that businesses rely on daily."
+        "description": "6 apps running in production with real users. No demos, no prototypes — working software that businesses rely on daily."
       },
       {
         "id": "fullstack",
@@ -272,8 +251,8 @@
     "founderTitle": "Founder · Veridis Dev",
     "githubCta": "See my GitHub",
     "stats": [
-      { "suffix": " year",  "label": "building production software" },
-      { "suffix": "+ apps", "label": "currently in production" }
+      { "suffix": "+ years", "label": "of experience building software" },
+      { "suffix": " apps", "label": "currently in production" }
     ]
   },
   "contact": {

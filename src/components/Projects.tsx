@@ -43,7 +43,7 @@ const PROJECTS: Project[] = [
     category: 'Martial Arts Management',
     title: 'Kensho',
     description:
-      'Full-featured management platform for a karate dojo built with real operational requirements. Student registration, attendance tracking, belt progression, payments and inventory.',
+      'Management platform used daily by the dojo to manage students, attendance, belt progression, inventory and payment records.',
     stack: ['React', 'Node.js', 'PostgreSQL', 'Prisma', 'Jest'],
     liveUrl: 'https://kensho.veridisdev.com',
     repoUrl: 'https://github.com/dacq7/kensho',
@@ -59,35 +59,8 @@ const PROJECTS: Project[] = [
       'Automated fee & mora detection',
     ],
     metrics: [
-      { value: '25', label: 'active students' },
       { value: '3', label: 'user roles' },
-      { value: '100%', label: 'automated payments' },
-    ],
-  },
-  {
-    id: 'barberos',
-    category: 'Barbershop SaaS',
-    title: 'BarberOS',
-    description:
-      'Complete SaaS platform for barbershop owners. Online booking, barber schedules, commission tracking and inventory. Role-based access for owners and barbers.',
-    stack: ['React', 'FastAPI', 'PostgreSQL', 'Supabase', 'Pytest'],
-    liveUrl: 'https://barberos-os.vercel.app/admin/login',
-    repoUrl: 'https://github.com/dacq7/barberos-os',
-    imgSrc: '/images/barberos-screenshot.png',
-    terminalPath: 'root@veridis:~/barberos-os',
-    credentials: [
-      { role: 'Admin',  user: DEMO_CREDENTIALS.barberos.admin.user, pass: DEMO_CREDENTIALS.barberos.admin.pass },
-      { role: 'Barber', user: DEMO_CREDENTIALS.barberos.staff.user, pass: DEMO_CREDENTIALS.barberos.staff.pass },
-    ],
-    features: [
-      '3-step public booking',
-      '40/60 commission split',
-      'Inventory with stock alerts',
-    ],
-    metrics: [
-      { value: '3', label: 'barbers' },
-      { value: '24+', label: 'daily appointments' },
-      { value: '40/60', label: 'commission split' },
+      { label: 'Used daily by the dojo', italic: true },
     ],
   },
   {
