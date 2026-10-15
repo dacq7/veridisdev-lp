@@ -226,7 +226,7 @@
       {
         "id": "tested",
         "title": "Tested and documented",
-        "description": "890+ tests across our production projects. Every codebase ships with a test suite and documentation — not just working code, but maintainable code."
+        "description": "My production apps are backed by 890+ automated tests — not just working code, but maintainable code."
       }
     ]
   },
